@@ -1,6 +1,6 @@
 # Orange Sea
 
-An HTML5 game written in JavaScript using the Phaser library (phaser.io).
+An HTML5 game written in JavaScript using the [Phaser](phaser.io) library. The player controls a hot air balloon and guides it through various perils in an attempt to cross the Orange Sea.
 
 ## Todo
 
