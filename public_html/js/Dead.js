@@ -13,7 +13,7 @@ OrangeSea.Dead.prototype = {
     var message = this.add.sprite(0, 0, OrangeSea.deadMessage);
     var spaceToContinueMessage = this.add.sprite(0, 0, 'spaceToContinue');
     spaceToContinueMessage.alpha = 0;
-    this.add.tween(spaceToContinueMessage).to( { alpha: 1.0 }, 500, Phaser.Easing.Linear.None, true, 2000);
+    this.add.tween(spaceToContinueMessage).to( { alpha: 1.0 }, 500, Phaser.Easing.Linear.None, true);
 
     var spaceBar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
     var fKey = this.input.keyboard.addKey(Phaser.KeyCode.F);

@@ -1,10 +1,13 @@
 # Orange Sea
 
-An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library. The player controls a hot air balloon and guides it through various perils in an attempt to cross the Orange Sea. Play for free at [orangesea.oddkraken.com](http://orangesea.oddkraken.com).
+An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library. The player controls a hot air balloon and guides it through various perils in an attempt to cross the Orange Sea. Work in progress! Play for free at [orangesea.oddkraken.com](http://orangesea.oddkraken.com).
 
 ## Todo
 
-* Fire specter and vaporize clouds in line of sight
+* After 3 specters, balloon starts flashing, "Press SPACE to enter the spectral plane"
+    * balloon becomes ghostly, spooky hum plays, no collisions occur
+    * last 10 seconds or so
+    * can make the game more difficult with this powerup
 * Design good and bad "encounters" to be used throughout Chapters
     * Good
         * goodies - blunderbuss, weight (slower balloon, less effected by wind)

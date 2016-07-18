@@ -32,7 +32,7 @@ OrangeSea.Boot.prototype = {
     }
     else
     {
-      alert("Mobile support is highly experimental! Proceed with low expectations. Tap to control.");
+      alert("Mobile support is highly experimental! Proceed with low expectations. Orient device horizontally and tap to control.");
       this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
       this.scale.pageAlignHorizontally = true;
       this.time.desiredFps = 30;

@@ -54,6 +54,8 @@ OrangeSea.ChapterOne.prototype = {
     this.lightning = null;
     this.flash = null;
     this.boost = null;
+    this.inSpectralPlane = false;
+    this.specterReady = false;
     this.specterCount = 0;
     this.desaturation = null;
     this.textGroup = null;
@@ -165,7 +167,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //boost
     this.boostSound = this.add.audio('boostSound');
-    this.boost = this.add.sprite(-10000, -100, 'boost');
+    this.boost = this.add.sprite(-5000, -100, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
@@ -185,7 +187,7 @@ OrangeSea.ChapterOne.prototype = {
     boostChild2.body.angularVelocity = 50;
 
     this.boost.anchor.setTo(0.47, 0.58);
-    this.add.tween(this.boost).to( { alpha: 0.5 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    this.add.tween(this.boost).to( { alpha: 0.75 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     this.add.tween(this.boost.scale).to( { x: 1.1, y: 1.1 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     this.add.tween(this.boost).to( { y: this.camera.height*0.8 }, 3000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     this.physics.arcade.enable(this.boost);
@@ -195,7 +197,7 @@ OrangeSea.ChapterOne.prototype = {
     this.boost.body.setSize(this.boost.body.width*scale, this.boost.body.height*scale,
       (this.boost.body.width-this.boost.body.width*scale)/2,
       (this.boost.body.height-this.boost.body.height*scale)/2);
-    this.boost.body.velocity.x = 300;
+    this.boost.body.velocity.x = 150;
     this.boost.body.angularVelocity = 50;
     this.updateFunctions.push(function(game) {
       if (game.physics.arcade.intersects(game.balloon.body, game.boost.body)) {
@@ -203,22 +205,26 @@ OrangeSea.ChapterOne.prototype = {
           game.displaySpeech('speech1');
         }
         game.specterCount++;
+        if (game.specterCount % 3 == 0) {
+          game.specterReady = true;
+        }
         game.boost.x = -2000+Math.random()*-1000;
         if (game.balloon.x < game.camera.width*0.75) { //only boost if if won't push balloon off screen
           game.add.tween(game.balloon.body.velocity).to( { x: game.MAX_SPEED }, 100, Phaser.Easing.Sinusoidal.InOut, true, 0, 0);
           game.balloon.body.acceleration.x = game.ACCELERATION;
         }
         if (!game.boostSound.isPlaying) {
-          game.boostSound.play(null, null, 0.25);
+          game.boostSound.play(null, null, 0.5);
         }
       } else if (game.boost.x > game.camera.width*2) {
-        game.boost.x = -2000+Math.random()*-1000;
+        game.boost.x = -1000+Math.random()*-500;
       }
     });
 
 
     // balloon
     this.balloon = this.add.sprite(this.camera.width*0.5, this.camera.height*0.25, 'balloon');
+    this.balloon.blendMode = PIXI.blendModes.OVERLAY;
     this.balloon.anchor.setTo(0.5, 0.1);
     this.balloon.angle = 8;
     this.physics.arcade.enable(this.balloon);
@@ -350,11 +356,11 @@ OrangeSea.ChapterOne.prototype = {
     this.stormCloudGroup = this.add.group(undefined, 'stormCloudGroup');
     var secondsBetweenClouds = 5;
     var cloudStartTime = 15;
-    var minInterval = 0.75;
-    var numStormClouds = 200;
+    var minInterval = 0.5;
+    var numStormClouds = 275;
     for (var i=0; i<numStormClouds; i++) {
       if (secondsBetweenClouds > minInterval) {
-        secondsBetweenClouds -= 0.5; //gradually increase frequency until 1.0 cloud/sec
+        secondsBetweenClouds -= 0.25; //gradually increase frequency until 1.0 cloud/sec
       } else if (secondsBetweenClouds != minInterval) {
         secondsBetweenClouds = minInterval;
       }
@@ -378,7 +384,9 @@ OrangeSea.ChapterOne.prototype = {
       for (var i=0; i<game.stormClouds.length; i++) {
         var stormCloudSprite = game.stormClouds[i];
         if (Phaser.Rectangle.containsRect(game.balloon.body, stormCloudSprite.body)) {
-          game.balloon.body.acceleration.x += stormCloudSprite.speed*10;
+          if (!game.inSpectralPlane) {
+            game.balloon.body.acceleration.x += stormCloudSprite.speed*10;
+          }
           if (!game.windSound.isPlaying) {
             game.windSound.play(null, null, 0.05);
           }
@@ -411,14 +419,32 @@ OrangeSea.ChapterOne.prototype = {
     var mKey = this.input.keyboard.addKey(Phaser.KeyCode.M);
     var pKey = this.input.keyboard.addKey(Phaser.KeyCode.P);
     var esc = this.input.keyboard.addKey(Phaser.KeyCode.ESC);
+    var spaceBar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
     fKey.onDown.add(OrangeSea.toggleFullScreen, this);
     mKey.onDown.add(function(){ this.sound.mute = !this.sound.mute; }, this);
     pKey.onDown.add(this.togglePause, this);
     esc.onDown.add(this.togglePause, this);
+    spaceBar.onDown.add(this.enterSpectralPlane, this);
 
     //mobile
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
+  },
+
+  // user may become invincible briefly after collecting specters
+  enterSpectralPlane: function() {
+    if (this.specterReady && !this.inSpectralPlane) {
+      this.inSpectralPlane = true;
+      this.specterReady = false;
+      this.balloon.blendMode = PIXI.blendModes.ADD;
+      console.log(this.timer.ms);
+      console.log(this.timer.ms + 5*Phaser.Timer.SECOND);
+
+      this.timer.add(5*Phaser.Timer.SECOND, function() {
+        this.inSpectralPlane = false;
+        this.balloon.blendMode = PIXI.blendModes.NORMAL;
+      }, this);
+    }
   },
 
   sendFish: function() {
@@ -439,7 +465,7 @@ OrangeSea.ChapterOne.prototype = {
       this.lastFish = this.fishTimer.ms;
       //account for ENV speed
       if (direction == -1) {
-        this.fish.body.velocity.x=-direction*300;
+        this.fish.body.velocity.x=-direction*400;
       } else {
         this.fish.body.velocity.x=-direction*500;
       }
@@ -472,8 +498,7 @@ OrangeSea.ChapterOne.prototype = {
     stormCloudSprite.alpha = Math.random()*0.2 + 0.8;
     var randScale = Math.random()/2 + 0.5; //[0.5, 1)
     stormCloudSprite.scale.setTo(reverse*randScale, randScale);
-    //TODO inverted normal distribution for the cloud's y value: middle of the screen should be safest
-    var randHeight = Math.random()*this.camera.height*0.7;
+    var randHeight = this.balloon.y + Math.random()*200 - 100;
     stormCloudSprite.x = this.camera.width + Math.abs(stormCloudSprite.width);
     stormCloudSprite.y = randHeight;
     stormCloudSprite.speed = -120*Math.random() - 120; // [-120, -240)
@@ -638,11 +663,13 @@ OrangeSea.ChapterOne.prototype = {
     // this.ship.x += 0.5;
 
     //fish collision
-    this.physics.arcade.collide(this.balloon, this.fish, function(balloon, fish) {
-      if (!this.hit.isPlaying) {
-        this.hit.play(null, null, 0.4);
-      }
-    }, null, this);
+    if (!this.inSpectralPlane) {
+      this.physics.arcade.collide(this.balloon, this.fish, function(balloon, fish) {
+        if (!this.hit.isPlaying) {
+          this.hit.play(null, null, 0.4);
+        }
+      }, null, this);
+    }
     if (this.balloon.y > 450 && this.balloon.y <= 650) {
       this.sendFish();
     }
@@ -664,7 +691,7 @@ OrangeSea.ChapterOne.prototype = {
       if (this.balloon.body.velocity.y < 0) {
         this.balloon.body.acceleration.y = this.ACCELERATION;
       }
-      if (this.balloon.y < -100) { //STRUCK BY LIGHTNING!
+      if (this.balloon.y < -100 && !this.inSpectralPlane) { //STRUCK BY LIGHTNING!
         this.strike();
       }
     }
