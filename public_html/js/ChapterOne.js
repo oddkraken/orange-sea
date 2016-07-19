@@ -28,6 +28,7 @@ OrangeSea.ChapterOne.prototype = {
     this.explosion = null;
     this.hit = null;
     this.balloon = null;
+    this.balloonGlowTween = null;
     this.derelict = null;
     this.sky = null;
     this.skyNight = null;
@@ -54,6 +55,9 @@ OrangeSea.ChapterOne.prototype = {
     this.lightning = null;
     this.flash = null;
     this.boost = null;
+    this.boostSound = null;
+    this.spectralPlane = null;
+    this.spectralPlaneSound = null;
     this.inSpectralPlane = false;
     this.specterReady = false;
     this.specterCount = 0;
@@ -167,6 +171,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //boost
     this.boostSound = this.add.audio('boostSound');
+    this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
     this.boost = this.add.sprite(-5000, -100, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
@@ -205,8 +210,22 @@ OrangeSea.ChapterOne.prototype = {
           game.displaySpeech('speech1');
         }
         game.specterCount++;
-        if (game.specterCount % 3 == 0) {
-          game.specterReady = true;
+        if (!game.specterReady) {
+          if (game.specterCount % 3 == 0) {
+            game.specterReady = true;
+            game.displaySpeech('spectralPlaneText');
+            game.balloonGlowTween.stop();
+            game.balloonGlow.alpha = 0;
+            game.balloonGlowTween = game.add.tween(game.balloonGlow).to( { alpha: 0.6 }, 250, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+          } else {
+            if (game.specterCount % 3 == 1) {
+              game.balloonGlowTween = game.add.tween(game.balloonGlow).to( { alpha: 0.6 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+            } else if (game.specterCount % 3 == 2) {
+              game.balloonGlowTween.stop();
+              game.balloonGlow.alpha = 0;
+              game.balloonGlowTween = game.add.tween(game.balloonGlow).to( { alpha: 0.6 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+            }
+          }
         }
         game.boost.x = -2000+Math.random()*-1000;
         if (game.balloon.x < game.camera.width*0.75) { //only boost if if won't push balloon off screen
@@ -224,10 +243,14 @@ OrangeSea.ChapterOne.prototype = {
 
     // balloon
     this.balloon = this.add.sprite(this.camera.width*0.5, this.camera.height*0.25, 'balloon');
-    this.balloon.blendMode = PIXI.blendModes.OVERLAY;
+    this.balloonGlow = this.add.sprite(0, 0, 'balloonGlow');
+    this.balloonGlow.alpha = 0.0;
+    this.balloon.addChild(this.balloonGlow);
     this.balloon.anchor.setTo(0.5, 0.1);
+    this.balloonGlow.anchor.setTo(0.5, 0.1);
     this.balloon.angle = 8;
     this.physics.arcade.enable(this.balloon);
+    this.balloonGlow.body.allowGravity = false;
     this.balloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
     this.balloon.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED);
     this.balloon.body.bounce = new Phaser.Point(1, 1);
@@ -374,6 +397,15 @@ OrangeSea.ChapterOne.prototype = {
     }
     console.log("Last cloud starting at " + cloudStartTime);
 
+    //spectral plane in front of everything
+    this.spectralPlane = this.add.tileSprite(0, -720, 1280, 1440, 'spectralPlane');
+    this.spectralPlane.blendMode = PIXI.blendModes.SCREEN;
+    this.spectralPlane.alpha = 0.0;
+    this.updateFunctions.push(function(game){
+      game.spectralPlane.tilePosition.x += 1;
+      game.spectralPlane.tilePosition.y -= 1;
+    });
+
     this.timer.add(Phaser.Timer.SECOND*cloudStartTime, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
@@ -434,13 +466,17 @@ OrangeSea.ChapterOne.prototype = {
   // user may become invincible briefly after collecting specters
   enterSpectralPlane: function() {
     if (this.specterReady && !this.inSpectralPlane) {
+      this.balloonGlowTween.stop();
+      this.balloonGlow.alpha = 0;
       this.inSpectralPlane = true;
       this.specterReady = false;
       this.balloon.blendMode = PIXI.blendModes.ADD;
-      console.log(this.timer.ms);
-      console.log(this.timer.ms + 5*Phaser.Timer.SECOND);
-
-      this.timer.add(5*Phaser.Timer.SECOND, function() {
+      this.add.tween(this.spectralPlane).to( { alpha: 1 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+      if (!this.spectralPlaneSound.isPlaying) {
+        this.spectralPlaneSound.play(null, null, 0.5);
+      }
+      this.timer.add(7*Phaser.Timer.SECOND, function() {
+        this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
         this.inSpectralPlane = false;
         this.balloon.blendMode = PIXI.blendModes.NORMAL;
       }, this);

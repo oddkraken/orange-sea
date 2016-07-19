@@ -16,6 +16,7 @@ OrangeSea.Preloader.prototype = {
     // this.load.baseURL = 'http://files.phaser.io.s3.amazonaws.com/codingtips/issue003/';
     //this.load.crossOrigin = 'anonymous';
     this.load.image('balloon', 'assets/images/balloon_small.png');
+    this.load.image('balloonGlow', 'assets/images/balloonGlow_small.png');
     this.load.image('derelict', 'assets/images/derelict_small.png');
     this.load.image('pirateShip', 'assets/images/pirateShip_small.png');
     this.load.image('sky', 'assets/images/tallSky.jpg');
@@ -41,6 +42,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('glow', 'assets/images/glow.png');
     this.load.image('shadow', 'assets/images/shadow.png');
     this.load.image('boost', 'assets/images/boost.png');
+    this.load.image('spectralPlane', 'assets/images/spectralPlane.jpg');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
 
     this.load.image('chapterOne', 'assets/text/chapterOne.png');
@@ -48,6 +50,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('speech0', 'assets/text/speech0.png');
     this.load.image('speech1', 'assets/text/speech1.png');
     this.load.image('controls', 'assets/text/controls.png');
+    this.load.image('spectralPlaneText', 'assets/text/spectralPlaneText.png');
     this.load.image('lostAtSea', 'assets/text/lostAtSea.png');
     this.load.image('lostInGloom', 'assets/text/lostInGloom.png');
     this.load.image('thanks', 'assets/text/thanks.png');
@@ -61,6 +64,7 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('fishJump', 'assets/audio/fishJump.mp3');
     this.load.audio('explosion', 'assets/audio/explosion.mp3');
     this.load.audio('boostSound', 'assets/audio/boost.mp3');
+    this.load.audio('spectralPlaneSound', 'assets/audio/spectralPlaneSound.mp3');
 
     if (!OrangeSea.debug) {
       //time when to display 'press space to continue' message
@@ -79,7 +83,7 @@ OrangeSea.Preloader.prototype = {
       this.input.onTap.add(this.spacePressed, this);
     }
 
-    var loadingBar = this.add.sprite(0, 0, "loading");
+    var loadingBar = this.add.sprite(0, 50, "loading");
     //loadingBar.anchor.setTo(0.5,1);
     this.load.setPreloadSprite(loadingBar,0);
 	},
