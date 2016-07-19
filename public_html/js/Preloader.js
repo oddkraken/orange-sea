@@ -146,7 +146,7 @@ OrangeSea.Preloader.prototype = {
 
   displayStoryText: function() {
     this.story = this.add.sprite(0, 0, 'story');
-    this.storyTween = this.add.tween(this.story).from( { alpha: 0.0 }, 3000, Phaser.Easing.Linear.None, true);
+    this.storyTween = this.add.tween(this.story).from( { alpha: 0.0 }, 1000, Phaser.Easing.Linear.None, true);
   },
 
 	update: function () {
