@@ -3,6 +3,7 @@ OrangeSea.Dead = function(game) {
 
 OrangeSea.Dead.prototype = {
   create: function () {
+    ga('send', 'event', 'dead');
     this.spaceHit = false;
     OrangeSea.thunder.fadeOut(3000);
     OrangeSea.music.fadeOut(3000);
