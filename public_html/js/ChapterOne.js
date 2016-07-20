@@ -76,7 +76,7 @@ OrangeSea.ChapterOne.prototype = {
 
     // Define movement constants
     this.MAX_SPEED = 600; // pixels/second
-    this.ACCELERATION = 1500; // pixels/second/second
+    this.ACCELERATION = 1200; // pixels/second/second
     this.DRAG_X = 400; // pixels/second
     this.DRAG_Y = 100; // pixels/second
     this.ENV_SPEED = 1.0;
@@ -208,7 +208,7 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions.push(function(game) {
       if (game.inSpectralPlane) {
         game.boost.x = game.balloon.x-5;
-        game.boost.y = game.balloon.y+5;
+        game.boost.y = game.balloon.y+20;
       } else if (game.physics.arcade.intersects(game.balloon.body, game.boost.body) && game.boost.body.enable) {
         if (!game.foundSpecter) {
           game.displaySpeech('speech1');

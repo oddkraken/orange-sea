@@ -25,6 +25,7 @@ OrangeSea.Dead.prototype = {
 
   spacePressed: function() {
     if (!this.spaceHit) {
+      ga('send', 'event', 'continue', 'dead');
       this.spaceHit = true;
       //stop sounds if they haven't finished fading out
       OrangeSea.thunder.stop();

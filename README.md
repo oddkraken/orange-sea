@@ -5,6 +5,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 ## Todo
 
 * Add something to collect
+* Trim silence in thunder mp3
 * Design good and bad "encounters" to be used throughout Chapters
     * Good
         * goodies - blunderbuss, weight (slower balloon, less effected by wind)

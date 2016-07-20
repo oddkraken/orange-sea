@@ -3,6 +3,7 @@ OrangeSea.Cleared = function(game) {
 
 OrangeSea.Cleared.prototype = {
   create: function () {
+    ga('send', 'event', 'cleared');
     this.spaceHit = false;
     OrangeSea.thunder.fadeOut(3000);
     OrangeSea.music.fadeOut(3000);
@@ -25,6 +26,7 @@ OrangeSea.Cleared.prototype = {
 
   spacePressed: function() {
     if (!this.spaceHit) {
+      ga('send', 'event', 'continue', 'cleared');
       this.spaceHit = true;
       //stop sounds if they haven't finished fading out
       OrangeSea.thunder.stop();
