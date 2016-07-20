@@ -4,10 +4,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* After 3 specters, balloon starts flashing, "Press SPACE to enter the spectral plane"
-    * balloon becomes ghostly, spooky hum plays, no collisions occur
-    * last 10 seconds or so
-    * can make the game more difficult with this powerup
+* Add something to collect
 * Design good and bad "encounters" to be used throughout Chapters
     * Good
         * goodies - blunderbuss, weight (slower balloon, less effected by wind)
