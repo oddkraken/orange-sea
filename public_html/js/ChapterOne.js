@@ -76,9 +76,9 @@ OrangeSea.ChapterOne.prototype = {
 
     // Define movement constants
     this.MAX_SPEED = 600; // pixels/second
-    this.ACCELERATION = 1200; // pixels/second/second
-    this.DRAG_X = 400; // pixels/second
-    this.DRAG_Y = 100; // pixels/second
+    this.ACCELERATION = 1400; // pixels/second/second
+    this.DRAG_X = 600; // pixels/second
+    this.DRAG_Y = 150; // pixels/second
     this.ENV_SPEED = 1.0;
     this.FISH_INTERVAL = 5000; //wait >= 5000ms before sending another fish
     this.fishTimer = this.time.create();
