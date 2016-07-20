@@ -609,9 +609,15 @@ OrangeSea.ChapterOne.prototype = {
     this.rainEmitters.push(emitter);
   },
 
-  displayChapterTitle() {
+  displayChapterTitle: function() {
     //fade in chapter title
-    this.chapterTitle = this.add.sprite(0, 0, 'chapterOne');
+    var titleCard;
+    if (OrangeSea.deadMessage) {
+      titleCard = OrangeSea.deadMessage;
+    } else {
+      titleCard = 'chapterOne';
+    }
+    this.chapterTitle = this.add.sprite(0, 0, titleCard);
     this.chapterTitle.fixedToCamera = true;
     this.textGroup.add(this.chapterTitle);
     var fadeIn = this.add.tween(this.chapterTitle).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
@@ -619,7 +625,7 @@ OrangeSea.ChapterOne.prototype = {
     fadeIn.chain(fadeOut);
   },
 
-  displaySpeech(speechImage) {
+  displaySpeech: function(speechImage) {
     //fade in speech
     this.speech = this.add.sprite(0, 0, speechImage);
     this.speech.fixedToCamera = true;
@@ -743,6 +749,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //WINNING
     if (this.balloon.x > this.camera.width*1.1 && this.over) {
+      ga('send', 'event', 'cleared');
       this.balloon.body.immovable = true;
       this.camera.fade(0x000000);
       this.camera.onFadeComplete.add(function(){ this.state.start('Cleared')}, this);
@@ -751,25 +758,31 @@ OrangeSea.ChapterOne.prototype = {
 
     //dying
     if (this.balloon.y > 650 && this.alive) {
+      ga('send', 'event', 'dead', 'lostAtSea');
       OrangeSea.deadMessage = 'lostAtSea';
       this.splash.play(null, null, 0.5);
       //this.windSound.pause();
+      OrangeSea.thunder.fadeOut(500);
+      OrangeSea.music.fadeOut(500);
       this.camera.fade(0x000000);
       this.camera.onFadeComplete.add(function(){
-        this.state.start('Dead');
+        this.state.start('ChapterOne');
       }, this);
       this.alive = false;
       this.balloon.body.acceleration.x = 0;
       this.balloon.body.acceleration.y = 0;
     }
     if (this.balloon.x < -300 && this.alive) {
+      ga('send', 'event', 'dead', 'lostInShadow');
       this.balloon.body.immovable = true;
-      OrangeSea.deadMessage = 'lostInGloom';
+      OrangeSea.deadMessage = 'lostInShadow';
       //this.windSound.pause();
       this.gust.play(null, null, 0.25);
+      OrangeSea.thunder.fadeOut(500);
+      OrangeSea.music.fadeOut(500);
       this.camera.fade(0x000000);
       this.camera.onFadeComplete.add(function(){
-        this.state.start('Dead');
+        this.state.start('ChapterOne');
       }, this);
       this.alive = false;
     }

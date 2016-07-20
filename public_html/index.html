@@ -19,7 +19,6 @@
       <script src="js/Preloader.js"></script>
       <script src="js/ChapterOne.js"></script>
       <script src="js/Cleared.js"></script>
-      <script src="js/Dead.js"></script>
       <style>
         * {margin:0;padding:0;}
         html, body {
@@ -67,7 +66,6 @@
         game.state.add('Preloader', OrangeSea.Preloader, false);
         game.state.add('ChapterOne', OrangeSea.ChapterOne, false);
         game.state.add('Cleared', OrangeSea.Cleared, false);
-        game.state.add('Dead', OrangeSea.Dead, false);
         game.state.start('Boot');
       };
     </script>
@@ -77,7 +75,7 @@
       <a id="gh" href="#"><i id="social-gh" class="fa fa-github-square fa-3x social-media"></i></a>
     </div>
     <script type="text/javascript">
-      var user = 'oddkraken', domain = 'gmail.com', em = document.getElementById("em"), tw = document.getElementById("tw");
+      var user = 'oddkraken', domain = 'gmail.com', em = document.getElementById("em"), tw = document.getElementById("tw"), gh = document.getElementById("gh");
       em.href = 'mailto:' + user + '@' + domain;
       tw.href = 'https://twitter.com/' + user;
       gh.href = 'https://github.com/' + user;

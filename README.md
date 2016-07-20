@@ -4,6 +4,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Instant restart on death!!!
 * Add something to collect
 * Trim silence in thunder mp3
 * Design good and bad "encounters" to be used throughout Chapters

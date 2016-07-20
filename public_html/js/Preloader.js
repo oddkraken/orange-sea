@@ -51,7 +51,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('speech1', 'assets/text/speech1.png');
     this.load.image('controls', 'assets/text/controls.png');
     this.load.image('lostAtSea', 'assets/text/lostAtSea.png');
-    this.load.image('lostInGloom', 'assets/text/lostInGloom.png');
+    this.load.image('lostInShadow', 'assets/text/lostInGloom.png');
     this.load.image('thanks', 'assets/text/thanks.png');
 
     this.load.audio('theme', 'assets/audio/theme2.mp3');
