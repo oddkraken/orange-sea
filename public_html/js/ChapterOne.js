@@ -230,7 +230,7 @@ OrangeSea.ChapterOne.prototype = {
           game.boostSound.play(null, null, 0.5);
         }
       } else if (game.boost.x > game.camera.width*1.5) { //only happens if you miss it
-        game.boost.x = -5000+Math.random()*-5000;
+        game.boost.x = -3000+Math.random()*-3000;
       }
     });
 
@@ -387,7 +387,7 @@ OrangeSea.ChapterOne.prototype = {
       }
       this.timer.add(Phaser.Timer.SECOND*(cloudStartTime+secondsBetweenClouds), this.sendStormCloud, this, lastOne);
       cloudStartTime += secondsBetweenClouds;
-      console.log(cloudStartTime + ", " + secondsBetweenClouds);
+      //console.log(cloudStartTime + ", " + secondsBetweenClouds);
     }
     console.log("Last cloud starting at " + cloudStartTime);
 
@@ -482,7 +482,7 @@ OrangeSea.ChapterOne.prototype = {
         fadeOutTween.chain(moveTween); //fade out boost and move it off screen
         this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
         //after leaving spectral plane, time next specter
-        var randSeconds = Math.random()*30; //between 0 and 30 seconds
+        var randSeconds = Math.random()*20; //between 0 and 20 seconds
         this.timer.add(randSeconds*Phaser.Timer.SECOND, function() {
           this.boostYTween.resume();
           this.boost.alpha = 1.0;
@@ -828,6 +828,7 @@ OrangeSea.ChapterOne.prototype = {
     var now = this.strikeTimer.ms;
     if (now - this.prevStrike > 10000 && !this.over) { // wait at least 10 seconds between strikes
       this.explosion.play();
+      this.camera.shake(0.003);
       this.balloon.body.velocity.y = this.MAX_SPEED;
       this.balloon.body.acceleration.y = this.ACCELERATION;
       this.prevStrike = now;
