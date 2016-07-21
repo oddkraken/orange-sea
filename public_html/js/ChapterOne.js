@@ -173,7 +173,7 @@ OrangeSea.ChapterOne.prototype = {
     //boost
     this.boostSound = this.add.audio('boostSound');
     this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
-    this.boost = this.add.sprite(-10000, 0, 'boost');
+    this.boost = this.add.sprite(-5000, 0, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
@@ -373,8 +373,8 @@ OrangeSea.ChapterOne.prototype = {
     this.stormCloudGroup = this.add.group(undefined, 'stormCloudGroup');
     var secondsBetweenClouds = 5;
     var cloudStartTime = 15;
-    var minInterval = 0.5;
-    var numStormClouds = 165;
+    var minInterval = 0.7;
+    var numStormClouds = 130;
     for (var i=0; i<numStormClouds; i++) {
       if (secondsBetweenClouds > minInterval) {
         secondsBetweenClouds -= 0.1; //gradually increase frequency until 1.0 cloud/sec
@@ -477,13 +477,14 @@ OrangeSea.ChapterOne.prototype = {
         this.add.tween(this.balloon).to( { alpha: 1.0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
         this.add.tween(this.stormCloudGroup).to( { alpha: 1.0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
         this.add.tween(this.balloonGlow).to( { alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-        this.add.tween(this.boost).to( { alpha: 0.0 }, 100, Phaser.Easing.Linear.None, true); //use boost as balloon "glow" while in spectral plane
+        var fadeOutTween = this.add.tween(this.boost).to( { alpha: 0.0 }, 100, Phaser.Easing.Linear.None, true);
+        var moveTween = this.add.tween(this.boost).to( { x: -100 }, 100, Phaser.Easing.Linear.None, false);
+        fadeOutTween.chain(moveTween); //fade out boost and move it off screen
         this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
         //after leaving spectral plane, time next specter
         var randSeconds = Math.random()*30; //between 0 and 30 seconds
         this.timer.add(randSeconds*Phaser.Timer.SECOND, function() {
           this.boostYTween.resume();
-          this.boost.x = -100;
           this.boost.alpha = 1.0;
           this.boost.body.velocity.x = this.BOOST_SPEED;
           this.boost.body.enable = true;
