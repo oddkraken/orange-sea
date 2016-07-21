@@ -25,6 +25,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('sun', 'assets/images/sun.png');
     this.load.image('fog', 'assets/images/fog.png');
     this.load.image('fish', 'assets/images/fish_sm.png');
+    this.load.image('pearl', 'assets/images/pearl.png');
     this.load.image('waves0', 'assets/images/waveTile0.png');
     this.load.image('waves1', 'assets/images/waveTile1.png');
     this.load.image('waves2', 'assets/images/waveTile2.png');
@@ -49,6 +50,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('spaceToContinue', 'assets/text/spaceToContinue.png');
     this.load.image('speech0', 'assets/text/speech0.png');
     this.load.image('speech1', 'assets/text/speech1.png');
+    this.load.image('speech2', 'assets/text/speech2.png');
     this.load.image('controls', 'assets/text/controls.png');
     this.load.image('lostAtSea', 'assets/text/lostAtSea.png');
     this.load.image('lostInShadow', 'assets/text/lostInGloom.png');
@@ -64,6 +66,7 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('explosion', 'assets/audio/explosion.mp3');
     this.load.audio('boostSound', 'assets/audio/boost.mp3');
     this.load.audio('spectralPlaneSound', 'assets/audio/spectralPlaneSound.mp3');
+    this.load.audio('pearlSound', 'assets/audio/pearlSound.mp3');
 
     if (!OrangeSea.debug) {
       //time when to display 'press space to continue' message

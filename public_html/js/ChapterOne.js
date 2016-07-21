@@ -217,7 +217,7 @@ OrangeSea.ChapterOne.prototype = {
         if (!game.specterReady) {
           game.specterReady = true;
           game.balloonGlow.alpha = 0;
-          game.balloonGlowTween = game.add.tween(game.balloonGlow).to( { alpha: 0.6 }, 250, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+          game.balloonGlowTween = game.add.tween(game.balloonGlow).to( { alpha: 0.6 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
         }
         game.add.tween(game.boost).to( { alpha: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0);
         game.add.tween(game.boost.body.velocity).to( { x: 0 }, 100, Phaser.Easing.Linear.None, true, 0, 0);
@@ -230,7 +230,7 @@ OrangeSea.ChapterOne.prototype = {
           game.boostSound.play(null, null, 0.5);
         }
       } else if (game.boost.x > game.camera.width*1.5) { //only happens if you miss it
-        game.boost.x = -3000+Math.random()*-3000;
+        game.boost.x = -1000+Math.random()*-1000;
       }
     });
 
@@ -299,6 +299,13 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
+    // init pearl
+    this.pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
+    this.pearlSound = this.add.audio('pearlSound');
+    this.physics.arcade.enable(this.pearl);
+    this.pearl.body.enable = false;
+    this.pearl.body.gravity.y = 300;
+
     // TODO waveropes scrapped until I find a way to tile them
     // this.waveRopes[2] = this.getWaveRope("waves2", -150, this.camera.height*.65, -60, 12, 0.8);
     // this.startWaveRopesTweens();
@@ -322,6 +329,7 @@ OrangeSea.ChapterOne.prototype = {
     }, this);
 
     this.splash = this.add.audio('splash');
+    this.splash.allowMultiple = true; //fish and pearl may splash simultaneously
     this.gust = this.add.audio('gust');
     this.hit = this.add.audio('hit');
     this.fishJump = this.add.audio('fishJump');
@@ -391,6 +399,11 @@ OrangeSea.ChapterOne.prototype = {
     }
     console.log("Last cloud starting at " + cloudStartTime);
 
+    //send pearls
+    this.timer.add(Phaser.Timer.SECOND*50, this.sendPearl, this);
+    this.timer.add(Phaser.Timer.SECOND*52, this.displaySpeech, this, 'speech2');
+
+
     //spectral plane in front of everything
     this.spectralPlane = this.add.tileSprite(0, -720, 1280, 1440, 'spectralPlane');
     this.spectralPlane.blendMode = PIXI.blendModes.SCREEN;
@@ -455,6 +468,45 @@ OrangeSea.ChapterOne.prototype = {
     //mobile
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
+  },
+
+  //send pearl and destroy if caught or falls back in the water
+  sendPearl: function() {
+    this.fishJump.play(null, null, 0.5);
+    this.pearl.body.reset(this.pearl.x, this.pearl.y);
+    this.pearl.x = Math.random()*this.camera.width*0.8;
+    this.pearl.y = this.camera.height;
+    this.pearl.body.enable = true;
+    //this.pearl.body.velocity.y = -1100 + Math.random()*400; // [-1100, -700)
+    this.pearl.body.velocity.y = -900 + Math.random()*400;
+    this.pearl.body.velocity.x = Math.random()*300;
+    if (this.pearl.x > (this.camera.width*.4)) {
+      this.pearl.body.velocity.x *= -1;
+    }
+    console.log(this.pearl.x);
+    var caught = false;
+
+    //catch or splash and destroy
+    this.updateFunctions.push(function(game) {
+      if (game.physics.arcade.intersects(game.balloon.body, game.pearl.body) && game.pearl.body.enable) {
+        game.pearlSound.play(null, null, 0.5);
+        game.pearl.y = game.camera.height;
+        game.pearl.body.enable = false;
+        if (!game.over) {
+          game.timer.add(Phaser.Timer.SECOND*(10*Math.random()), function() {
+            this.sendPearl();
+          }, game);
+        }
+      } else if (game.pearl.body.enable && game.pearl.y > game.camera.height) {
+        game.splash.play(null, null, 0.5);
+        game.pearl.body.enable = false;
+        if (!game.over) {
+          game.timer.add(Phaser.Timer.SECOND*(10*Math.random()), function() {
+            this.sendPearl();
+          }, game);
+        }
+      }
+    });
   },
 
   // user may become invincible briefly after collecting specters
