@@ -3,6 +3,7 @@ OrangeSea.Cleared = function(game) {
 
 OrangeSea.Cleared.prototype = {
   create: function () {
+    OrangeSea.deadMessage = null;
     this.spaceHit = false;
     OrangeSea.thunder.fadeOut(3000);
     OrangeSea.music.fadeOut(3000);

@@ -173,7 +173,7 @@ OrangeSea.ChapterOne.prototype = {
     //boost
     this.boostSound = this.add.audio('boostSound');
     this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
-    this.boost = this.add.sprite(-10000, -100, 'boost');
+    this.boost = this.add.sprite(-10000, 0, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
@@ -202,7 +202,7 @@ OrangeSea.ChapterOne.prototype = {
     this.boost.body.setSize(this.boost.body.width*scale, this.boost.body.height*scale,
       (this.boost.body.width-this.boost.body.width*scale)/2,
       (this.boost.body.height-this.boost.body.height*scale)/2);
-    this.BOOST_SPEED = 300;
+    this.BOOST_SPEED = 250;
     this.boost.body.velocity.x = this.BOOST_SPEED;
     this.boost.body.angularVelocity = 50;
     this.updateFunctions.push(function(game) {
@@ -374,10 +374,10 @@ OrangeSea.ChapterOne.prototype = {
     var secondsBetweenClouds = 5;
     var cloudStartTime = 15;
     var minInterval = 0.5;
-    var numStormClouds = 325;
+    var numStormClouds = 165;
     for (var i=0; i<numStormClouds; i++) {
       if (secondsBetweenClouds > minInterval) {
-        secondsBetweenClouds -= 0.5; //gradually increase frequency until 1.0 cloud/sec
+        secondsBetweenClouds -= 0.1; //gradually increase frequency until 1.0 cloud/sec
       } else if (secondsBetweenClouds != minInterval) {
         secondsBetweenClouds = minInterval;
       }
@@ -387,7 +387,7 @@ OrangeSea.ChapterOne.prototype = {
       }
       this.timer.add(Phaser.Timer.SECOND*(cloudStartTime+secondsBetweenClouds), this.sendStormCloud, this, lastOne);
       cloudStartTime += secondsBetweenClouds;
-      //console.log(cloudStartTime + ", " + secondsBetweenClouds);
+      console.log(cloudStartTime + ", " + secondsBetweenClouds);
     }
     console.log("Last cloud starting at " + cloudStartTime);
 
@@ -480,7 +480,7 @@ OrangeSea.ChapterOne.prototype = {
         this.add.tween(this.boost).to( { alpha: 0.0 }, 100, Phaser.Easing.Linear.None, true); //use boost as balloon "glow" while in spectral plane
         this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
         //after leaving spectral plane, time next specter
-        var randSeconds = Math.random()*60; //between 0 and 60 seconds
+        var randSeconds = Math.random()*30; //between 0 and 30 seconds
         this.timer.add(randSeconds*Phaser.Timer.SECOND, function() {
           this.boostYTween.resume();
           this.boost.x = -100;
