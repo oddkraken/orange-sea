@@ -173,7 +173,7 @@ OrangeSea.ChapterOne.prototype = {
     //boost
     this.boostSound = this.add.audio('boostSound');
     this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
-    this.boost = this.add.sprite(-5000, 0, 'boost');
+    this.boost = this.add.sprite(-7000, 0, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
