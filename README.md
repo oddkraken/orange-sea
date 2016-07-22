@@ -4,7 +4,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Start pearls sooner? maybe they should be before the specter
+* Start pearls before specter. Player needs to "jump in" doing something active and fun
 * Spectral plane lets you go underwater and above clouds! there are goodies there!
     * tint camera color if possible
 * Replace speech with webfont, maybe
