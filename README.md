@@ -4,14 +4,13 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Start pearls sooner? maybe they should be before the specter
 * Spectral plane lets you go underwater and above clouds! there are goodies there!
+    * tint camera color if possible
 * Replace speech with webfont, maybe
 * Does fish fall while off screen? look into that.
-* Tint camera color in spectral plane
 * "SPACE: interact" in instructions
 * Every 10th cloud is white and pushes you forward?
-* Add something to collect: PEARLS
-    * "A colossal mollusk lobs pearls from the depths! These curiosities shall fetch a generous price."
 * Trim silence in thunder mp3
 * Design good and bad "encounters" to be used throughout Chapters
     * Good

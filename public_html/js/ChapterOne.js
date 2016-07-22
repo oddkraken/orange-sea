@@ -500,7 +500,7 @@ OrangeSea.ChapterOne.prototype = {
         game.pearlCountText.x = game.balloon.x;
         game.pearlCountText.y = game.balloon.y;
         game.pearlCountText.alpha = 1.0;
-        game.add.tween(game.pearlCountText).to( {y: game.pearlCountText.y - 100, alpha: 0}, 1000, null, true);
+        game.add.tween(game.pearlCountText).to( {y: game.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
 
         game.pearlSound.play(null, null, 0.5);
         game.pearl.y = game.camera.height;
