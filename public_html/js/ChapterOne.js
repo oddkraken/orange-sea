@@ -801,7 +801,7 @@ OrangeSea.ChapterOne.prototype = {
     }
 
     //WINNING
-    if (this.balloon.x > this.camera.width*1.1 && this.over) {
+    if (this.balloon.x > this.camera.width*1.1 && this.over && this.alive) {
       ga('send', 'event', 'cleared');
       this.balloon.body.immovable = true;
       this.camera.fade(0x000000);
