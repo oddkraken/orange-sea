@@ -53,6 +53,13 @@
         .social-media:focus {
           color: white;
         }
+        @font-face {
+          font-family: 'great_victorianstandard';
+          src: url('assets/fonts/greatvictorian-standard-webfont.woff2') format('woff2'),
+               url('assets/fonts/greatvictorian-standard-webfont.woff') format('woff');
+          font-weight: normal;
+          font-style: normal;
+        }
       </style>
   </head>
   <body>
@@ -74,6 +81,7 @@
       <a id="tw" href="#"><i id="social-tw" class="fa fa-twitter-square fa-3x social-media"></i></a>
       <a id="gh" href="#"><i id="social-gh" class="fa fa-github-square fa-3x social-media"></i></a>
     </div>
+    <div style="font-family:great_victorianstandard;position:absolute;color:black;">Font loader.</div> <!-- Need this div so the page will load the webfont -->
     <script type="text/javascript">
       var user = 'oddkraken', domain = 'gmail.com', em = document.getElementById("em"), tw = document.getElementById("tw"), gh = document.getElementById("gh");
       em.href = 'mailto:' + user + '@' + domain;

@@ -4,7 +4,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Pearl counter
+* Spectral plane lets you go underwater and above clouds! there are goodies there!
+* Replace speech with webfont, maybe
 * Does fish fall while off screen? look into that.
 * Tint camera color in spectral plane
 * "SPACE: interact" in instructions

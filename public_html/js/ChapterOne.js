@@ -67,6 +67,7 @@ OrangeSea.ChapterOne.prototype = {
     this.chapterTitle = null;
     this.speech = null;
     this.updateFunctions = []; //update iterates through this and runs them all
+    this.pearlCount = 0;
   },
 
   create: function () {
@@ -447,6 +448,10 @@ OrangeSea.ChapterOne.prototype = {
 
     //text group
     this.textGroup = this.add.group(undefined, 'textGroup');
+    //pearl count text
+    this.pearlCountText = this.add.text(0, -50, "10", { font: "48px great_victorianstandard", fill: "white" } );
+    this.pearlCountText.anchor.setTo(0.5, 0.5);
+    this.pearlCountText.alpha = 0;
 
     //display chapter title
     this.timer.add(Phaser.Timer.SECOND*2, this.displayChapterTitle, this);
@@ -489,6 +494,14 @@ OrangeSea.ChapterOne.prototype = {
     //catch or splash and destroy
     this.updateFunctions.push(function(game) {
       if (game.physics.arcade.intersects(game.balloon.body, game.pearl.body) && game.pearl.body.enable) {
+        //show pearl count text
+        game.pearlCount++;
+        game.pearlCountText.setText(game.pearlCount);
+        game.pearlCountText.x = game.balloon.x;
+        game.pearlCountText.y = game.balloon.y;
+        game.pearlCountText.alpha = 1.0;
+        game.add.tween(game.pearlCountText).to( {y: game.pearlCountText.y - 100, alpha: 0}, 1000, null, true);
+
         game.pearlSound.play(null, null, 0.5);
         game.pearl.y = game.camera.height;
         game.pearl.body.enable = false;
@@ -497,6 +510,7 @@ OrangeSea.ChapterOne.prototype = {
             this.sendPearl();
           }, game);
         }
+
       } else if (game.pearl.body.enable && game.pearl.y > game.camera.height) {
         game.splash.play(null, null, 0.5);
         game.pearl.body.enable = false;
