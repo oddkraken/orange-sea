@@ -401,8 +401,8 @@ OrangeSea.ChapterOne.prototype = {
     console.log("Last cloud starting at " + cloudStartTime);
 
     //send pearls
-    this.timer.add(Phaser.Timer.SECOND*50, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*52, this.displaySpeech, this, 'speech2');
+    this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, 'speech2');
 
 
     //spectral plane in front of everything
@@ -455,7 +455,9 @@ OrangeSea.ChapterOne.prototype = {
 
     //display chapter title
     this.timer.add(Phaser.Timer.SECOND*2, this.displayChapterTitle, this);
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, 'speech0');
+
+    //TODO redo speech0 with webfont
+    //this.timer.add(Phaser.Timer.SECOND*48, this.displaySpeech, this, 'speech0');
 
     //init cursors
     this.cursors = this.input.keyboard.createCursorKeys();

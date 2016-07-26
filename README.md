@@ -4,9 +4,23 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Start pearls before specter. Player needs to "jump in" doing something active and fun
-* Spectral plane lets you go underwater and above clouds! there are goodies there!
-    * tint camera color if possible
+* Pearls start immediately. They are ammo, not treasure.
+    * Space to drop pearl
+    * Fish comes to surface, pauses, jumps aggressively at balloon, pulls it down?
+    * Drop pearl to kill it.
+* Then clouds start
+* Then specter
+    * Specter auto-initializes if x < 0
+    * Pushes balloon forward (and up if close to water)
+* BOSS
+    * After storm ends, pirate ship arrives, waves stop, Pirates bar the way and shoot cannons
+    * Cannons put holes in balloon, each one makes it harder to stay up
+    * Drop 3 pearls on ship to sink it
+    * Each one lowers its level in the water and stays on the deck
+    * When it sinks, leave sparkling flotsam containing a powerup
+    * After you pick it up, right side of screen glows indicating level end
+
+* tint camera color in spectral plane if possible
 * Replace speech with webfont, maybe
 * Does fish fall while off screen? look into that.
 * "SPACE: interact" in instructions
