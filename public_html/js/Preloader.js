@@ -16,6 +16,7 @@ OrangeSea.Preloader.prototype = {
     // this.load.baseURL = 'http://files.phaser.io.s3.amazonaws.com/codingtips/issue003/';
     //this.load.crossOrigin = 'anonymous';
     this.load.image('balloon', 'assets/images/balloon_small.png');
+    this.load.image('badBalloon', 'assets/images/badBalloon.png');
     this.load.image('balloonGlow', 'assets/images/balloonGlow_small.png');
     this.load.image('derelict', 'assets/images/derelict_small.png');
     this.load.image('pirateShip', 'assets/images/pirateShip_small.png');
@@ -25,8 +26,8 @@ OrangeSea.Preloader.prototype = {
     this.load.image('sun', 'assets/images/sun.png');
     this.load.image('fog', 'assets/images/fog.png');
     this.load.image('fish', 'assets/images/fish_sm.png');
-    this.load.image('anglerBody', 'assets/images/anglerBody.png');
-    this.load.image('anglerMouth', 'assets/images/anglerMouth.png');
+    // this.load.image('anglerBody', 'assets/images/anglerBody.png');
+    // this.load.image('anglerMouth', 'assets/images/anglerMouth.png');
     this.load.image('pearl', 'assets/images/pearl.png');
     this.load.image('waves0', 'assets/images/waveTile0.png');
     this.load.image('waves1', 'assets/images/waveTile1.png');

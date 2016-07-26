@@ -29,6 +29,7 @@ OrangeSea.ChapterOne.prototype = {
     this.explosion = null;
     this.hit = null;
     this.balloon = null;
+    this.badBalloon = null;
     this.balloonGlowTween = null;
     this.derelict = null;
     this.sky = null;
@@ -259,19 +260,44 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
+    //bad balloon
+    this.badBalloon = this.add.sprite(-1000, this.camera.height*0.25, 'badBalloon');
+    this.physics.arcade.enable(this.badBalloon);
+    this.badBalloon.anchor.setTo(0.5, 0.1);
+    this.badBalloon.angle = 8;
+    this.badBalloon.body.allowGravity = false;
+    this.badBalloon.body.acceleration.x = 50;
+    this.badBalloon.body.maxVelocity.setTo(50, this.MAX_SPEED);
+    this.badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
+    this.badBalloon.body.mass = 10;
+    this.badBalloon.body.bounce = new Phaser.Point(1, 1);
+    this.updateFunctions.push(function(game) {
+      if (game.badBalloon.body.rotation >= 0) {
+        game.badBalloon.body.angularAcceleration = -60;
+      } else {
+        game.badBalloon.body.angularAcceleration = 60;
+      }
+      game.physics.arcade.collide(game.balloon, game.badBalloon);
+      var yTarget = 300;
+      game.badBalloon.body.acceleration.y =  0.2*(yTarget - game.badBalloon.y);
+    });
+
     // anglerfish
-    // TODO fish to kill with pearls
-    this.anglerFish = this.add.sprite(this.camera.width*2.2, this.camera.height, 'anglerBody');
-    this.anglerMouth = this.add.sprite(110, 85, 'anglerMouth');
-    this.anglerFish.addChild(this.anglerMouth);
-    this.add.tween(this.anglerFish).to( { y: this.anglerFish.y+25 }, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-    this.anglerFish.angle = 30;
-    this.anglerFish.scale.setTo(-1, 1);
-    this.anglerMouth.anchor.setTo(0.5, 0.85);
-    this.anglerFish.anchor.setTo(0.5, 0.5);
-    this.anglerMouth.angle = 50;
-    this.add.tween(this.anglerMouth).to( { angle: 60 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-    this.add.tween(this.anglerFish).to( { x: -200 }, 20000, Phaser.Easing.Linear.None, true);
+    // this.anglerFish = this.add.sprite(this.camera.width*1.5, this.camera.height, 'anglerBody');
+    // this.physics.arcade.enable(this.anglerFish);
+    // this.anglerFish.body.allowGravity = false;
+    // this.anglerMouth = this.add.sprite(110, 85, 'anglerMouth');
+    // this.anglerFish.addChild(this.anglerMouth);
+    // this.add.tween(this.anglerFish).to( { y: this.camera.height*0.9 }, 3000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    // this.anglerFish.angle = 30;
+    // this.anglerFish.scale.setTo(-1, 1);
+    // this.anglerMouth.anchor.setTo(0.5, 0.85);
+    // this.anglerFish.anchor.setTo(0.5, 0.5);
+    // this.anglerMouth.angle = 50;
+    // this.add.tween(this.anglerMouth).to( { angle: 60 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    // this.updateFunctions.push(function(game) {
+    //   game.anglerFish.body.velocity.x =  (game.balloon.x + 150) - game.anglerFish.x;
+    // });
 
     //lightning strike
     this.lightningStrike = this.add.sprite(this.camera.width*0.5, -50, 'lightning2');
@@ -499,9 +525,9 @@ OrangeSea.ChapterOne.prototype = {
       var droppedPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
       this.pearlGroup.add(droppedPearl);
       this.physics.arcade.enable(droppedPearl);
-      droppedPearl.body.velocity.x = this.balloon.body.velocity.x/2;
-      droppedPearl.body.velocity.y = this.balloon.body.velocity.y/2;
-      droppedPearl.body.gravity.y = 300;
+      droppedPearl.body.velocity.x = this.balloon.body.velocity.x;
+      droppedPearl.body.velocity.y = 100;
+      droppedPearl.body.gravity.y = 600;
     }
   },
 
