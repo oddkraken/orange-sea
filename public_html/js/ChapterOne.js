@@ -5,11 +5,11 @@ OrangeSea.ChapterOne.prototype = {
   render: function() {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
-      this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-      this.game.debug.text(this.boost.x, 2, 45, "#ffffff");
-      this.game.debug.text(this.boost.body.enable, 2, 60, "#ffffff");
+      // this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
+      // this.game.debug.text(this.boost.x, 2, 45, "#ffffff");
+      // this.game.debug.text(this.boost.body.enable, 2, 60, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
-      // this.game.debug.text(this.perfTimeElapsed, 2, 45, "#ffffff");
+      this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       //this.game.debug.body(this.boost);
       // for (var i=0; i<this.stormClouds.length; i++) {
       //   this.game.debug.body(this.stormClouds[i], 'rgba(0,255,0,0.2)');
@@ -37,7 +37,7 @@ OrangeSea.ChapterOne.prototype = {
     this.sun = null;
     this.fog = null;
     this.fish = null;
-    this.anglerfish = null;
+    this.anglerFish = null;
     this.fishTimer = null;
     this.lastFish = 0; //fish should only appear every so often
     this.cursors = null;
@@ -167,18 +167,6 @@ OrangeSea.ChapterOne.prototype = {
     this.waveTiles[0].anchor.setTo(0.5, 0);
     this.waveTiles[0].alpha = 1.0;
 
-    //anglerfish
-    //TODO fish to kill with pearls
-    // this.anglerfish = this.add.sprite(this.camera.width*1.1, this.camera.height*.9, 'anglerfish');
-    // this.add.tween(this.anglerfish).to( { y: this.anglerfish.y+25 }, 1500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-    // this.anglerfish.angle = 0;
-    // this.anglerfish.anchor.setTo(0.5, 0.5);
-    // this.physics.arcade.enable(this.anglerfish);
-    // this.anglerfish.scale.setTo(-1, 1);
-    // this.anglerfish.body.bounce = new Phaser.Point(0.5, 0.5);
-    // this.anglerfish.body.velocity.x = -20;
-    // this.anglerfish.body.allowGravity = false;
-
     var waveTile1Image = this.cache.getImage('waves1');
     this.waveTiles[1] = this.add.tileSprite(this.camera.width/2, -655, waveTile1Image.width, waveTile1Image.height, 'waves1');
     this.waveTiles[1].angle = -1;
@@ -249,7 +237,6 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
-
     // balloon
     this.balloon = this.add.sprite(this.camera.width*0.5, this.camera.height*0.25, 'balloon');
     this.balloonGlow = this.add.sprite(0, 0, 'balloonGlow');
@@ -271,6 +258,20 @@ OrangeSea.ChapterOne.prototype = {
         game.balloon.body.angularAcceleration = 60;
       }
     });
+
+    // anglerfish
+    // TODO fish to kill with pearls
+    this.anglerFish = this.add.sprite(this.camera.width*2.2, this.camera.height, 'anglerBody');
+    this.anglerMouth = this.add.sprite(110, 85, 'anglerMouth');
+    this.anglerFish.addChild(this.anglerMouth);
+    this.add.tween(this.anglerFish).to( { y: this.anglerFish.y+25 }, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    this.anglerFish.angle = 30;
+    this.anglerFish.scale.setTo(-1, 1);
+    this.anglerMouth.anchor.setTo(0.5, 0.85);
+    this.anglerFish.anchor.setTo(0.5, 0.5);
+    this.anglerMouth.angle = 50;
+    this.add.tween(this.anglerMouth).to( { angle: 60 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    this.add.tween(this.anglerFish).to( { x: -200 }, 20000, Phaser.Easing.Linear.None, true);
 
     //lightning strike
     this.lightningStrike = this.add.sprite(this.camera.width*0.5, -50, 'lightning2');
@@ -813,7 +814,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   update: function () {
-    //var perfTimeStart = window.performance.now();
+    var perfTimeStart = window.performance.now();
     // this.ship.y = this.waveRopes[0].y + this.waveRopes[0].points[5].y - 105;
     // this.ship.x += 0.5;
 
@@ -906,7 +907,7 @@ OrangeSea.ChapterOne.prototype = {
       }
     }
 
-    //this.perfTimeElapsed = window.performance.now() - perfTimeStart;
+    this.perfTimeElapsed = window.performance.now() - perfTimeStart;
   },
 
   steerBalloon: function() {
