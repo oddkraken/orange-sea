@@ -4,9 +4,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Pearls start immediately. They are ammo, not treasure.
-    * Space to drop pearl
-    * Fish comes to surface, pauses, jumps aggressively at balloon, pulls it down?
+* Text when first specter initializes, explaining Spectral Plane
+* Fish comes to surface, pauses, jumps aggressively at balloon, pulls it down?
     * Drop pearl to kill it.
 * Then clouds start
 * Then specter

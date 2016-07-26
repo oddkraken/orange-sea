@@ -25,6 +25,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('sun', 'assets/images/sun.png');
     this.load.image('fog', 'assets/images/fog.png');
     this.load.image('fish', 'assets/images/fish_sm.png');
+    //this.load.image('anglerfish', 'assets/images/anglerfish.png');
     this.load.image('pearl', 'assets/images/pearl.png');
     this.load.image('waves0', 'assets/images/waveTile0.png');
     this.load.image('waves1', 'assets/images/waveTile1.png');

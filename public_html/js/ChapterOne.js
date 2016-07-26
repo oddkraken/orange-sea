@@ -37,6 +37,7 @@ OrangeSea.ChapterOne.prototype = {
     this.sun = null;
     this.fog = null;
     this.fish = null;
+    this.anglerfish = null;
     this.fishTimer = null;
     this.lastFish = 0; //fish should only appear every so often
     this.cursors = null;
@@ -165,6 +166,19 @@ OrangeSea.ChapterOne.prototype = {
     this.waveTiles[0].angle = 1;
     this.waveTiles[0].anchor.setTo(0.5, 0);
     this.waveTiles[0].alpha = 1.0;
+
+    //anglerfish
+    //TODO fish to kill with pearls
+    // this.anglerfish = this.add.sprite(this.camera.width*1.1, this.camera.height*.9, 'anglerfish');
+    // this.add.tween(this.anglerfish).to( { y: this.anglerfish.y+25 }, 1500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    // this.anglerfish.angle = 0;
+    // this.anglerfish.anchor.setTo(0.5, 0.5);
+    // this.physics.arcade.enable(this.anglerfish);
+    // this.anglerfish.scale.setTo(-1, 1);
+    // this.anglerfish.body.bounce = new Phaser.Point(0.5, 0.5);
+    // this.anglerfish.body.velocity.x = -20;
+    // this.anglerfish.body.allowGravity = false;
+
     var waveTile1Image = this.cache.getImage('waves1');
     this.waveTiles[1] = this.add.tileSprite(this.camera.width/2, -655, waveTile1Image.width, waveTile1Image.height, 'waves1');
     this.waveTiles[1].angle = -1;
@@ -212,7 +226,7 @@ OrangeSea.ChapterOne.prototype = {
         game.boost.y = game.balloon.y+20;
       } else if (game.physics.arcade.intersects(game.balloon.body, game.boost.body) && game.boost.body.enable) {
         if (!game.foundSpecter) {
-          game.displaySpeech('speech1');
+          game.displaySpeech('"An ethereal being fleeing the Shadow offers to rescue me in a time of need."');
           game.foundSpecter = true;
         }
         if (!game.specterReady) {
@@ -306,6 +320,7 @@ OrangeSea.ChapterOne.prototype = {
     this.physics.arcade.enable(this.pearl);
     this.pearl.body.enable = false;
     this.pearl.body.gravity.y = 300;
+    this.pearlGroup = this.add.group(undefined, 'pearlGroup');
 
     // TODO waveropes scrapped until I find a way to tile them
     // this.waveRopes[2] = this.getWaveRope("waves2", -150, this.camera.height*.65, -60, 12, 0.8);
@@ -402,8 +417,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, 'speech2');
-
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..." Press Space to drop a pearl.');
 
     //spectral plane in front of everything
     this.spectralPlane = this.add.tileSprite(0, -720, 1280, 1440, 'spectralPlane');
@@ -470,11 +484,24 @@ OrangeSea.ChapterOne.prototype = {
     mKey.onDown.add(function(){ this.sound.mute = !this.sound.mute; }, this);
     pKey.onDown.add(this.togglePause, this);
     esc.onDown.add(this.togglePause, this);
-    spaceBar.onDown.add(this.enterSpectralPlane, this);
+    spaceBar.onDown.add(this.dropPearl, this);
 
     //mobile
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
+  },
+
+  dropPearl: function() {
+    if (this.pearlCount > 0) {
+      this.pearlCount--;
+      this.showPearlCount();
+      var droppedPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
+      this.pearlGroup.add(droppedPearl);
+      this.physics.arcade.enable(droppedPearl);
+      droppedPearl.body.velocity.x = this.balloon.body.velocity.x/2;
+      droppedPearl.body.velocity.y = this.balloon.body.velocity.y/2;
+      droppedPearl.body.gravity.y = 300;
+    }
   },
 
   //send pearl and destroy if caught or falls back in the water
@@ -498,11 +525,7 @@ OrangeSea.ChapterOne.prototype = {
       if (game.physics.arcade.intersects(game.balloon.body, game.pearl.body) && game.pearl.body.enable) {
         //show pearl count text
         game.pearlCount++;
-        game.pearlCountText.setText(game.pearlCount);
-        game.pearlCountText.x = game.balloon.x;
-        game.pearlCountText.y = game.balloon.y;
-        game.pearlCountText.alpha = 1.0;
-        game.add.tween(game.pearlCountText).to( {y: game.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
+        game.showPearlCount();
 
         game.pearlSound.play(null, null, 0.5);
         game.pearl.y = game.camera.height;
@@ -525,40 +548,46 @@ OrangeSea.ChapterOne.prototype = {
     });
   },
 
+  showPearlCount: function() {
+    this.pearlCountText.setText(this.pearlCount);
+    this.pearlCountText.x = this.balloon.x;
+    this.pearlCountText.y = this.balloon.y;
+    this.pearlCountText.alpha = 1.0;
+    this.add.tween(this.pearlCountText).to( {y: this.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
+  },
+
   // user may become invincible briefly after collecting specters
   enterSpectralPlane: function() {
-    if (this.specterReady && !this.inSpectralPlane) {
-      this.balloonGlowTween.stop();
-      this.inSpectralPlane = true;
-      this.specterReady = false;
-      this.add.tween(this.balloon).to( { alpha: 0.4 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-      this.add.tween(this.stormCloudGroup).to( { alpha: 0.6 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
-      this.add.tween(this.balloonGlow).to( { alpha: 0.9 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-      this.add.tween(this.boost).to( { alpha: 1.0 }, 500, Phaser.Easing.Linear.None, true); //use boost as balloon "glow" while in spectral plane
-      this.boostYTween.pause();
-      this.add.tween(this.spectralPlane).to( { alpha: 0.5 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
-      if (!this.spectralPlaneSound.isPlaying) {
-        this.spectralPlaneSound.play(null, null, 0.5);
-      }
-      this.timer.add(7*Phaser.Timer.SECOND, function() {
-        this.inSpectralPlane = false;
-        this.add.tween(this.balloon).to( { alpha: 1.0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-        this.add.tween(this.stormCloudGroup).to( { alpha: 1.0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
-        this.add.tween(this.balloonGlow).to( { alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-        var fadeOutTween = this.add.tween(this.boost).to( { alpha: 0.0 }, 100, Phaser.Easing.Linear.None, true);
-        var moveTween = this.add.tween(this.boost).to( { x: -100 }, 100, Phaser.Easing.Linear.None, false);
-        fadeOutTween.chain(moveTween); //fade out boost and move it off screen
-        this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
-        //after leaving spectral plane, time next specter
-        var randSeconds = Math.random()*20; //between 0 and 20 seconds
-        this.timer.add(randSeconds*Phaser.Timer.SECOND, function() {
-          this.boostYTween.resume();
-          this.boost.alpha = 1.0;
-          this.boost.body.velocity.x = this.BOOST_SPEED;
-          this.boost.body.enable = true;
-        }, this);
-      }, this);
+    this.balloonGlowTween.stop();
+    this.inSpectralPlane = true;
+    this.specterReady = false;
+    this.add.tween(this.balloon).to( { alpha: 0.4 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+    this.add.tween(this.stormCloudGroup).to( { alpha: 0.6 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+    this.add.tween(this.balloonGlow).to( { alpha: 0.9 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+    this.add.tween(this.boost).to( { alpha: 1.0 }, 500, Phaser.Easing.Linear.None, true); //use boost as balloon "glow" while in spectral plane
+    this.boostYTween.pause();
+    this.add.tween(this.spectralPlane).to( { alpha: 0.5 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+    if (!this.spectralPlaneSound.isPlaying) {
+      this.spectralPlaneSound.play(null, null, 0.5);
     }
+    this.timer.add(7*Phaser.Timer.SECOND, function() {
+      this.inSpectralPlane = false;
+      this.add.tween(this.balloon).to( { alpha: 1.0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+      this.add.tween(this.stormCloudGroup).to( { alpha: 1.0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+      this.add.tween(this.balloonGlow).to( { alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+      var fadeOutTween = this.add.tween(this.boost).to( { alpha: 0.0 }, 100, Phaser.Easing.Linear.None, true);
+      var moveTween = this.add.tween(this.boost).to( { x: -100 }, 100, Phaser.Easing.Linear.None, false);
+      fadeOutTween.chain(moveTween); //fade out boost and move it off screen
+      this.add.tween(this.spectralPlane).to( { alpha: 0 }, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+      //after leaving spectral plane, time next specter
+      var randSeconds = Math.random()*20; //between 0 and 20 seconds
+      this.timer.add(randSeconds*Phaser.Timer.SECOND, function() {
+        this.boostYTween.resume();
+        this.boost.alpha = 1.0;
+        this.boost.body.velocity.x = this.BOOST_SPEED;
+        this.boost.body.enable = true;
+      }, this);
+    }, this);
   },
 
   sendFish: function() {
@@ -680,23 +709,29 @@ OrangeSea.ChapterOne.prototype = {
 
   displayChapterTitle: function() {
     //fade in chapter title
-    var titleCard;
+    var titleText;
     if (OrangeSea.deadMessage) {
-      titleCard = OrangeSea.deadMessage;
+      titleText = this.add.text(this.camera.width/2, this.camera.height/2, OrangeSea.deadMessage, { font: "90px great_victorianstandard", fill: "white" } );
+      titleText.anchor.setTo(0.5, 0.5);
     } else {
-      titleCard = 'chapterOne';
+      titleText = this.add.text(this.camera.width/2, 296, "Part One", { font: "72px great_victorianstandard", fill: "white" } );
+      titleText.anchor.setTo(0.5, 0.5);
+      var partTitle = this.add.text(0, 56, "The Squall", { font: "120px great_victorianstandard", fill: "white" } );
+      partTitle.anchor.setTo(0.5, 0.5);
+      titleText.addChild(partTitle);
     }
-    this.chapterTitle = this.add.sprite(0, 0, titleCard);
-    this.chapterTitle.fixedToCamera = true;
-    this.textGroup.add(this.chapterTitle);
-    var fadeIn = this.add.tween(this.chapterTitle).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
-    var fadeOut = this.add.tween(this.chapterTitle).to({ alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, false, 2000);
+    titleText.fixedToCamera = true;
+    this.textGroup.add(titleText);
+    var fadeIn = this.add.tween(titleText).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
+    var fadeOut = this.add.tween(titleText).to({ alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, false, 2000);
     fadeIn.chain(fadeOut);
   },
 
-  displaySpeech: function(speechImage) {
+  displaySpeech: function(speechText) {
     //fade in speech
-    this.speech = this.add.sprite(0, 0, speechImage);
+    var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.6, align: "center" };
+    this.speech = this.add.text(this.camera.width/2, this.camera.height*.8, speechText, style);
+    this.speech.anchor.setTo(0.5, 0.5);
     this.speech.fixedToCamera = true;
     this.textGroup.add(this.speech);
     this.speech.bringToTop();
@@ -826,34 +861,49 @@ OrangeSea.ChapterOne.prototype = {
     }
 
     //dying
-    if (this.balloon.y > 650 && this.alive) {
-      ga('send', 'event', 'dead', 'lostAtSea');
-      OrangeSea.deadMessage = 'lostAtSea';
-      this.splash.play(null, null, 0.5);
-      //this.windSound.pause();
-      OrangeSea.thunder.fadeOut(500);
-      OrangeSea.music.fadeOut(500);
-      this.camera.fade(0x000000);
-      this.camera.onFadeComplete.add(function(){
-        this.state.start('ChapterOne');
-      }, this);
-      this.alive = false;
-      this.balloon.body.acceleration.x = 0;
-      this.balloon.body.acceleration.y = 0;
+    if (this.balloon.y > 650 && this.alive && !this.inSpectralPlane) {
+      //specter saves you!
+      if (this.specterReady) {
+        this.balloon.body.acceleration.y = -this.ACCELERATION;
+        this.balloon.body.velocity.y = -this.MAX_SPEED;
+        this.enterSpectralPlane();
+      } else {
+        ga('send', 'event', 'dead', 'lostAtSea');
+        OrangeSea.deadMessage = 'He was lost at sea.';
+        this.splash.play(null, null, 0.5);
+        //this.windSound.pause();
+        OrangeSea.thunder.fadeOut(500);
+        OrangeSea.music.fadeOut(500);
+        this.camera.fade(0x000000);
+        this.camera.onFadeComplete.add(function(){
+          this.state.start('ChapterOne');
+        }, this);
+        this.alive = false;
+        this.balloon.body.acceleration.x = 0;
+        this.balloon.body.acceleration.y = 0;
+      }
     }
-    if (this.balloon.x < -300 && this.alive) {
-      ga('send', 'event', 'dead', 'lostInShadow');
-      this.balloon.body.immovable = true;
-      OrangeSea.deadMessage = 'lostInShadow';
-      //this.windSound.pause();
-      this.gust.play(null, null, 0.25);
-      OrangeSea.thunder.fadeOut(500);
-      OrangeSea.music.fadeOut(500);
-      this.camera.fade(0x000000);
-      this.camera.onFadeComplete.add(function(){
-        this.state.start('ChapterOne');
-      }, this);
-      this.alive = false;
+    if (this.balloon.x < -300 && this.alive && !this.inSpectralPlane) {
+      //specter saves you!
+      if (this.specterReady) {
+        this.balloon.x = 0;
+        this.balloon.body.acceleration.x = this.ACCELERATION;
+        this.balloon.body.velocity.x = this.MAX_SPEED;
+        this.enterSpectralPlane();
+      } else {
+        ga('send', 'event', 'dead', 'lostInShadow');
+        this.balloon.body.immovable = true;
+        OrangeSea.deadMessage = 'He was lost in the Shadow.';
+        //this.windSound.pause();
+        this.gust.play(null, null, 0.25);
+        OrangeSea.thunder.fadeOut(500);
+        OrangeSea.music.fadeOut(500);
+        this.camera.fade(0x000000);
+        this.camera.onFadeComplete.add(function(){
+          this.state.start('ChapterOne');
+        }, this);
+        this.alive = false;
+      }
     }
 
     //this.perfTimeElapsed = window.performance.now() - perfTimeStart;
