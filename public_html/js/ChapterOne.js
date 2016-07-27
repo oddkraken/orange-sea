@@ -6,10 +6,10 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
       // this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-      // this.game.debug.text(this.boost.x, 2, 45, "#ffffff");
+       this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
       // this.game.debug.text(this.boost.body.enable, 2, 60, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
-      this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
+      //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       //this.game.debug.body(this.boost);
       // for (var i=0; i<this.stormClouds.length; i++) {
       //   this.game.debug.body(this.stormClouds[i], 'rgba(0,255,0,0.2)');
@@ -260,27 +260,7 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
-    //bad balloon
-    this.badBalloon = this.add.sprite(-1000, this.camera.height*0.25, 'badBalloon');
-    this.physics.arcade.enable(this.badBalloon);
-    this.badBalloon.anchor.setTo(0.5, 0.1);
-    this.badBalloon.angle = 8;
-    this.badBalloon.body.allowGravity = false;
-    this.badBalloon.body.acceleration.x = 50;
-    this.badBalloon.body.maxVelocity.setTo(50, this.MAX_SPEED);
-    this.badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
-    this.badBalloon.body.mass = 10;
-    this.badBalloon.body.bounce = new Phaser.Point(1, 1);
-    this.updateFunctions.push(function(game) {
-      if (game.badBalloon.body.rotation >= 0) {
-        game.badBalloon.body.angularAcceleration = -60;
-      } else {
-        game.badBalloon.body.angularAcceleration = 60;
-      }
-      game.physics.arcade.collide(game.balloon, game.badBalloon);
-      var yTarget = 300;
-      game.badBalloon.body.acceleration.y =  0.2*(yTarget - game.badBalloon.y);
-    });
+    this.badBalloonGroup = this.add.group(undefined, 'badBalloonGroup');
 
     // anglerfish
     // this.anglerFish = this.add.sprite(this.camera.width*1.5, this.camera.height, 'anglerBody');
@@ -443,8 +423,26 @@ OrangeSea.ChapterOne.prototype = {
     console.log("Last cloud starting at " + cloudStartTime);
 
     //send pearls
-    this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..." Press Space to drop a pearl.');
+    //this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
+    //this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..." Press Space to drop a pearl.');
+    this.timer.add(Phaser.Timer.SECOND*1, this.sendBadBalloon, this);
+    this.updateFunctions.push(function(game) {
+      //destroy offscreen balloons
+      game.badBalloonGroup.filter(balloon => balloon.x < -100).callAll('destroy');
+      //update all badBalloons
+      game.badBalloonGroup.forEach(function(child) {
+        if (child.body.rotation >= 0) {
+          child.body.angularAcceleration = -60;
+        } else {
+          child.body.angularAcceleration = 60;
+        }
+        if (!game.inSpectralPlane) {
+          game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.2); });
+        }
+        var yTarget = 300;
+        child.body.acceleration.y =  0.2*(yTarget - child.y);
+      });
+    });
 
     //spectral plane in front of everything
     this.spectralPlane = this.add.tileSprite(0, -720, 1280, 1440, 'spectralPlane');
@@ -516,6 +514,27 @@ OrangeSea.ChapterOne.prototype = {
     //mobile
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
+  },
+
+  sendBadBalloon: function() {
+    //bad balloon
+    var badBalloon = this.add.sprite(this.camera.width*1.5, this.camera.height*Math.random(), 'badBalloon');
+    var size = Math.random()+0.5;
+    badBalloon.scale.setTo(size, size);
+    badBalloon.alpha = 0.6;
+    badBalloon.tint = (Math.random()*0.5+0.5)*0xFFFFFF;
+    this.physics.arcade.enable(badBalloon);
+    badBalloon.anchor.setTo(0.5, 0.1);
+    badBalloon.angle = 8;
+    badBalloon.body.allowGravity = false;
+    badBalloon.body.acceleration.x = -50;
+    badBalloon.body.maxVelocity.setTo(200, this.MAX_SPEED);
+    badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
+    badBalloon.body.mass = 10;
+    badBalloon.body.bounce = new Phaser.Point(1, 1);
+    this.badBalloonGroup.add(badBalloon);
+
+    this.timer.add(Phaser.Timer.SECOND*Math.random(), this.sendBadBalloon, this);
   },
 
   dropPearl: function() {
@@ -847,9 +866,7 @@ OrangeSea.ChapterOne.prototype = {
     //fish collision
     if (!this.inSpectralPlane) {
       this.physics.arcade.collide(this.balloon, this.fish, function(balloon, fish) {
-        if (!this.hit.isPlaying) {
-          this.hit.play(null, null, 0.4);
-        }
+        this.hit.play(null, null, 0.4);
       }, null, this);
     }
     if (this.balloon.y > 450 && this.balloon.y <= 650) {
