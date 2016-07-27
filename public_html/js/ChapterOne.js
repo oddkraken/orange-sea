@@ -424,7 +424,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..."\nPress Space to drop a pearl.');
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..."\nPress Space to throw a pearl.');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
       game.badBalloonGroup.filter(balloon => balloon.x < -100).callAll('destroy');
@@ -514,7 +514,7 @@ OrangeSea.ChapterOne.prototype = {
     mKey.onDown.add(function(){ this.sound.mute = !this.sound.mute; }, this);
     pKey.onDown.add(this.togglePause, this);
     esc.onDown.add(this.togglePause, this);
-    spaceBar.onDown.add(this.dropPearl, this);
+    spaceBar.onDown.add(this.throwPearl, this);
 
     //mobile
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
@@ -548,16 +548,16 @@ OrangeSea.ChapterOne.prototype = {
     this.timer.add(Phaser.Timer.SECOND*5*Math.random(), this.sendBadBalloon, this);
   },
 
-  dropPearl: function() {
+  throwPearl: function() {
     if (this.pearlCount > 0) {
       this.pearlCount--;
       this.showPearlCount();
-      var droppedPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
-      this.pearlGroup.add(droppedPearl);
-      this.physics.arcade.enable(droppedPearl);
-      droppedPearl.body.velocity.x = this.balloon.body.velocity.x/2;
-      droppedPearl.body.velocity.y = 100;
-      droppedPearl.body.gravity.y = 600;
+      var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
+      this.pearlGroup.add(thrownPearl);
+      this.physics.arcade.enable(thrownPearl);
+      thrownPearl.body.velocity.x = this.balloon.body.velocity.x + 300;
+      thrownPearl.body.velocity.y = -100;
+      thrownPearl.body.gravity.y = 600;
     }
   },
 
@@ -588,7 +588,7 @@ OrangeSea.ChapterOne.prototype = {
         game.pearl.y = game.camera.height;
         game.pearl.body.enable = false;
         if (!game.over) {
-          game.timer.add(Phaser.Timer.SECOND*(10*Math.random()), function() {
+          game.timer.add(Phaser.Timer.SECOND*(3*Math.random()), function() {
             this.sendPearl();
           }, game);
         }
@@ -597,7 +597,7 @@ OrangeSea.ChapterOne.prototype = {
         game.splash.play(null, null, 0.5);
         game.pearl.body.enable = false;
         if (!game.over) {
-          game.timer.add(Phaser.Timer.SECOND*(10*Math.random()), function() {
+          game.timer.add(Phaser.Timer.SECOND*(3*Math.random()), function() {
             this.sendPearl();
           }, game);
         }
