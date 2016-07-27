@@ -177,7 +177,7 @@ OrangeSea.ChapterOne.prototype = {
     //boost
     this.boostSound = this.add.audio('boostSound');
     this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
-    this.boost = this.add.sprite(-7000, 0, 'boost');
+    this.boost = this.add.sprite(-100, 0, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
@@ -207,7 +207,7 @@ OrangeSea.ChapterOne.prototype = {
       (this.boost.body.width-this.boost.body.width*scale)/2,
       (this.boost.body.height-this.boost.body.height*scale)/2);
     this.BOOST_SPEED = 250;
-    this.boost.body.velocity.x = this.BOOST_SPEED;
+    this.boost.body.velocity.x = 0; //start boost on timer
     this.boost.body.angularVelocity = 50;
     this.updateFunctions.push(function(game) {
       if (game.inSpectralPlane) {
@@ -423,9 +423,8 @@ OrangeSea.ChapterOne.prototype = {
     console.log("Last cloud starting at " + cloudStartTime);
 
     //send pearls
-    //this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    //this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..." Press Space to drop a pearl.');
-    this.timer.add(Phaser.Timer.SECOND*1, this.sendBadBalloon, this);
+    this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..."\nPress Space to drop a pearl.');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
       game.badBalloonGroup.filter(balloon => balloon.x < -100).callAll('destroy');
@@ -441,6 +440,14 @@ OrangeSea.ChapterOne.prototype = {
         }
       });
     });
+
+    //send bad balloon
+    this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this);
+    this.timer.add(Phaser.Timer.SECOND*35, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! They must not sweep me away."');
+
+    //send specter/boost
+    this.timer.add(Phaser.Timer.SECOND*45, function() { this.boost.body.velocity.x = this.BOOST_SPEED; }, this);
+
 
     //spectral plane in front of everything
     this.spectralPlane = this.add.tileSprite(0, -720, 1280, 1440, 'spectralPlane');
@@ -520,7 +527,7 @@ OrangeSea.ChapterOne.prototype = {
     var badBalloon = this.add.sprite(this.camera.width*1.5, height, 'badBalloon');
     var size = Math.random()+0.5;
     badBalloon.scale.setTo(size, size);
-    badBalloon.alpha = 0.6;
+    //badBalloon.alpha = 0.6;
 
     var red = 0.5+Math.random()*0.5;
     var green = 0.5+Math.random()*0.5;
@@ -548,7 +555,7 @@ OrangeSea.ChapterOne.prototype = {
       var droppedPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
       this.pearlGroup.add(droppedPearl);
       this.physics.arcade.enable(droppedPearl);
-      droppedPearl.body.velocity.x = this.balloon.body.velocity.x;
+      droppedPearl.body.velocity.x = this.balloon.body.velocity.x/2;
       droppedPearl.body.velocity.y = 100;
       droppedPearl.body.gravity.y = 600;
     }
@@ -780,7 +787,7 @@ OrangeSea.ChapterOne.prototype = {
 
   displaySpeech: function(speechText) {
     //fade in speech
-    var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.6, align: "center" };
+    var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" };
     this.speech = this.add.text(this.camera.width/2, this.camera.height*.8, speechText, style);
     this.speech.anchor.setTo(0.5, 0.5);
     this.speech.fixedToCamera = true;
