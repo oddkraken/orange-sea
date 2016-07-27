@@ -439,8 +439,6 @@ OrangeSea.ChapterOne.prototype = {
         if (!game.inSpectralPlane) {
           game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.2); });
         }
-        var yTarget = 300;
-        child.body.acceleration.y =  0.2*(yTarget - child.y);
       });
     });
 
@@ -518,11 +516,17 @@ OrangeSea.ChapterOne.prototype = {
 
   sendBadBalloon: function() {
     //bad balloon
-    var badBalloon = this.add.sprite(this.camera.width*1.5, this.camera.height*Math.random(), 'badBalloon');
+    var height = this.camera.height*(Math.random()*0.4 + 0.3);
+    var badBalloon = this.add.sprite(this.camera.width*1.5, height, 'badBalloon');
     var size = Math.random()+0.5;
     badBalloon.scale.setTo(size, size);
     badBalloon.alpha = 0.6;
-    badBalloon.tint = (Math.random()*0.5+0.5)*0xFFFFFF;
+
+    var red = 0.5+Math.random()*0.5;
+    var green = 0.5+Math.random()*0.5;
+    var blue = 0.5+Math.random()*0.5;
+    var rgb = (red*0xFF) | ((green*0xFF) << 8) | ((blue*0XFF) << 16);
+    badBalloon.tint = rgb;
     this.physics.arcade.enable(badBalloon);
     badBalloon.anchor.setTo(0.5, 0.1);
     badBalloon.angle = 8;
@@ -534,7 +538,7 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.bounce = new Phaser.Point(1, 1);
     this.badBalloonGroup.add(badBalloon);
 
-    this.timer.add(Phaser.Timer.SECOND*Math.random(), this.sendBadBalloon, this);
+    this.timer.add(Phaser.Timer.SECOND*5*Math.random(), this.sendBadBalloon, this);
   },
 
   dropPearl: function() {
@@ -687,7 +691,8 @@ OrangeSea.ChapterOne.prototype = {
     stormCloudSprite.alpha = Math.random()*0.2 + 0.8;
     var randScale = Math.random()/2 + 0.5; //[0.5, 1)
     stormCloudSprite.scale.setTo(reverse*randScale, randScale);
-    var randHeight = this.balloon.y + Math.random()*200 - 100;
+    //var randHeight = this.balloon.y + Math.random()*200 - 100; //target balloon
+    var randHeight = (Math.random()*0.3 - 0.1)*this.camera.height;
     stormCloudSprite.x = this.camera.width + Math.abs(stormCloudSprite.width);
     stormCloudSprite.y = randHeight;
     stormCloudSprite.speed = -120*Math.random() - 120; // [-120, -240)

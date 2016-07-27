@@ -5,6 +5,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 ## Todo
 
 * "Sycophants of the Shadow abandon the World of Light! They must not sweep me away."
+    * Bad balloons low, storm clouds high!
 * Text when first specter initializes, explaining Spectral Plane
 * Angler Fish doesn't actually do anything, just looks scary
     * snaps jaws shut if you fall in
