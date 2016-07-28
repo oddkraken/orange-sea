@@ -70,6 +70,9 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('boostSound', 'assets/audio/boost.mp3');
     this.load.audio('spectralPlaneSound', 'assets/audio/spectralPlaneSound.mp3');
     this.load.audio('pearlSound', 'assets/audio/pearlSound.mp3');
+    this.load.audio('gunshot', 'assets/audio/gunshot.mp3');
+    this.load.audio('pop', 'assets/audio/pop.mp3');
+    this.load.audio('click', 'assets/audio/click.mp3');
 
     if (!OrangeSea.debug) {
       //time when to display 'press space to continue' message

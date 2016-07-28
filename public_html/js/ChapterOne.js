@@ -6,7 +6,7 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
       // this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-       this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
+       this.game.debug.text(this.thrownPearlGroup.total, 2, 30, "#ffffff");
       // this.game.debug.text(this.boost.body.enable, 2, 60, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
@@ -238,6 +238,14 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
+    // init pearl
+    this.pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
+    this.pearlSound = this.add.audio('pearlSound');
+    this.physics.arcade.enable(this.pearl);
+    this.pearl.body.enable = false;
+    this.pearl.body.gravity.y = 300;
+    this.thrownPearlGroup = this.add.group(undefined, 'thrownPearlGroup');
+
     // balloon
     this.balloon = this.add.sprite(this.camera.width*0.5, this.camera.height*0.25, 'balloon');
     this.balloonGlow = this.add.sprite(0, 0, 'balloonGlow');
@@ -321,14 +329,6 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
-    // init pearl
-    this.pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
-    this.pearlSound = this.add.audio('pearlSound');
-    this.physics.arcade.enable(this.pearl);
-    this.pearl.body.enable = false;
-    this.pearl.body.gravity.y = 300;
-    this.pearlGroup = this.add.group(undefined, 'pearlGroup');
-
     // TODO waveropes scrapped until I find a way to tile them
     // this.waveRopes[2] = this.getWaveRope("waves2", -150, this.camera.height*.65, -60, 12, 0.8);
     // this.startWaveRopesTweens();
@@ -353,6 +353,12 @@ OrangeSea.ChapterOne.prototype = {
 
     this.splash = this.add.audio('splash');
     this.splash.allowMultiple = true; //fish and pearl may splash simultaneously
+    this.gunshot = this.add.audio('gunshot');
+    this.gunshot.allowMultiple = true;
+    this.pop = this.add.audio('pop');
+    this.pop.allowMultiple = true;
+    this.click = this.add.audio('click');
+    this.click.allowMultiple = true;
     this.gust = this.add.audio('gust');
     this.hit = this.add.audio('hit');
     this.fishJump = this.add.audio('fishJump');
@@ -424,10 +430,10 @@ OrangeSea.ChapterOne.prototype = {
 
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These curiosities may prove useful..."\nPress Space to throw a pearl.');
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! Perfect musket ammunition..."');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
-      game.badBalloonGroup.filter(balloon => balloon.x < -100).callAll('destroy');
+      game.badBalloonGroup.filter(balloon => balloon.x < -100 || balloon.y > game.camera.height).callAll('destroy');
       //update all badBalloons
       game.badBalloonGroup.forEach(function(child) {
         if (child.body.rotation >= 0) {
@@ -437,13 +443,33 @@ OrangeSea.ChapterOne.prototype = {
         }
         if (!game.inSpectralPlane) {
           game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.2); });
+
         }
+        game.thrownPearlGroup.forEach(function(pearl) {
+          // game.physics.arcade.collide(pearl, child, function() {
+          //   game.hit.play(null, null, 0.2);
+          //   child.body.acceleration.y = 50;
+          //   child.tween.stop();
+          // });
+          if (game.physics.arcade.intersects(pearl, child)) {
+            if (!child.popped) {
+              game.pop.play(null, null, 0.25);
+              child.popped = true;
+            }
+            child.body.acceleration.y = 100;
+            child.body.velocity.x = pearl.body.velocity.x;
+            child.tween.stop();
+          }
+          if (pearl.x > game.camera.width || pearl.y > game.camera.height) {
+            pearl.destroy();
+          }
+        });
       });
     });
 
     //send bad balloon
     this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this);
-    this.timer.add(Phaser.Timer.SECOND*35, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! They must not sweep me away."');
+    this.timer.add(Phaser.Timer.SECOND*32, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! I must not let them pass!"');
 
     //send specter/boost
     this.timer.add(Phaser.Timer.SECOND*45, function() { this.boost.body.velocity.x = this.BOOST_SPEED; }, this);
@@ -538,6 +564,7 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.anchor.setTo(0.5, 0.1);
     badBalloon.angle = 8;
     badBalloon.body.allowGravity = false;
+    badBalloon.tween = this.add.tween(badBalloon).to({ y: badBalloon.y - 200}, 3000 + Math.random()*3000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     badBalloon.body.acceleration.x = -50;
     badBalloon.body.maxVelocity.setTo(200, this.MAX_SPEED);
     badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
@@ -550,14 +577,16 @@ OrangeSea.ChapterOne.prototype = {
 
   throwPearl: function() {
     if (this.pearlCount > 0) {
+      this.gunshot.play(null, null, 0.4);
       this.pearlCount--;
       this.showPearlCount();
       var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
-      this.pearlGroup.add(thrownPearl);
+      this.thrownPearlGroup.add(thrownPearl);
       this.physics.arcade.enable(thrownPearl);
-      thrownPearl.body.velocity.x = this.balloon.body.velocity.x + 300;
+      thrownPearl.body.velocity.x = this.balloon.body.velocity.x + 600;
       thrownPearl.body.velocity.y = -100;
-      thrownPearl.body.gravity.y = 600;
+    } else {
+      this.click.play(null, null, 0.25);
     }
   },
 

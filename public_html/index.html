@@ -25,6 +25,7 @@
           height: 100%;
           background-color: black;
           margin: 0;
+          overflow: hidden;
         }
         #wrap {
           min-height: 100%;
@@ -76,12 +77,12 @@
         game.state.start('Boot');
       };
     </script>
+    <div style="font-family:great_victorianstandard;position:absolute;color:black;">Font loader.</div> <!-- Need this div so the page will load the webfont -->
     <div id="footer" class="text-center" style="position:relative;bottom:0px;">
       <a id="em" href="#"><i id="social-em" class="fa fa-envelope-square fa-3x social-media"></i></a>
       <a id="tw" href="#"><i id="social-tw" class="fa fa-twitter-square fa-3x social-media"></i></a>
       <a id="gh" href="#"><i id="social-gh" class="fa fa-github-square fa-3x social-media"></i></a>
     </div>
-    <div style="font-family:great_victorianstandard;position:absolute;color:black;">Font loader.</div> <!-- Need this div so the page will load the webfont -->
     <script type="text/javascript">
       var user = 'oddkraken', domain = 'gmail.com', em = document.getElementById("em"), tw = document.getElementById("tw"), gh = document.getElementById("gh");
       em.href = 'mailto:' + user + '@' + domain;
