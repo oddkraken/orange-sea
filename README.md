@@ -4,7 +4,13 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Rewrite intro to explain:
+    * shadow spreading north
+    * musket needs ammo
+    * benevolent specters flee the shadow
+* Specter makes noise as it flies by
 * Pearl rips hole in balloon
+* vary pop noise based on size of balloon
 * gradually increase sycophants
 * Angler Fish doesn't actually do anything, just looks scary
     * snaps jaws shut if you fall in

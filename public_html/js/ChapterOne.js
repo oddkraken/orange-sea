@@ -6,7 +6,7 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
       // this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-       this.game.debug.text(this.thrownPearlGroup.total, 2, 30, "#ffffff");
+       this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
       // this.game.debug.text(this.boost.body.enable, 2, 60, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
@@ -177,7 +177,7 @@ OrangeSea.ChapterOne.prototype = {
     //boost
     this.boostSound = this.add.audio('boostSound');
     this.spectralPlaneSound = this.add.audio('spectralPlaneSound');
-    this.boost = this.add.sprite(-100, 0, 'boost');
+    this.boost = this.add.sprite(-350, 0, 'boost');
     var boostChild = this.add.sprite(0, 0, 'boost');
     boostChild.scale.setTo(1.5, 1.5);
     boostChild.alpha = 0.25;
@@ -206,7 +206,7 @@ OrangeSea.ChapterOne.prototype = {
     this.boost.body.setSize(this.boost.body.width*scale, this.boost.body.height*scale,
       (this.boost.body.width-this.boost.body.width*scale)/2,
       (this.boost.body.height-this.boost.body.height*scale)/2);
-    this.BOOST_SPEED = 250;
+    this.BOOST_SPEED = 150;
     this.boost.body.velocity.x = 0; //start boost on timer
     this.boost.body.angularVelocity = 50;
     this.updateFunctions.push(function(game) {
@@ -215,7 +215,7 @@ OrangeSea.ChapterOne.prototype = {
         game.boost.y = game.balloon.y+20;
       } else if (game.physics.arcade.intersects(game.balloon.body, game.boost.body) && game.boost.body.enable) {
         if (!game.foundSpecter) {
-          game.displaySpeech('"An ethereal being fleeing the Shadow offers to rescue me in a time of need."');
+          //game.displaySpeech('"An ethereal being fleeing the Shadow offers to rescue me in a time of need."');
           game.foundSpecter = true;
         }
         if (!game.specterReady) {
@@ -428,12 +428,15 @@ OrangeSea.ChapterOne.prototype = {
     }
     console.log("Last cloud starting at " + cloudStartTime);
 
+
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
     this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! Perfect musket ammunition..."');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
-      game.badBalloonGroup.filter(balloon => balloon.x < -100 || balloon.y > game.camera.height).callAll('destroy');
+      game.badBalloonGroup.filter(function(balloon) {
+        return (balloon.x < -100 || balloon.y > game.camera.height);
+      }).callAll('destroy');
       //update all badBalloons
       game.badBalloonGroup.forEach(function(child) {
         if (child.body.rotation >= 0) {
@@ -468,8 +471,8 @@ OrangeSea.ChapterOne.prototype = {
     });
 
     //send bad balloon
-    this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this);
-    this.timer.add(Phaser.Timer.SECOND*32, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! I must not let them pass!"');
+    this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this, 10);
+    //this.timer.add(Phaser.Timer.SECOND*32, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! I must not let them pass!"');
 
     //send specter/boost
     this.timer.add(Phaser.Timer.SECOND*45, function() { this.boost.body.velocity.x = this.BOOST_SPEED; }, this);
@@ -547,7 +550,7 @@ OrangeSea.ChapterOne.prototype = {
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
   },
 
-  sendBadBalloon: function() {
+  sendBadBalloon: function(delay) {
     //bad balloon
     var height = this.camera.height*(Math.random()*0.4 + 0.3);
     var badBalloon = this.add.sprite(this.camera.width*1.5, height, 'badBalloon');
@@ -572,7 +575,10 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.bounce = new Phaser.Point(1, 1);
     this.badBalloonGroup.add(badBalloon);
 
-    this.timer.add(Phaser.Timer.SECOND*5*Math.random(), this.sendBadBalloon, this);
+    if (delay > 5) {
+      delay -= 0.5;
+    }
+    this.timer.add(Phaser.Timer.SECOND*delay*Math.random(), this.sendBadBalloon, this, delay);
   },
 
   throwPearl: function() {
