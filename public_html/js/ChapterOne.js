@@ -363,6 +363,7 @@ OrangeSea.ChapterOne.prototype = {
     this.gust = this.add.audio('gust');
     this.hit = this.add.audio('hit');
     this.fishJump = this.add.audio('fishJump');
+    this.deadSound = this.add.audio('dead');
 
     this.windSound = this.add.audio('gust', 0);
     this.explosion = this.add.audio('explosion', 0.5);
@@ -432,10 +433,25 @@ OrangeSea.ChapterOne.prototype = {
 
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These will have to suffice..."');
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These will have to suffice..."\nPress Space to fire.');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
       game.badBalloonGroup.filter(function(balloon) {
+        //escaped balloon triggers loss!
+        if (balloon.x < -100 && !balloon.popped) {
+          ga('send', 'event', 'dead', 'balloonEscaped');
+          OrangeSea.deadMessage = 'The Shadow consumed all.';
+          game.deadSound.play(null, null, 0.5);
+          OrangeSea.thunder.fadeOut(500);
+          OrangeSea.music.stop();
+          game.camera.fade(0x000000);
+          game.camera.onFadeComplete.add(function(){
+            game.state.start('ChapterOne');
+          }, game);
+          game.alive = false;
+          game.balloon.body.acceleration.x = 0;
+          game.balloon.body.acceleration.y = 0;
+        }
         return (balloon.x < -100 || balloon.y > game.camera.height);
       }).callAll('destroy');
       //update all badBalloons
@@ -591,7 +607,7 @@ OrangeSea.ChapterOne.prototype = {
     } else { //send final wave
       this.timer.add(Phaser.Timer.SECOND*10, this.displaySpeech, this, '"A final surge approaches..."');
       for (var i=0; i<40; i++) {
-        this.timer.add(Phaser.Timer.SECOND*(2*i+20), this.sendBadBalloon, this, -1);
+        this.timer.add(Phaser.Timer.SECOND*(1.5*i+20), this.sendBadBalloon, this, -1);
       }
     }
 
@@ -977,9 +993,10 @@ OrangeSea.ChapterOne.prototype = {
         ga('send', 'event', 'dead', 'lostAtSea');
         OrangeSea.deadMessage = 'He was lost at sea.';
         this.splash.play(null, null, 0.5);
+        this.deadSound.play(null, null, 0.5);
         //this.windSound.pause();
         OrangeSea.thunder.fadeOut(500);
-        OrangeSea.music.fadeOut(500);
+        OrangeSea.music.stop();
         this.camera.fade(0x000000);
         this.camera.onFadeComplete.add(function(){
           this.state.start('ChapterOne');
@@ -1000,10 +1017,11 @@ OrangeSea.ChapterOne.prototype = {
         ga('send', 'event', 'dead', 'lostInShadow');
         this.balloon.body.immovable = true;
         OrangeSea.deadMessage = 'He was lost in the Shadow.';
+        this.deadSound.play(null, null, 0.5);
         //this.windSound.pause();
         this.gust.play(null, null, 0.25);
         OrangeSea.thunder.fadeOut(500);
-        OrangeSea.music.fadeOut(500);
+        OrangeSea.music.stop();
         this.camera.fade(0x000000);
         this.camera.onFadeComplete.add(function(){
           this.state.start('ChapterOne');
