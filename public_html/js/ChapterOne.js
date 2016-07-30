@@ -31,7 +31,7 @@ OrangeSea.ChapterOne.prototype = {
     this.balloon = null;
     this.badBalloon = null;
     this.balloonGlowTween = null;
-    this.derelict = null;
+    // this.derelict = null;
     this.sky = null;
     this.skyNight = null;
     this.stars = null;
@@ -70,6 +70,7 @@ OrangeSea.ChapterOne.prototype = {
     this.speech = null;
     this.updateFunctions = []; //update iterates through this and runs them all
     this.pearlCount = 0;
+    this.pearlThrowDirection = 1;
   },
 
   create: function () {
@@ -114,22 +115,22 @@ OrangeSea.ChapterOne.prototype = {
     this.lightning.alpha = 0.0;
 
     //derelict
-    this.derelict = this.add.sprite(this.camera.width*10, this.camera.height*0.15, 'derelict');
-    this.derelict.anchor.setTo(0.5, 0.1);
-    this.derelict.scale.setTo(0.75, 0.75);
-    this.derelict.angle = 4;
-    this.physics.arcade.enable(this.derelict);
-    this.derelict.body.allowGravity = false;
-    this.derelict.body.velocity.x = -100;
-    //derelict swaying
-    this.updateFunctions.push(function(game) {
-      if (game.derelict.body.rotation >= 0) {
-        game.derelict.body.angularAcceleration = -20;
-      } else {
-        game.derelict.body.angularAcceleration = 20;
-      }
-    });
-    this.add.tween(this.derelict).to( { y: this.derelict.y + 25 }, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    // this.derelict = this.add.sprite(this.camera.width*10, this.camera.height*0.15, 'derelict');
+    // this.derelict.anchor.setTo(0.5, 0.1);
+    // this.derelict.scale.setTo(0.75, 0.75);
+    // this.derelict.angle = 4;
+    // this.physics.arcade.enable(this.derelict);
+    // this.derelict.body.allowGravity = false;
+    // this.derelict.body.velocity.x = -100;
+    // //derelict swaying
+    // this.updateFunctions.push(function(game) {
+    //   if (game.derelict.body.rotation >= 0) {
+    //     game.derelict.body.angularAcceleration = -20;
+    //   } else {
+    //     game.derelict.body.angularAcceleration = 20;
+    //   }
+    // });
+    // this.add.tween(this.derelict).to( { y: this.derelict.y + 25 }, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
 
     //back clouds
     var cloudTileImage = this.cache.getImage('cloudTile');
@@ -431,7 +432,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*10, this.sendPearl, this);
-    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! Perfect musket ammunition..."');
+    this.timer.add(Phaser.Timer.SECOND*12, this.displaySpeech, this, '"A colossal mollusk lobs pearls from the depths! These will have to suffice..."');
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
       game.badBalloonGroup.filter(function(balloon) {
@@ -458,8 +459,12 @@ OrangeSea.ChapterOne.prototype = {
             if (!child.popped) {
               game.pop.play(null, null, 0.25);
               child.popped = true;
+              var balloonHole = game.add.sprite(0, 10, 'balloonHole');
+              balloonHole.anchor.setTo(0.5, 0.5);
+              child.addChild(balloonHole);
             }
             child.body.acceleration.y = 100;
+            child.body.velocity.y = 200;
             child.body.velocity.x = pearl.body.velocity.x;
             child.tween.stop();
           }
@@ -471,7 +476,7 @@ OrangeSea.ChapterOne.prototype = {
     });
 
     //send bad balloon
-    this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this, 10);
+    this.timer.add(Phaser.Timer.SECOND*30, this.sendBadBalloon, this, 15);
     //this.timer.add(Phaser.Timer.SECOND*32, this.displaySpeech, this, '"Sycophants of the Shadow abandon the World of Light! I must not let them pass!"');
 
     //send specter/boost
@@ -575,10 +580,21 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.bounce = new Phaser.Point(1, 1);
     this.badBalloonGroup.add(badBalloon);
 
-    if (delay > 5) {
-      delay -= 0.5;
+    if (delay < 0) {
+      return; //don't send any more
     }
-    this.timer.add(Phaser.Timer.SECOND*delay*Math.random(), this.sendBadBalloon, this, delay);
+
+    if (delay > 8) {
+      delay -= 0.5;
+      console.log("Delay: " + delay);
+      this.timer.add(Phaser.Timer.SECOND*delay*Math.random(), this.sendBadBalloon, this, delay);
+    } else { //send final wave
+      this.timer.add(Phaser.Timer.SECOND*10, this.displaySpeech, this, '"A final surge approaches..."');
+      for (var i=0; i<40; i++) {
+        this.timer.add(Phaser.Timer.SECOND*(2*i+20), this.sendBadBalloon, this, -1);
+      }
+    }
+
   },
 
   throwPearl: function() {
@@ -589,7 +605,7 @@ OrangeSea.ChapterOne.prototype = {
       var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+50, 'pearl');
       this.thrownPearlGroup.add(thrownPearl);
       this.physics.arcade.enable(thrownPearl);
-      thrownPearl.body.velocity.x = this.balloon.body.velocity.x + 600;
+      thrownPearl.body.velocity.x = this.balloon.body.velocity.x + this.pearlThrowDirection*600;
       thrownPearl.body.velocity.y = -100;
     } else {
       this.click.play(null, null, 0.25);
@@ -609,7 +625,6 @@ OrangeSea.ChapterOne.prototype = {
     if (this.pearl.x > (this.camera.width*.4)) {
       this.pearl.body.velocity.x *= -1;
     }
-    console.log(this.pearl.x);
     var caught = false;
 
     //catch or splash and destroy
@@ -623,7 +638,7 @@ OrangeSea.ChapterOne.prototype = {
         game.pearl.y = game.camera.height;
         game.pearl.body.enable = false;
         if (!game.over) {
-          game.timer.add(Phaser.Timer.SECOND*(3*Math.random()), function() {
+          game.timer.add(Phaser.Timer.SECOND*(Math.random()), function() {
             this.sendPearl();
           }, game);
         }
@@ -632,7 +647,7 @@ OrangeSea.ChapterOne.prototype = {
         game.splash.play(null, null, 0.5);
         game.pearl.body.enable = false;
         if (!game.over) {
-          game.timer.add(Phaser.Timer.SECOND*(3*Math.random()), function() {
+          game.timer.add(Phaser.Timer.SECOND*(Math.random()), function() {
             this.sendPearl();
           }, game);
         }
@@ -809,7 +824,7 @@ OrangeSea.ChapterOne.prototype = {
     } else {
       titleText = this.add.text(this.camera.width/2, 296, "Part One", { font: "72px great_victorianstandard", fill: "white" } );
       titleText.anchor.setTo(0.5, 0.5);
-      var partTitle = this.add.text(0, 56, "The Squall", { font: "120px great_victorianstandard", fill: "white" } );
+      var partTitle = this.add.text(0, 56, "The Drifting Legion", { font: "120px great_victorianstandard", fill: "white" } );
       partTitle.anchor.setTo(0.5, 0.5);
       titleText.addChild(partTitle);
     }
@@ -1012,9 +1027,11 @@ OrangeSea.ChapterOne.prototype = {
 
       if (this.cursors.right.isDown) {
         this.balloon.body.acceleration.x = this.ACCELERATION;
+        this.pearlThrowDirection = 1; //right
       }
       else if (this.cursors.left.isDown) {
         this.balloon.body.acceleration.x = -this.ACCELERATION;
+        this.pearlThrowDirection = -1; //left
       }
       else {
         this.balloon.body.acceleration.x = 0;

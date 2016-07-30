@@ -4,10 +4,9 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Rewrite intro to explain:
-    * shadow spreading north
-    * musket needs ammo
-    * benevolent specters flee the shadow
+* MOBILE
+    * improve controls!
+* "As he takes flight from the advancing Shadow, the aeronaut ascends far above the waves and eyes the approaching legion. He must not allow these fallen souls to strengthen their Master. Brandishing his empty musket in vain, he pilots the fire balloon into the gale and steels himself for the trials to come..."
 * Specter makes noise as it flies by
 * Pearl rips hole in balloon
 * vary pop noise based on size of balloon

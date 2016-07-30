@@ -18,6 +18,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('balloon', 'assets/images/balloon_small.png');
     this.load.image('badBalloon', 'assets/images/badBalloon.png');
     this.load.image('balloonGlow', 'assets/images/balloonGlow_small.png');
+    this.load.image('balloonHole', 'assets/images/balloonHole.png');
     this.load.image('derelict', 'assets/images/derelict_small.png');
     this.load.image('pirateShip', 'assets/images/pirateShip_small.png');
     this.load.image('sky', 'assets/images/tallSky.jpg');
