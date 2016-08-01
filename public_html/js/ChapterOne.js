@@ -840,7 +840,7 @@ OrangeSea.ChapterOne.prototype = {
     } else {
       titleText = this.add.text(this.camera.width/2, 296, "Part One", { font: "72px great_victorianstandard", fill: "white" } );
       titleText.anchor.setTo(0.5, 0.5);
-      var partTitle = this.add.text(0, 56, "The Drifting Legion", { font: "120px great_victorianstandard", fill: "white" } );
+      var partTitle = this.add.text(0, 56, "The Airship Armada", { font: "120px great_victorianstandard", fill: "white" } );
       partTitle.anchor.setTo(0.5, 0.5);
       titleText.addChild(partTitle);
     }
