@@ -11,8 +11,14 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * Loss animation that explains what happens
 * Shadow doesn't kill you
 * Use circle hitboxes, or smaller boxes
+* Part Two: Nocturnal Sycophants
+    * Get rid of the "not flying at night" thing, find another way to indicate there's a level end / reprieve
+* Combos
+    * "2 for 1!"
+    * End screen: "Best multi-shot: 4 for 1!"
 * Dead animation
 * BIG balloon BOSS that takes 3 pearls to bring down
+    * MUSIC!!!
 * Add MUSKET graphic to balloon, change direction with arrow keys
 * Angler Fish?
 * Does fish fall while off screen? look into that.

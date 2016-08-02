@@ -436,6 +436,18 @@ OrangeSea.ChapterOne.prototype = {
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+      this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0x5577FF, 20000);
+      this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0x5577FF, 20000);
+      this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0x5577FF, 20000);
+      this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
+      this.tweenTint(this.balloon, 0xFFFFFF, 0x7799FF, 20000);
+
+      this.tweenTint(this.backClouds, this.backClouds.tint, 0x888888, 20000);
+      this.tweenTint(this.midClouds, this.midClouds.tint, 0x888888, 20000);
+      this.tweenTint(this.frontClouds, this.frontClouds.tint, 0x888888, 20000);
+      // this.add.tween(this.backClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
+      // this.add.tween(this.midClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
+      // this.add.tween(this.frontClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
       this.over = true;
     }, this);
 
@@ -454,6 +466,18 @@ OrangeSea.ChapterOne.prototype = {
       }
     });
 
+  },
+
+  tweenTint: function(obj, startColor, endColor, time) { // create an object to tween with our step value at 0
+    var colorBlend = {step: 0};    // create the tween on this object and tween its step property to 100
+    var colorTween = this.add.tween(colorBlend).to({step: 100}, time);
+     // run the interpolateColor function every time the tween updates, feeding it the
+     // updated value of our tween each time, and set the result as our tint
+    colorTween.onUpdateCallback(function() {
+      obj.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step);
+    });        // set the object to the start color straight away
+    obj.tint = startColor;            // start the tween
+    colorTween.start();
   },
 
   //use delay = -1 to send only one
