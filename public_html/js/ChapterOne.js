@@ -5,8 +5,8 @@ OrangeSea.ChapterOne.prototype = {
   render: function() {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
-      // this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-       this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
+      this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
+      // this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       //this.game.debug.body(this.balloon);
@@ -60,6 +60,9 @@ OrangeSea.ChapterOne.prototype = {
     this.pearlCount = 0; //ammo
     this.totalPearlCount = 0; //total collected
     this.pearlThrowDirection = 1;
+    this.gameEndTime = 60;
+    this.escapedBalloons = 0;
+    this.glow = null; //end game glow
   },
 
   create: function () {
@@ -94,9 +97,8 @@ OrangeSea.ChapterOne.prototype = {
       game.stars.tilePosition.x -= (0.4*game.ENV_SPEED);
     });
 
-    this.sun = this.add.sprite(this.camera.width*.4, this.camera.height*-0.1, 'sun');
+    this.sun = this.add.sprite(this.camera.width*.4, this.camera.height*-0.3, 'sun');
     this.sun.anchor.setTo(0.5,0.5);
-    this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*200, Phaser.Easing.Linear.None, true);
 
     //lightning bolt
     this.lightning = this.add.sprite(this.camera.width*0.5, -200, 'lightning');
@@ -295,20 +297,23 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions.push(function(game) {
       //destroy offscreen balloons
       game.badBalloonGroup.filter(function(balloon) {
-        //escaped balloon triggers loss!
+        //3 escaped balloons triggers loss!
         if (balloon.x < -100 && !balloon.popped) {
-          ga('send', 'event', 'dead', 'balloonEscaped');
-          OrangeSea.deadMessage = 'The Shadow consumed all.';
-          game.deadSound.play(null, null, 0.5);
-          OrangeSea.thunder.fadeOut(500);
-          OrangeSea.music.stop();
-          game.camera.fade(0x000000);
-          game.camera.onFadeComplete.add(function(){
-            game.state.start('ChapterOne');
-          }, game);
-          game.alive = false;
-          game.balloon.body.acceleration.x = 0;
-          game.balloon.body.acceleration.y = 0;
+          game.escapedBalloons++;
+          if (game.escapedBalloons >= 1) {
+            ga('send', 'event', 'dead', 'balloonEscaped');
+            OrangeSea.deadMessage = 'The Shadow consumed all.';
+            game.deadSound.play(null, null, 0.5);
+            OrangeSea.thunder.fadeOut(500);
+            OrangeSea.music.stop();
+            game.camera.fade(0x000000);
+            game.camera.onFadeComplete.add(function(){
+              game.state.start('ChapterOne');
+            }, game);
+            game.alive = false;
+            game.balloon.body.acceleration.x = 0;
+            game.balloon.body.acceleration.y = 0;
+          }
         }
         return (balloon.x < -100 || balloon.y > game.camera.height);
       }).callAll('destroy');
@@ -365,15 +370,9 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.showTutorial) {
       this.beginTutorial();
     } else {
-      this.sendBadBalloon(5);
       this.sendPearl();
+      this.startGame();
     }
-
-    var gameEndTime = 190;
-    this.timer.add(Phaser.Timer.SECOND*gameEndTime, function() {
-      this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
-      this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
-    }, this);
 
     //evil shadow
     this.shadow = this.add.sprite(-100, 0, 'shadow');
@@ -415,18 +414,50 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   beginTutorial: function() {
+    this.tutorialInProgress = true;
     this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had some ammunition..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(-1, 10, 1.5);
     firstBadBalloon.onPopped = function(game) {
-      game.sendBadBalloon(5);
+      game.timer.add(Phaser.Timer.SECOND*10, function() {
+        this.displaySpeech('"They won\'t fly at night...\nI need only hold them off until dusk."', 8);
+      }, game);
       OrangeSea.showTutorial = false;
+      game.tutorialInProgress = false;
+      game.startGame();
     };
+  },
+
+  startGame: function() {
+    this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
+    this.sendBadBalloon(5);
+    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
+      this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
+      this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+      this.over = true;
+    }, this);
+
+    //when to end the game
+    this.updateFunctions.push(function(game) {
+      if (game.over && game.badBalloonGroup.total == 0 && this.glow == null) {
+        //no more balloons, fade in glow
+        this.glow = game.add.sprite(game.camera.width, 0, 'glow');
+        this.glow.alpha = 0.0;
+        this.glow.anchor.setTo(1, 0);
+        var fadeIn = game.add.tween(this.glow).to( { alpha: 1.0 }, 2000, Phaser.Easing.Linear.None, true);
+        var blink = game.add.tween(this.glow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
+        fadeIn.chain(blink);
+      }
+    });
+
   },
 
   //use delay = -1 to send only one
   sendBadBalloon: function(delay, maxVelocity, size) {
+    if (this.over) {
+      return;
+    }
     console.log("Sending. Next in " + delay);
     if (!maxVelocity) {
       maxVelocity = this.MAX_SPEED;
@@ -456,10 +487,9 @@ OrangeSea.ChapterOne.prototype = {
     }
     var nextDelay = delay;
     if (nextDelay > 2) {
-      nextDelay--;
+      nextDelay -= 0.25;
     }
     this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, Math.random()*this.MAX_SPEED + this.MAX_SPEED);
-
   },
 
   throwPearl: function() {
@@ -479,19 +509,21 @@ OrangeSea.ChapterOne.prototype = {
 
   //send pearl and destroy if caught or falls back in the water
   sendPearl: function() {
-    pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
-    this.physics.arcade.enable(pearl);
-    pearl.body.gravity.y = 300;
-    this.fishJump.play(null, null, 0.5);
-    pearl.x = Math.random()*this.camera.width*0.8;
-    pearl.y = this.camera.height;
-    //pearl.body.velocity.y = -1100 + Math.random()*400; // [-1100, -700)
-    pearl.body.velocity.y = -900 + Math.random()*400;
-    pearl.body.velocity.x = Math.random()*300;
-    if (pearl.x > (this.camera.width*.4)) {
-      pearl.body.velocity.x *= -1;
+    if (!(this.tutorialInProgress && this.pearlCount >= 2)) { //don't let player collect much more than 3 pearls during tutorial
+      pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
+      this.physics.arcade.enable(pearl);
+      pearl.body.gravity.y = 300;
+      this.fishJump.play(null, null, 0.5);
+      pearl.x = Math.random()*this.camera.width*0.8;
+      pearl.y = this.camera.height;
+      //pearl.body.velocity.y = -1100 + Math.random()*400; // [-1100, -700)
+      pearl.body.velocity.y = -900 + Math.random()*400;
+      pearl.body.velocity.x = Math.random()*300;
+      if (pearl.x > (this.camera.width*.4)) {
+        pearl.body.velocity.x *= -1;
+      }
+      this.lobbedPearlGroup.add(pearl);
     }
-    this.lobbedPearlGroup.add(pearl);
     if (!this.over) {
       this.timer.add(Phaser.Timer.SECOND*Math.random()*3, function() {
         this.sendPearl();
@@ -702,7 +734,7 @@ OrangeSea.ChapterOne.prototype = {
     }
 
     //WINNING
-    if (this.balloon.x > this.camera.width*1.1 && this.over && this.alive) {
+    if (this.balloon.x > this.camera.width*1.1 && this.over && this.alive && this.badBalloonGroup.total == 0) {
       ga('send', 'event', 'cleared');
       this.balloon.body.immovable = true;
       this.camera.fade(0x000000);
