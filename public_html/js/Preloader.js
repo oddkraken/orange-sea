@@ -17,10 +17,7 @@ OrangeSea.Preloader.prototype = {
     //this.load.crossOrigin = 'anonymous';
     this.load.image('balloon', 'assets/images/balloon_small.png');
     this.load.image('badBalloon', 'assets/images/badBalloon.png');
-    this.load.image('balloonGlow', 'assets/images/balloonGlow_small.png');
     this.load.image('balloonHole', 'assets/images/balloonHole.png');
-    this.load.image('derelict', 'assets/images/derelict_small.png');
-    this.load.image('pirateShip', 'assets/images/pirateShip_small.png');
     this.load.image('sky', 'assets/images/tallSky.jpg');
     this.load.image('skyNight', 'assets/images/tallSkyNight.jpg');
     this.load.image('stars', 'assets/images/stars.jpg');
@@ -38,16 +35,13 @@ OrangeSea.Preloader.prototype = {
     // this.load.image('waves2', 'assets/images/waves2.png');
     this.load.image('cloudTile', 'assets/images/cloudTile.png');
     this.load.image('frontClouds', 'assets/images/frontClouds.png');
-    this.load.image('stormCloud2', 'assets/images/stormCloud2_crop.png');
     this.load.image('rain', 'assets/images/rain5.png');
     this.load.image('lightning', 'assets/images/lightning.png');
     this.load.image('lightning2', 'assets/images/lightning2.png');
-    this.load.image('cloudLightning', 'assets/images/cloudLightning.png');
     this.load.image('white', 'assets/images/white.png');
     this.load.image('glow', 'assets/images/glow.png');
     this.load.image('shadow', 'assets/images/shadow.png');
     this.load.image('boost', 'assets/images/boost.png');
-    this.load.image('spectralPlane', 'assets/images/spectralPlane.jpg');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
 
     this.load.image('chapterOne', 'assets/text/chapterOne.png');
@@ -68,8 +62,6 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('hit', 'assets/audio/hit.mp3');
     this.load.audio('fishJump', 'assets/audio/fishJump.mp3');
     this.load.audio('explosion', 'assets/audio/explosion.mp3');
-    this.load.audio('boostSound', 'assets/audio/boost.mp3');
-    this.load.audio('spectralPlaneSound', 'assets/audio/spectralPlaneSound.mp3');
     this.load.audio('pearlSound', 'assets/audio/pearlSound.mp3');
     this.load.audio('gunshot', 'assets/audio/gunshot.mp3');
     this.load.audio('pop', 'assets/audio/pop.mp3');

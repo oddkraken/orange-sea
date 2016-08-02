@@ -5,6 +5,7 @@ var OrangeSea = {
   music: null,
   waveSound: null,
   deadMessage: null,
+  showTutorial: true, //show tutorial once when game begins
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
