@@ -6,6 +6,7 @@ var OrangeSea = {
   waveSound: null,
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
+  minBalloonDelay: 2, //gets shorter as levels progress
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {

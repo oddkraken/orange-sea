@@ -58,11 +58,12 @@ OrangeSea.ChapterOne.prototype = {
     this.speech = null;
     this.updateFunctions = []; //update iterates through this and runs them all
     this.pearlCount = 0; //ammo
-    this.totalPearlCount = 0; //total collected
     this.pearlThrowDirection = 1;
     this.gameEndTime = 60;
     this.escapedBalloons = 0;
     this.glow = null; //end game glow
+    this.continuePearls = true;
+    OrangeSea.totalPearlCount = 0; //total collected
   },
 
   create: function () {
@@ -302,7 +303,7 @@ OrangeSea.ChapterOne.prototype = {
           game.escapedBalloons++;
           if (game.escapedBalloons >= 1) {
             ga('send', 'event', 'dead', 'balloonEscaped');
-            OrangeSea.deadMessage = 'The Shadow consumed all.';
+            OrangeSea.deadMessage = 'A servant joined the Shadow.';
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
             OrangeSea.music.stop();
@@ -350,11 +351,11 @@ OrangeSea.ChapterOne.prototype = {
       game.lobbedPearlGroup.forEach(function(pearl) {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body)) {
           //show explanation if first pearl
-          if (game.totalPearlCount == 0 && OrangeSea.showTutorial) {
+          if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
             game.displaySpeech('"A colossal mollusk lobs pearls from the depths! These will have to suffice..."\nPress Space to fire.', 5);
           }
           //show pearl count text
-          game.totalPearlCount++;
+          OrangeSea.totalPearlCount++;
           game.pearlCount++;
           game.showPearlCount();
           game.pearlSound.play(null, null, 0.5);
@@ -441,6 +442,8 @@ OrangeSea.ChapterOne.prototype = {
     //when to end the game
     this.updateFunctions.push(function(game) {
       if (game.over && game.badBalloonGroup.total == 0 && this.glow == null) {
+        game.continuePearls = false;
+        //  OrangeSea.minBalloonDelay -= 0.75; // TODO make next level harder
         //no more balloons, fade in glow
         this.glow = game.add.sprite(game.camera.width, 0, 'glow');
         this.glow.alpha = 0.0;
@@ -486,7 +489,7 @@ OrangeSea.ChapterOne.prototype = {
       return badBalloon; //don't send any more
     }
     var nextDelay = delay;
-    if (nextDelay > 2) {
+    if (nextDelay > OrangeSea.minBalloonDelay) {
       nextDelay -= 0.25;
     }
     this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, Math.random()*this.MAX_SPEED + this.MAX_SPEED);
@@ -524,7 +527,7 @@ OrangeSea.ChapterOne.prototype = {
       }
       this.lobbedPearlGroup.add(pearl);
     }
-    if (!this.over) {
+    if (this.continuePearls) {
       this.timer.add(Phaser.Timer.SECOND*Math.random()*3, function() {
         this.sendPearl();
       }, this);

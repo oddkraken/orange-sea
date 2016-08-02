@@ -11,7 +11,10 @@ OrangeSea.Cleared.prototype = {
     var fadeColor = 0x000000;
     this.camera.flash(fadeColor, 1000); //fade in
     var background = this.add.sprite(0, 0, 'clearedBackground1'); //winner background
-    var message = this.add.sprite(0, 0, 'thanks');
+
+    var message = this.add.text(this.camera.width/2, this.camera.height/2, 'Cleared!\nPearls caught: ' + OrangeSea.totalPearlCount, { font: "90px great_victorianstandard", fill: "#ede3d6", align: "center" } );
+    message.anchor.setTo(0.5, 0.5);
+
     var spaceToContinueMessage = this.add.sprite(0, 0, 'spaceToContinue');
     spaceToContinueMessage.alpha = 0;
     this.add.tween(spaceToContinueMessage).to( { alpha: 1.0 }, 500, Phaser.Easing.Linear.None, true);
