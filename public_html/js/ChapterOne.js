@@ -6,7 +6,6 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.debug) {
       this.game.debug.text(this.time.fps || '--', 2, 15, "#ffffff");
       this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
-      // this.game.debug.text(this.badBalloonGroup.total, 2, 30, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       //this.game.debug.body(this.balloon);
@@ -352,7 +351,7 @@ OrangeSea.ChapterOne.prototype = {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body)) {
           //show explanation if first pearl
           if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
-            game.displaySpeech('"A colossal mollusk lobs pearls from the depths! These will have to suffice..."\nPress Space to fire.', 5);
+            game.displaySpeech('"Colossal mollusks lob pearls from the depths! These trinkets will have to suffice..."\nPress Space to fire.', 5);
           }
           //show pearl count text
           OrangeSea.totalPearlCount++;
@@ -421,8 +420,9 @@ OrangeSea.ChapterOne.prototype = {
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(-1, 10, 1.5);
     firstBadBalloon.onPopped = function(game) {
+      this.body.maxVelocity.x = game.MAX_SPEED; //let it fly off screen
       game.timer.add(Phaser.Timer.SECOND*10, function() {
-        this.displaySpeech('"They won\'t fly at night...\nI need only hold them off until dusk."', 8);
+        this.displaySpeech('"The followers don\'t fly at night...\nI need only hold them off until dusk."', 8);
       }, game);
       OrangeSea.showTutorial = false;
       game.tutorialInProgress = false;
@@ -461,7 +461,6 @@ OrangeSea.ChapterOne.prototype = {
     if (this.over) {
       return;
     }
-    console.log("Sending. Next in " + delay);
     if (!maxVelocity) {
       maxVelocity = this.MAX_SPEED;
     }
