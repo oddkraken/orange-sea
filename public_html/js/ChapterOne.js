@@ -259,7 +259,7 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions.push(function(game) {
       game.fog.tilePosition.x -= (2*game.ENV_SPEED);
     });
-    this.add.tween(this.fog).to( {alpha: 0.75}, Phaser.Timer.SECOND*120, Phaser.Easing.Linear.None, true, 0, 0, true);
+    this.add.tween(this.fog).to( {alpha: 0.5}, Phaser.Timer.SECOND*(this.gameEndTime*0.5), Phaser.Easing.Linear.None, true);
 
     //set up lightning flash
     this.flash = this.add.sprite(0, -720, 'white');
@@ -436,18 +436,17 @@ OrangeSea.ChapterOne.prototype = {
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+
       this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
       this.tweenTint(this.balloon, 0xFFFFFF, 0x7799FF, 20000);
+      this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
 
       this.tweenTint(this.backClouds, this.backClouds.tint, 0x888888, 20000);
       this.tweenTint(this.midClouds, this.midClouds.tint, 0x888888, 20000);
       this.tweenTint(this.frontClouds, this.frontClouds.tint, 0x888888, 20000);
-      // this.add.tween(this.backClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
-      // this.add.tween(this.midClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
-      // this.add.tween(this.frontClouds).to( { alpha: 0.5 }, 20000, Phaser.Easing.Linear.None, true);
       this.over = true;
     }, this);
 
