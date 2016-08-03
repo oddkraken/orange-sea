@@ -793,6 +793,9 @@ OrangeSea.ChapterOne.prototype = {
     if (this.balloon.x > this.camera.width*0.8 && this.balloon.body.velocity.x > 0 && !this.over) {
       this.balloon.body.acceleration.x = -this.ACCELERATION;
     }
+    if (this.balloon.x < 0) {
+      this.balloon.body.acceleration.x = this.ACCELERATION;
+    }
     if (this.balloon.y < 0) {
       if (this.balloon.body.velocity.y < 0) {
         this.balloon.body.acceleration.y = this.ACCELERATION;
