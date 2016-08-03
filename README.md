@@ -5,11 +5,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 ## Todo
 
 * INVESTIGATE MEMORY LEAKS!
-* Let 3 balloons get by before dying
-    * "A servant has eluded me! The Shadow grows stronger."
-    * bad balloon flashes red if x < ~200
-    * Shadow gets larger (no longer a function of balloon.x)
-    * Loss animation that explains what happens
+* Dead animation
+    * Shadow grows, evil music plays, camera fades out
 * Shadow doesn't kill you
 * Use smaller boxes
     * place hole at correct height
@@ -17,16 +14,19 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Part Two: Nocturnal Sycophants
     * Get rid of the "not flying at night" thing, find another way to indicate there's a level end / reprieve
 * Combos
-    * "2 for 1!"
-    * End screen: "Best multi-shot: 4 for 1!"
-* Dead animation
+    * "2 with one pearl!"
+    * End screen: "Best multi-shot: 5"
 * BIG balloon BOSS that takes 5 pearls to bring down
     * Music
-    * "A formidable airship!"
 * Add MUSKET graphic to balloon, change direction with arrow keys
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3
+* Let 3 balloons get by before dying
+    * "A servant has eluded me! The Shadow grows stronger."
+    * bad balloon flashes red if x < ~200
+    * Shadow gets larger (no longer a function of balloon.x)
+    * Loss animation that explains what happens
 * Design good and bad "encounters" to be used throughout Chapters
     * Good
         * goodies - blunderbuss, weight (slower balloon, less effected by wind)
