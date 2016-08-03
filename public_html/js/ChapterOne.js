@@ -311,7 +311,7 @@ OrangeSea.ChapterOne.prototype = {
           game.escapedBalloons++;
           if (game.escapedBalloons >= 1) {
             ga('send', 'event', 'dead', 'balloonEscaped');
-            OrangeSea.deadMessage = 'A servant joined the Shadow.';
+            OrangeSea.deadMessage = 'An evil airship escaped.';
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
             OrangeSea.music.stop();
@@ -487,6 +487,7 @@ OrangeSea.ChapterOne.prototype = {
     //when to end the game
     this.updateFunctions.push(function(game) {
       if (game.over && game.badBalloonGroup.total == 0 && this.glow == null) {
+        game.displaySpeech('"I can continue my journey in peace! For now..."', 5);
         game.continuePearls = false;
         //  OrangeSea.minBalloonDelay -= 0.75; // TODO make next level harder
         //no more balloons, fade in glow
