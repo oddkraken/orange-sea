@@ -7,15 +7,14 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * INVESTIGATE MEMORY LEAKS!
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
-* Shadow doesn't kill you
 * Use smaller boxes
     * place hole at correct height
     * vary hole.x randomly?
 * Part Two: Nocturnal Sycophants
     * Get rid of the "not flying at night" thing, find another way to indicate there's a level end / reprieve
 * Combos
-    * "2 with one pearl!"
-    * End screen: "Best multi-shot: 5"
+    * "Double hit!"
+    * End screen: "Best multi-hit: 5"
 * BIG balloon BOSS that takes 5 pearls to bring down
     * Music
 * Add MUSKET graphic to balloon, change direction with arrow keys
