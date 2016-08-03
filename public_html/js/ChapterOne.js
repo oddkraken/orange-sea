@@ -377,7 +377,7 @@ OrangeSea.ChapterOne.prototype = {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body)) {
           //show explanation if first pearl
           if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
-            game.displaySpeech('"Colossal mollusks lob pearls from the depths! These trinkets will have to suffice..."\nPress Space to fire.', 5);
+            game.displaySpeech('"Colossal mollusks lob pearls from the depths! These trinkets will have to suffice."\nPress Space to fire.', 5);
           }
           //show pearl count text
           OrangeSea.totalPearlCount++;
@@ -473,6 +473,8 @@ OrangeSea.ChapterOne.prototype = {
 
       //send BOSS
       //TODO scary music
+      this.displaySpeech('"A formidable airship is incoming!"', 3);
+
       this.deadSound.play();
       this.timer.add(Phaser.Timer.SECOND*5, function() {
         this.boss = this.sendBadBalloon(-1, 50, 2, 5, 0xCC2222);
