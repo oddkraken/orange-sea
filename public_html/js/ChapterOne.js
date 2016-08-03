@@ -13,13 +13,13 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
-      this.badBalloonGroup.forEach(function(child) {
-        child.game.debug.body(child);
-      });
-      this.thrownPearlGroup.forEach(function(child) {
-        child.game.debug.body(child);
-      });
-      this.game.debug.body(this.balloon);
+      // this.badBalloonGroup.forEach(function(child) {
+      //   child.game.debug.body(child);
+      // });
+      // this.thrownPearlGroup.forEach(function(child) {
+      //   child.game.debug.body(child);
+      // });
+      // this.game.debug.body(this.balloon);
       // for (var i=0; i<this.stormClouds.length; i++) {
       //   this.game.debug.body(this.stormClouds[i], 'rgba(0,255,0,0.2)');
       // }
@@ -362,7 +362,10 @@ OrangeSea.ChapterOne.prototype = {
           } else if (game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
             game.pop.play(null, null, 0.25);
             child.popped = true;
-            var balloonHole = game.add.sprite(0, 10, 'balloonHole');
+            var holeY = pearl.centerY - child.top;
+            if (holeY < 0) { holeY = 0; }
+            else if (holeY > 50) { holeY = 50; }
+            var balloonHole = game.add.sprite(0, holeY, 'balloonHole');
             balloonHole.anchor.setTo(0.5, 0.5);
             child.addChild(balloonHole);
             typeof child.onPopped === 'function' && child.onPopped(game);
@@ -602,7 +605,7 @@ OrangeSea.ChapterOne.prototype = {
       this.lobbedPearlGroup.add(pearl);
     }
     if (this.continuePearls) {
-      this.timer.add(Phaser.Timer.SECOND*Math.random()*3, function() {
+      this.timer.add(Phaser.Timer.SECOND*Math.random()*2, function() {
         this.sendPearl();
       }, this);
     }
