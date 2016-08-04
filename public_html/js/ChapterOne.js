@@ -318,7 +318,7 @@ OrangeSea.ChapterOne.prototype = {
           game.escapedBalloons++;
           if (game.escapedBalloons >= 1) {
             ga('send', 'event', 'dead', 'balloonEscaped');
-            OrangeSea.deadMessage = 'An evil airship escaped.';
+            OrangeSea.deadMessage = 'An enemy airship escaped.';
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
             OrangeSea.music.stop();
@@ -359,10 +359,10 @@ OrangeSea.ChapterOne.prototype = {
                 pearl.alive = false;
               }, null, game);
             }
-          } else if (game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
+          } else if (pearl.alive && game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
             game.pop.play(null, null, 0.25);
             child.popped = true;
-            var holeY = pearl.centerY - child.top;
+            var holeY = pearl.centerY - child.y;
             if (holeY < 0) { holeY = 0; }
             else if (holeY > 50) { holeY = 50; }
             var balloonHole = game.add.sprite(0, holeY, 'balloonHole');
@@ -430,6 +430,15 @@ OrangeSea.ChapterOne.prototype = {
     //display chapter title
     this.timer.add(Phaser.Timer.SECOND*2, this.displayChapterTitle, this);
 
+    //show controls on pause
+    this.screenTint = this.add.sprite(0, 0, 'white');
+    this.screenTint.fixedToCamera = true;
+    this.screenTint.tint = 0x000000;
+    this.screenTint.alpha = 0;
+    this.controlsMessage = this.add.sprite(0, 0, 'controls');
+    this.controlsMessage.fixedToCamera = true;
+    this.controlsMessage.alpha = 0;
+
     //init cursors
     this.cursors = this.input.keyboard.createCursorKeys();
     var fKey = this.input.keyboard.addKey(Phaser.KeyCode.F);
@@ -451,7 +460,7 @@ OrangeSea.ChapterOne.prototype = {
 
   beginTutorial: function() {
     this.tutorialInProgress = true;
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had some ammunition..."', 5);
+    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had saved some ammunition..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(-1, 10, 1.5);
@@ -474,12 +483,12 @@ OrangeSea.ChapterOne.prototype = {
       this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
-      this.tweenTint(this.balloon, 0xFFFFFF, 0x7799FF, 20000);
+      this.tweenTint(this.balloon, 0xFFFFFF, 0x99AAFF, 20000);
+      this.tweenTint(this.musket, 0xFFFFFF, 0x99AAFF, 20000);
       this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
 
       this.tweenTint(this.backClouds, this.backClouds.tint, 0x888888, 20000);
       this.tweenTint(this.midClouds, this.midClouds.tint, 0x888888, 20000);
-      this.tweenTint(this.frontClouds, this.frontClouds.tint, 0x888888, 20000);
 
       //send BOSS
       //TODO scary music
@@ -487,7 +496,7 @@ OrangeSea.ChapterOne.prototype = {
 
       this.deadSound.play();
       this.timer.add(Phaser.Timer.SECOND*5, function() {
-        this.boss = this.sendBadBalloon(-1, 50, 2, 5, 0xCC2222);
+        this.boss = this.sendBadBalloon(-1, 50, 2, 10, 0xCC2222);
         this.boss.onPopped = function(game) {
           game.over = true;
         }
@@ -496,17 +505,27 @@ OrangeSea.ChapterOne.prototype = {
 
     //when to end the game
     this.updateFunctions.push(function(game) {
-      if (game.over && game.badBalloonGroup.total == 0 && this.glow == null) {
+      if (game.over && game.badBalloonGroup.total == 0 && game.glow == null) {
         game.displaySpeech('"I can continue my journey in peace! For now..."', 5);
         game.continuePearls = false;
         //  OrangeSea.minBalloonDelay -= 0.75; // TODO make next level harder
         //no more balloons, fade in glow
-        this.glow = game.add.sprite(game.camera.width, 0, 'glow');
-        this.glow.alpha = 0.0;
-        this.glow.anchor.setTo(1, 0);
-        var fadeIn = game.add.tween(this.glow).to( { alpha: 1.0 }, 2000, Phaser.Easing.Linear.None, true);
-        var blink = game.add.tween(this.glow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
+        game.glow = game.add.sprite(game.camera.width, 0, 'glow');
+        game.glow.alpha = 0.0;
+        game.glow.anchor.setTo(1, 0);
+        var fadeIn = game.add.tween(game.glow).to( { alpha: 1.0 }, 2000, Phaser.Easing.Linear.None, true);
+        var blink = game.add.tween(game.glow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
         fadeIn.chain(blink);
+
+        //gradually DECREASE rain
+        for (var i=0; i<game.rainEmitters.length; i++) {
+          game.timer.add(Phaser.Timer.QUARTER*i, function() {
+            this.on = false;
+          }, game.rainEmitters[i]);
+        }
+        OrangeSea.thunder.fadeOut(6000, true);
+        //stop storm
+        game.add.tween(game.frontClouds).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
       }
     });
 
@@ -656,8 +675,14 @@ OrangeSea.ChapterOne.prototype = {
   togglePause: function() {
     if (this.game.paused) {
       this.game.paused = false;
+      this.controlsMessage.alpha = 0;
+      this.screenTint.alpha = 0;
     } else {
       this.game.paused = true;
+      this.controlsMessage.alpha = 1;
+      this.screenTint.alpha = 0.75;
+      this.screenTint.bringToTop();
+      this.controlsMessage.bringToTop();
     }
   },
 
