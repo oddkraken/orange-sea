@@ -7,9 +7,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * INVESTIGATE MEMORY LEAKS!
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
-* Use smaller boxes
-    * place hole at correct height
-    * vary hole.x randomly?
 * Part Two: Nocturnal Sycophants
     * Get rid of the "not flying at night" thing, find another way to indicate there's a level end / reprieve
 * Combos
@@ -17,7 +14,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * End screen: "Best multi-hit: 5"
 * BIG balloon BOSS that takes 5 pearls to bring down
     * Music
-* Add MUSKET graphic to balloon, change direction with arrow keys
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3

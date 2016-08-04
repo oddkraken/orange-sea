@@ -11,6 +11,7 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text("Balloons: " + this.badBalloonGroup.total, 2, 75, "#ffffff");
       this.game.debug.text("Text: " + this.textGroup.total, 2, 90, "#ffffff");
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
+      this.game.debug.text("Fish y: " + this.fish.y, 2, 120, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       // this.badBalloonGroup.forEach(function(child) {
@@ -496,7 +497,7 @@ OrangeSea.ChapterOne.prototype = {
 
       this.deadSound.play();
       this.timer.add(Phaser.Timer.SECOND*5, function() {
-        this.boss = this.sendBadBalloon(-1, 50, 2, 10, 0xCC2222);
+        this.boss = this.sendBadBalloon(-1, 50, 2, 5, 0xCC2222, true);
         this.boss.onPopped = function(game) {
           game.over = true;
         }
@@ -544,7 +545,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   //use delay = -1 to send only one
-  sendBadBalloon: function(delay, maxVelocity, size, hp, tint) {
+  sendBadBalloon: function(delay, maxVelocity, size, hp, tint, immovable) {
     if (this.over) {
       return;
     }
@@ -578,6 +579,9 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
     badBalloon.body.mass = 10;
     badBalloon.body.bounce = new Phaser.Point(1, 1);
+    if (immovable) {
+      badBalloon.body.immovable = true;
+    }
     this.badBalloonGroup.add(badBalloon);
 
     if (delay < 0) {
@@ -600,7 +604,7 @@ OrangeSea.ChapterOne.prototype = {
       this.physics.arcade.enable(thrownPearl);
       thrownPearl.body.velocity.x = this.pearlThrowDirection*1200;
       thrownPearl.body.velocity.y = -100;
-      thrownPearl.body.bounce.setTo(1, 1);
+      thrownPearl.body.bounce.setTo(0.1, 0.1);
     } else {
       this.click.play(null, null, 0.25);
     }
