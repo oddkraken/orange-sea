@@ -296,10 +296,8 @@ OrangeSea.ChapterOne.prototype = {
       var duration = 90; //hard-coding total duration of thunder file
       for (var i=0; i<3; i++) { //thunder sound will loop 3 times
         this.timer.add(Phaser.Timer.SECOND*(duration*i + 4), this.flashLightning, this, 1.0);
-        if (i != 2) { //skip last two bolts because storm is over
-          this.timer.add(Phaser.Timer.SECOND*(duration*i + 20), this.flashLightning, this, 1.0);
-          this.timer.add(Phaser.Timer.SECOND*(duration*i + 64.5), this.flashLightning, this, 1.0);
-        }
+        this.timer.add(Phaser.Timer.SECOND*(duration*i + 20), this.flashLightning, this, 1.0);
+        this.timer.add(Phaser.Timer.SECOND*(duration*i + 64.5), this.flashLightning, this, 1.0);
       }
       OrangeSea.thunder.fadeIn(6000, true);
       this.timer.start();
@@ -476,9 +474,13 @@ OrangeSea.ChapterOne.prototype = {
   startGame: function() {
     this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
     this.sendBadBalloon(5, 100);
+    //stagger tweens because they cause jitter
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.9, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+    }, this);
+
+    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.95, function() {
       this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
     }, this);
 
@@ -745,6 +747,9 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   flashLightning: function(brightness) {
+    if (this.over) { //storm ends when game is over
+      return;
+    }
     this.flash.alpha = brightness;
     this.flash.bringToTop();
     var fadeInFlash = this.add.tween(this.flash).from( {alpha: 0.0}, 100, Phaser.Easing.Exponential.In, true);
