@@ -70,7 +70,7 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions = []; //update iterates through this and runs them all
     this.pearlCount = 0; //ammo
     this.pearlThrowDirection = 1;
-    this.gameEndTime = 60;
+    this.gameEndTime = 30;
     this.escapedBalloons = 0;
     this.glow = null; //end game glow
     this.continuePearls = true;
@@ -475,15 +475,17 @@ OrangeSea.ChapterOne.prototype = {
 
   startGame: function() {
     this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
-    this.sendBadBalloon(5);
-    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
+    this.sendBadBalloon(5, 100);
+    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.9, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+      this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
+    }, this);
 
+    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
       this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0x5577FF, 20000);
       this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0x5577FF, 20000);
-      this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
       this.tweenTint(this.balloon, 0xFFFFFF, 0x99AAFF, 20000);
       this.tweenTint(this.musket, 0xFFFFFF, 0x99AAFF, 20000);
       this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
@@ -591,7 +593,8 @@ OrangeSea.ChapterOne.prototype = {
     if (nextDelay > OrangeSea.minBalloonDelay) {
       nextDelay -= 0.25;
     }
-    this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, Math.random()*this.MAX_SPEED + this.MAX_SPEED);
+    console.log(nextDelay);
+    this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, maxVelocity);
   },
 
   throwPearl: function() {

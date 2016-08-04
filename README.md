@@ -4,7 +4,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* INVESTIGATE MEMORY LEAKS!
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
 * Part Two: Nocturnal Sycophants
