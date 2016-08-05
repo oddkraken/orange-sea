@@ -70,7 +70,7 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions = []; //update iterates through this and runs them all
     this.pearlCount = 0; //ammo
     this.pearlThrowDirection = 1;
-    this.gameEndTime = 30;
+    this.gameEndTime = 45;
     this.escapedBalloons = 0;
     this.glow = null; //end game glow
     this.continuePearls = true;
@@ -361,7 +361,7 @@ OrangeSea.ChapterOne.prototype = {
           } else if (pearl.alive && game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
             game.pop.play(null, null, 0.25);
             child.popped = true;
-            var holeY = pearl.centerY - child.y;
+            var holeY = pearl.y - child.y;
             if (holeY < 0) { holeY = 0; }
             else if (holeY > 50) { holeY = 50; }
             var balloonHole = game.add.sprite(0, holeY, 'balloonHole');
@@ -474,26 +474,24 @@ OrangeSea.ChapterOne.prototype = {
   startGame: function() {
     this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
     this.sendBadBalloon(5, 100);
+
     //stagger tweens because they cause jitter
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.9, function() {
       this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
       this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
     }, this);
 
-    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.95, function() {
-      this.tweenTint(this.skyNight, 0xFFFFFF, 0x7799FF, 10000);
-    }, this);
-
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
-      this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0x5577FF, 20000);
-      this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0x5577FF, 20000);
-      this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0x5577FF, 20000);
-      this.tweenTint(this.balloon, 0xFFFFFF, 0x99AAFF, 20000);
-      this.tweenTint(this.musket, 0xFFFFFF, 0x99AAFF, 20000);
+      this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0xCCCCFF, 20000);
+      this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0xCCCCFF, 20000);
+      this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0xCCCCFF, 20000);
+      this.tweenTint(this.balloon, 0xFFFFFF, 0xCCCCFF, 20000);
+      this.tweenTint(this.musket, 0xFFFFFF, 0xCCCCFF, 20000);
       this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
 
-      this.tweenTint(this.backClouds, this.backClouds.tint, 0x888888, 20000);
-      this.tweenTint(this.midClouds, this.midClouds.tint, 0x888888, 20000);
+      this.tweenTint(this.backClouds, this.backClouds.tint, 0x997755, 20000);
+      this.tweenTint(this.midClouds, this.midClouds.tint, 0x997755, 20000);
+      this.tweenTint(this.frontClouds, this.midClouds.tint, 0x997755, 20000);
 
       //send BOSS
       //TODO scary music
@@ -531,6 +529,7 @@ OrangeSea.ChapterOne.prototype = {
         OrangeSea.thunder.fadeOut(6000, true);
         //stop storm
         game.add.tween(game.frontClouds).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+        game.add.tween(game.fog).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
       }
     });
 
@@ -714,14 +713,11 @@ OrangeSea.ChapterOne.prototype = {
     //fade in chapter title
     var titleText;
     if (OrangeSea.deadMessage) {
-      titleText = this.add.text(this.camera.width/2, this.camera.height/2, OrangeSea.deadMessage, { font: "90px great_victorianstandard", fill: "white" } );
+      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, OrangeSea.deadMessage, { font: "90px great_victorianstandard", fill: "white" } );
       titleText.anchor.setTo(0.5, 0.5);
     } else {
-      titleText = this.add.text(this.camera.width/2, 296, "Part One", { font: "72px great_victorianstandard", fill: "white" } );
+      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, "Orange Sea", { font: "120px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
       titleText.anchor.setTo(0.5, 0.5);
-      var partTitle = this.add.text(0, 56, "The Airship Armada", { font: "120px great_victorianstandard", fill: "white" } );
-      partTitle.anchor.setTo(0.5, 0.5);
-      titleText.addChild(partTitle);
     }
     titleText.fixedToCamera = true;
     this.textGroup.add(titleText);
