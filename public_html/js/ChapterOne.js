@@ -473,7 +473,7 @@ OrangeSea.ChapterOne.prototype = {
 
   startGame: function() {
     this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
-    this.sendBadBalloon(5, 100);
+    this.sendBadBalloon(8, 100);
 
     //stagger tweens because they cause jitter
     this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.9, function() {
@@ -592,7 +592,7 @@ OrangeSea.ChapterOne.prototype = {
     }
     var nextDelay = delay;
     if (nextDelay > OrangeSea.minBalloonDelay) {
-      nextDelay -= 0.25;
+      nextDelay -= 0.5;
     }
     console.log(nextDelay);
     this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, maxVelocity);
