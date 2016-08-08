@@ -321,7 +321,7 @@ OrangeSea.ChapterOne.prototype = {
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
             OrangeSea.music.stop();
-            game.camera.fade(0x000000);
+            game.camera.fade(0x000000, 2000);
             game.camera.onFadeComplete.add(function(){
               game.state.start('ChapterOne');
             }, game);
@@ -710,6 +710,9 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   displayChapterTitle: function() {
+    if (!this.alive) {
+      return;
+    }
     //fade in chapter title
     var titleText;
     if (OrangeSea.deadMessage) {
@@ -867,28 +870,13 @@ OrangeSea.ChapterOne.prototype = {
       //this.windSound.pause();
       OrangeSea.thunder.fadeOut(500);
       OrangeSea.music.stop();
-      this.camera.fade(0x000000);
+      this.camera.fade(0x000000, 2000);
       this.camera.onFadeComplete.add(function(){
         this.state.start('ChapterOne');
       }, this);
       this.alive = false;
       this.balloon.body.acceleration.x = 0;
       this.balloon.body.acceleration.y = 0;
-    }
-    if (this.balloon.x < -300 && this.alive) {
-      ga('send', 'event', 'dead', 'lostInShadow');
-      this.balloon.body.immovable = true;
-      OrangeSea.deadMessage = 'He was lost in the Shadow.';
-      this.deadSound.play(null, null, 0.5);
-      //this.windSound.pause();
-      this.gust.play(null, null, 0.25);
-      OrangeSea.thunder.fadeOut(500);
-      OrangeSea.music.stop();
-      this.camera.fade(0x000000);
-      this.camera.onFadeComplete.add(function(){
-        this.state.start('ChapterOne');
-      }, this);
-      this.alive = false;
     }
 
     this.perfTimeElapsed = window.performance.now() - perfTimeStart;
