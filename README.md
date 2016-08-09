@@ -4,7 +4,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Replace stars with transparent PNG so you don't need screen blendMode
 * STATS!
     * Combos will make it WAY more fun
         * "Double hit!"

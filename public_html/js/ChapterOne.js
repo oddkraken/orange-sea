@@ -68,12 +68,10 @@ OrangeSea.ChapterOne.prototype = {
     this.chapterTitle = null;
     this.speech = null;
     this.updateFunctions = []; //update iterates through this and runs them all
-    this.pearlCount = 0; //ammo
     this.pearlThrowDirection = 1;
     this.escapedBalloons = 0;
     this.glow = null; //end game glow
     this.continuePearls = true;
-    OrangeSea.totalPearlCount = 0; //total collected
     this.boss = {};
   },
 
@@ -355,6 +353,7 @@ OrangeSea.ChapterOne.prototype = {
           game.escapedBalloons++;
           if (game.escapedBalloons >= 1) {
             ga('send', 'event', 'dead', 'balloonEscaped');
+            OrangeSea.pearlCount = 0;
             OrangeSea.deadMessage = 'An enemy airship escaped.';
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
@@ -421,14 +420,14 @@ OrangeSea.ChapterOne.prototype = {
     //pearl behavior
     this.updateFunctions.push(function(game) {
       game.lobbedPearlGroup.forEach(function(pearl) {
-        if (game.physics.arcade.intersects(game.balloon.body, pearl.body)) {
+        if (game.physics.arcade.intersects(game.balloon.body, pearl.body) && game.alive) {
           //show explanation if first pearl
           if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
             game.displaySpeech('"Colossal mollusks lob pearls from the depths! These trinkets will have to suffice."\nPress Space to fire.', 5);
           }
           //show pearl count text
           OrangeSea.totalPearlCount++;
-          game.pearlCount++;
+          OrangeSea.pearlCount++;
           game.showPearlCount();
           game.pearlSound.play(null, null, 0.5);
           pearl.destroy();
@@ -641,9 +640,9 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   throwPearl: function() {
-    if (this.pearlCount > 0) {
+    if (OrangeSea.pearlCount > 0) {
       this.gunshot.play(null, null, 0.4);
-      this.pearlCount--;
+      OrangeSea.pearlCount--;
       this.showPearlCount();
       var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
       this.thrownPearlGroup.add(thrownPearl);
@@ -658,12 +657,12 @@ OrangeSea.ChapterOne.prototype = {
 
   //send pearl and destroy if caught or falls back in the water
   sendPearl: function() {
-    if (!(this.tutorialInProgress && this.pearlCount >= 2)) { //don't let player collect much more than 3 pearls during tutorial
+    if (!(this.tutorialInProgress && OrangeSea.pearlCount >= 2)) { //don't let player collect much more than 3 pearls during tutorial
       pearl = this.add.sprite(Math.random()*this.camera.width, this.camera.height, 'pearl');
       this.physics.arcade.enable(pearl);
       pearl.body.gravity.y = 300;
       this.fishJump.play(null, null, 0.5);
-      pearl.x = Math.random()*this.camera.width*0.8;
+      pearl.x = Math.random()*this.camera.width;
       pearl.y = this.camera.height;
       //pearl.body.velocity.y = -1100 + Math.random()*400; // [-1100, -700)
       pearl.body.velocity.y = -900 + Math.random()*400;
@@ -684,7 +683,7 @@ OrangeSea.ChapterOne.prototype = {
     if (this.pearlCountText.tween) {
       this.pearlCountText.tween.stop();
     }
-    this.pearlCountText.setText(this.pearlCount);
+    this.pearlCountText.setText(OrangeSea.pearlCount);
     this.pearlCountText.x = this.balloon.x;
     this.pearlCountText.y = this.balloon.y;
     this.pearlCountText.alpha = 1.0;
@@ -886,10 +885,10 @@ OrangeSea.ChapterOne.prototype = {
     }
 
     //balloon world limits
-    if (this.balloon.x > this.camera.width*0.8 && this.balloon.body.velocity.x > 0 && !this.over) {
+    if (this.balloon.x > this.camera.width && this.balloon.body.velocity.x > 0 && !this.over) {
       this.balloon.body.acceleration.x = -this.ACCELERATION;
     }
-    if (this.balloon.x < 0) {
+    if (this.balloon.x < 50 && this.balloon.body.velocity.x < 0 && !this.over) {
       this.balloon.body.acceleration.x = this.ACCELERATION;
     }
     if (this.balloon.y < 0) {
@@ -913,6 +912,7 @@ OrangeSea.ChapterOne.prototype = {
     //dying
     if (this.balloon.y > 650 && this.alive) {
       ga('send', 'event', 'dead', 'lostAtSea');
+      OrangeSea.pearlCount = 0;
       OrangeSea.deadMessage = 'He was lost at sea.';
       this.splash.play(null, null, 0.5);
       this.deadSound.play(null, null, 0.5);

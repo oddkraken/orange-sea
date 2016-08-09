@@ -7,6 +7,8 @@ var OrangeSea = {
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
   currentLevel: 0,
+  pearlCount: 0, //ammo
+  totalPearlCount: 0, //total collected
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
