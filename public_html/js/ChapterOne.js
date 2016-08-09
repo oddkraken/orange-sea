@@ -87,6 +87,7 @@ OrangeSea.ChapterOne.prototype = {
     var musketTint = 0xFFFFFF;
     var fogTint = 0xFFFFFF;
     var fogAlpha = 0.25;
+    var fogAlphaMax = 0.5;
     var backCloudsTint = 0xeeeedd;
     var midCloudsTint = 0xeeddcc;
     var frontCloudsTint = 0xffeedd;
@@ -99,6 +100,7 @@ OrangeSea.ChapterOne.prototype = {
       musketTint = 0xCCCCFF;
       fogTint = 0x557799;
       fogAlpha = 0.1;
+      fogAlphaMax = 0.2;
       backCloudsTint = 0x557799;
       midCloudsTint = 0x557799;
       frontCloudsTint = 0x557799;
@@ -309,7 +311,7 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions.push(function(game) {
       game.fog.tilePosition.x -= (2*game.ENV_SPEED);
     });
-    this.add.tween(this.fog).to( {alpha: 0.5}, Phaser.Timer.SECOND*(Levels[OrangeSea.currentLevel].duration*0.5), Phaser.Easing.Linear.None, true);
+    this.add.tween(this.fog).to( {alpha: fogAlphaMax}, Phaser.Timer.SECOND*(Levels[OrangeSea.currentLevel].duration*0.5), Phaser.Easing.Linear.None, true);
 
     //set up lightning flash
     this.flash = this.add.sprite(0, -720, 'white');
@@ -508,7 +510,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   sunset: function() {
-    this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
+    //this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
     this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
     this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0xCCCCFF, 20000);
     this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0xCCCCFF, 20000);
