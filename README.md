@@ -4,6 +4,9 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Design level configuration system:
+    * boss HP
+    * write moonrise function
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
 * Part Two: Nocturnal Sycophants

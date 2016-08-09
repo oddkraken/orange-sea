@@ -6,7 +6,7 @@ var OrangeSea = {
   waveSound: null,
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
-  minBalloonDelay: 2, //gets shorter as levels progress
+  currentLevel: 0,
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
@@ -20,6 +20,37 @@ var OrangeSea = {
     }
   }
 };
+
+var Levels = [
+  {
+    title: "Day One",
+    duration: 45,
+    balloonDelay: 8,
+    dayTime: true,
+    storm: true
+  },
+  {
+    title: "Night One",
+    duration: 60,
+    balloonDelay: 4,
+    dayTime: false,
+    storm: false
+  },
+  {
+    title: "Day Two",
+    duration: 75,
+    balloonDelay: 2,
+    dayTime: true,
+    storm: false
+  },
+  {
+    title: "Night Two",
+    duration: 90,
+    balloonDelay: 1,
+    dayTime: false,
+    storm: true
+  }
+];
 
 OrangeSea.Boot = function(game) {
 };

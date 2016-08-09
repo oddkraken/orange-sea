@@ -25,6 +25,8 @@ OrangeSea.Cleared.prototype = {
     //mobile
     this.input.onTap.add(this.spacePressed, this);
     spaceBar.onDown.add(this.spacePressed, this);
+
+    OrangeSea.currentLevel++;
   },
 
   spacePressed: function() {

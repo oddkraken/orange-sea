@@ -36,6 +36,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('cloudTile', 'assets/images/cloudTile.png');
     this.load.image('frontClouds', 'assets/images/frontClouds.png');
     this.load.image('rain', 'assets/images/rain5.png');
+    this.load.image('rainNight', 'assets/images/rainNight.png');
     this.load.image('lightning', 'assets/images/lightning.png');
     this.load.image('lightning2', 'assets/images/lightning2.png');
     this.load.image('white', 'assets/images/white.png');

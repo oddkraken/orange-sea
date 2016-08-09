@@ -70,7 +70,6 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions = []; //update iterates through this and runs them all
     this.pearlCount = 0; //ammo
     this.pearlThrowDirection = 1;
-    this.gameEndTime = 45;
     this.escapedBalloons = 0;
     this.glow = null; //end game glow
     this.continuePearls = true;
@@ -79,6 +78,32 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   create: function () {
+    //set up day and night (day default)
+    var starsAlpha = 0;
+    var skyNightAlpha = 0;
+    var skyNightTint = 0XFFFFFF;
+    var waveTilesTint = 0xFFFFFF;
+    var balloonTint = 0xFFFFFF;
+    var musketTint = 0xFFFFFF;
+    var fogTint = 0xFFFFFF;
+    var fogAlpha = 0.25;
+    var backCloudsTint = 0xeeeedd;
+    var midCloudsTint = 0xeeddcc;
+    var frontCloudsTint = 0xffeedd;
+    if (!Levels[OrangeSea.currentLevel].dayTime) { //if night...
+      starsAlpha = 1;
+      skyNightAlpha = 1;
+      skyNightTint = 0x222244;
+      waveTilesTint = 0x4444FF;
+      balloonTint = 0xCCCCFF;
+      musketTint = 0xCCCCFF;
+      fogTint = 0x557799;
+      fogAlpha = 0.1;
+      backCloudsTint = 0x557799;
+      midCloudsTint = 0x557799;
+      frontCloudsTint = 0x557799;
+    }
+
     this.camera.flash(0x000000, 1000); //fade in
     this.time.advancedTiming = true; //enable FPS calculation
     this.alive = true;
@@ -100,8 +125,9 @@ OrangeSea.ChapterOne.prototype = {
     this.sky = this.add.tileSprite(0, -675, 1280, 1440, 'sky');
     this.skyNight = this.add.tileSprite(0, -675, 1280, 1440, 'skyNight');
     this.stars = this.add.tileSprite(0, -675, 1280, 1440, 'stars');
-    this.skyNight.alpha = 0;
-    this.stars.alpha = 0;
+    this.skyNight.alpha = skyNightAlpha;
+    this.skyNight.tint = skyNightTint;
+    this.stars.alpha = starsAlpha;
     this.stars.blendMode = PIXI.blendModes.SCREEN;
     this.updateFunctions.push(function(game) {
       //animate sky on update
@@ -110,6 +136,7 @@ OrangeSea.ChapterOne.prototype = {
       game.stars.tilePosition.x -= (0.4*game.ENV_SPEED);
     });
 
+    //TODO add moon at night
     this.sun = this.add.sprite(this.camera.width*.4, this.camera.height*-0.3, 'sun');
     this.sun.anchor.setTo(0.5,0.5);
 
@@ -123,7 +150,7 @@ OrangeSea.ChapterOne.prototype = {
     this.backClouds = this.add.tileSprite(0, 125, cloudTileImage.width, cloudTileImage.height, 'cloudTile');
     this.backClouds.scale.setTo(0.7, 0.7);
     this.backClouds.alpha = 0.85;
-    this.backClouds.tint = 0xeeeedd;
+    this.backClouds.tint = backCloudsTint;
     this.backClouds.tilePosition.x = -1000;
     this.updateFunctions.push(function(game) {
       //animate clouds on update
@@ -138,7 +165,7 @@ OrangeSea.ChapterOne.prototype = {
     this.MID_CLOUDS_Y = -160;
     this.midClouds = this.add.tileSprite(-200, -150, cloudTileImage.width, cloudTileImage.height, 'cloudTile');
     this.midClouds.alpha = 1.0;
-    this.midClouds.tint = 0xeeddcc;
+    this.midClouds.tint = midCloudsTint;
     this.updateFunctions.push(function(game) {
       //animate clouds on update
       game.midClouds.tilePosition.x -= (1.0*game.ENV_SPEED);
@@ -154,12 +181,14 @@ OrangeSea.ChapterOne.prototype = {
     this.waveTiles[0].angle = 1;
     this.waveTiles[0].anchor.setTo(0.5, 0);
     this.waveTiles[0].alpha = 1.0;
+    this.waveTiles[0].tint = waveTilesTint;
 
     var waveTile1Image = this.cache.getImage('waves1');
     this.waveTiles[1] = this.add.tileSprite(this.camera.width/2, -655, waveTile1Image.width, waveTile1Image.height, 'waves1');
     this.waveTiles[1].angle = -1;
     this.waveTiles[1].anchor.setTo(0.5, 0);
     this.waveTiles[1].alpha = 0.9;
+    this.waveTiles[1].tint = waveTilesTint;
 
     // init pearl
     this.pearlSound = this.add.audio('pearlSound');
@@ -174,11 +203,13 @@ OrangeSea.ChapterOne.prototype = {
     this.balloon.anchor.setTo(0.5, 0.1);
     this.balloon.angle = 8;
     this.physics.arcade.enable(this.balloon);
+    this.balloon.tint = balloonTint;
     this.musket.body.allowGravity = false;
     this.balloon.body.allowGravity = false;
     this.balloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
     this.balloon.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED);
     this.balloon.body.bounce = new Phaser.Point(1, 1);
+    this.musket.tint = musketTint;
     //balloon swaying
     this.updateFunctions.push(function(game) {
       if (game.balloon.body.rotation >= 0) {
@@ -199,7 +230,7 @@ OrangeSea.ChapterOne.prototype = {
     var frontCloudTileImage = this.cache.getImage('frontClouds');
     this.FRONT_CLOUDS_Y = -600;
     this.frontClouds = this.add.tileSprite(-200, -350, frontCloudTileImage.width, frontCloudTileImage.height, 'frontClouds');
-    this.frontClouds.tint = 0xffeedd;
+    this.frontClouds.tint = frontCloudsTint;
     this.frontClouds.alpha = 1.0;
     this.updateFunctions.push(function(game) {
       //animate clouds on update
@@ -241,6 +272,7 @@ OrangeSea.ChapterOne.prototype = {
     this.waveTiles[2].angle = 1;
     this.waveTiles[2].anchor.setTo(0.5, 0);
     this.waveTiles[2].alpha = 0.8;
+    this.waveTiles[2].tint = waveTilesTint;
 
     this.updateFunctions.push(function(game) {
       game.waveTiles[0].tilePosition.x -= (1.0*game.ENV_SPEED+2);
@@ -272,11 +304,12 @@ OrangeSea.ChapterOne.prototype = {
 
     //use fog sprite, filter is too slow
     this.fog = this.add.tileSprite(0, 0, 1280, 720, 'fog');
-    this.fog.alpha = 0.25;
+    this.fog.tint = fogTint;
+    this.fog.alpha = fogAlpha;
     this.updateFunctions.push(function(game) {
       game.fog.tilePosition.x -= (2*game.ENV_SPEED);
     });
-    this.add.tween(this.fog).to( {alpha: 0.5}, Phaser.Timer.SECOND*(this.gameEndTime*0.5), Phaser.Easing.Linear.None, true);
+    this.add.tween(this.fog).to( {alpha: 0.5}, Phaser.Timer.SECOND*(Levels[OrangeSea.currentLevel].duration*0.5), Phaser.Easing.Linear.None, true);
 
     //set up lightning flash
     this.flash = this.add.sprite(0, -720, 'white');
@@ -291,21 +324,24 @@ OrangeSea.ChapterOne.prototype = {
 
     this.timer = this.time.create();
     OrangeSea.thunder = this.add.audio('thunder');
-    OrangeSea.thunder.onDecoded.add(function() {
-      //synchronize lightning events with thunder
-      var duration = 90; //hard-coding total duration of thunder file
-      for (var i=0; i<3; i++) { //thunder sound will loop 3 times
-        this.timer.add(Phaser.Timer.SECOND*(duration*i + 4), this.flashLightning, this, 1.0);
-        this.timer.add(Phaser.Timer.SECOND*(duration*i + 20), this.flashLightning, this, 1.0);
-        this.timer.add(Phaser.Timer.SECOND*(duration*i + 64.5), this.flashLightning, this, 1.0);
+    if (Levels[OrangeSea.currentLevel].storm) {
+      OrangeSea.thunder.onDecoded.add(function() {
+        //synchronize lightning events with thunder
+        var duration = 90; //hard-coding total duration of thunder file
+        for (var i=0; i<3; i++) { //thunder sound will loop 3 times
+          this.timer.add(Phaser.Timer.SECOND*(duration*i + 4), this.flashLightning, this, 1.0);
+          this.timer.add(Phaser.Timer.SECOND*(duration*i + 20), this.flashLightning, this, 1.0);
+          this.timer.add(Phaser.Timer.SECOND*(duration*i + 64.5), this.flashLightning, this, 1.0);
+        }
+        OrangeSea.thunder.fadeIn(6000, true);
+        this.timer.start();
+      }, this);
+      //gradually increase rain
+      for (var i=1; i<=10; i++) {
+        this.timer.add(Phaser.Timer.SECOND*(3+2*i), this.addRainEmitter, this, -150 + 10*i);
       }
-      OrangeSea.thunder.fadeIn(6000, true);
+    } else {
       this.timer.start();
-    }, this);
-
-    //gradually increase rain
-    for (var i=1; i<=10; i++) {
-      this.timer.add(Phaser.Timer.SECOND*(3+2*i), this.addRainEmitter, this, -150 + 10*i);
     }
 
     //bad balloon behavior
@@ -471,27 +507,34 @@ OrangeSea.ChapterOne.prototype = {
     };
   },
 
+  sunset: function() {
+    this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
+    this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
+    this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0xCCCCFF, 20000);
+    this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0xCCCCFF, 20000);
+    this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0xCCCCFF, 20000);
+    this.tweenTint(this.balloon, 0xFFFFFF, 0xCCCCFF, 20000);
+    this.tweenTint(this.musket, 0xFFFFFF, 0xCCCCFF, 20000);
+    this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
+    this.tweenTint(this.backClouds, this.backClouds.tint, 0x997755, 20000);
+    this.tweenTint(this.midClouds, this.midClouds.tint, 0x997755, 20000);
+    this.tweenTint(this.frontClouds, this.midClouds.tint, 0x997755, 20000);
+  },
+
+  moonset: function() {
+
+  },
+
   startGame: function() {
-    this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*this.gameEndTime, Phaser.Easing.Linear.None, true);
-    this.sendBadBalloon(8, 100);
+    this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, Phaser.Easing.Linear.None, true);
+    this.sendBadBalloon(Levels[OrangeSea.currentLevel].balloonDelay, 100);
 
-    //stagger tweens because they cause jitter
-    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime*0.9, function() {
-      this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
-      this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
-    }, this);
-
-    this.timer.add(Phaser.Timer.SECOND*this.gameEndTime, function() {
-      this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0xCCCCFF, 20000);
-      this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0xCCCCFF, 20000);
-      this.tweenTint(this.waveTiles[2], 0xFFFFFF, 0xCCCCFF, 20000);
-      this.tweenTint(this.balloon, 0xFFFFFF, 0xCCCCFF, 20000);
-      this.tweenTint(this.musket, 0xFFFFFF, 0xCCCCFF, 20000);
-      this.tweenTint(this.fog, 0xFFFFFF, 0x888888, 10000);
-
-      this.tweenTint(this.backClouds, this.backClouds.tint, 0x997755, 20000);
-      this.tweenTint(this.midClouds, this.midClouds.tint, 0x997755, 20000);
-      this.tweenTint(this.frontClouds, this.midClouds.tint, 0x997755, 20000);
+    this.timer.add(Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, function() {
+      if (Levels[OrangeSea.currentLevel].dayTime) {
+        this.sunset();
+      } else {
+        this.moonset();
+      }
 
       //send BOSS
       //TODO scary music
@@ -511,7 +554,6 @@ OrangeSea.ChapterOne.prototype = {
       if (game.over && game.badBalloonGroup.total == 0 && game.glow == null) {
         game.displaySpeech('"I can continue my journey in peace! For now..."', 5);
         game.continuePearls = false;
-        //  OrangeSea.minBalloonDelay -= 0.75; // TODO make next level harder
         //no more balloons, fade in glow
         game.glow = game.add.sprite(game.camera.width, 0, 'glow');
         game.glow.alpha = 0.0;
@@ -520,16 +562,18 @@ OrangeSea.ChapterOne.prototype = {
         var blink = game.add.tween(game.glow).to( { alpha: 0.5 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
         fadeIn.chain(blink);
 
-        //gradually DECREASE rain
-        for (var i=0; i<game.rainEmitters.length; i++) {
-          game.timer.add(Phaser.Timer.QUARTER*i, function() {
-            this.on = false;
-          }, game.rainEmitters[i]);
+        if (Levels[OrangeSea.currentLevel].storm) {
+          //gradually DECREASE rain
+          for (var i=0; i<game.rainEmitters.length; i++) {
+            game.timer.add(Phaser.Timer.QUARTER*i, function() {
+              this.on = false;
+            }, game.rainEmitters[i]);
+          }
+          OrangeSea.thunder.fadeOut(6000, true);
+          //stop storm
+          game.add.tween(game.frontClouds).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+          game.add.tween(game.fog).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
         }
-        OrangeSea.thunder.fadeOut(6000, true);
-        //stop storm
-        game.add.tween(game.frontClouds).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
-        game.add.tween(game.fog).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
       }
     });
 
@@ -590,12 +634,8 @@ OrangeSea.ChapterOne.prototype = {
     if (delay < 0) {
       return badBalloon; //don't send any more
     }
-    var nextDelay = delay;
-    if (nextDelay > OrangeSea.minBalloonDelay) {
-      nextDelay -= 0.5;
-    }
-    console.log(nextDelay);
-    this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, nextDelay, maxVelocity);
+    console.log(delay);
+    this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, delay, maxVelocity);
   },
 
   throwPearl: function() {
@@ -639,11 +679,14 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   showPearlCount: function() {
+    if (this.pearlCountText.tween) {
+      this.pearlCountText.tween.stop();
+    }
     this.pearlCountText.setText(this.pearlCount);
     this.pearlCountText.x = this.balloon.x;
     this.pearlCountText.y = this.balloon.y;
     this.pearlCountText.alpha = 1.0;
-    this.add.tween(this.pearlCountText).to( {y: this.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
+    this.pearlCountText.tween = this.add.tween(this.pearlCountText).to( {y: this.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
   },
 
   sendFish: function() {
@@ -697,7 +740,11 @@ OrangeSea.ChapterOne.prototype = {
   addRainEmitter: function(height) {
     var emitter = this.add.emitter(this.world.centerX, height, 90);
   	emitter.width = this.world.width*1.2;
-  	emitter.makeParticles('rain');
+    if (Levels[OrangeSea.currentLevel].dayTime) {
+    	emitter.makeParticles('rain');
+    } else {
+      emitter.makeParticles('rainNight');
+    }
   	emitter.minParticleScale = 0.1;
   	emitter.maxParticleScale = 0.4;
   	emitter.setYSpeed(600, 1000);
@@ -719,7 +766,7 @@ OrangeSea.ChapterOne.prototype = {
       titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, OrangeSea.deadMessage, { font: "90px great_victorianstandard", fill: "white" } );
       titleText.anchor.setTo(0.5, 0.5);
     } else {
-      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, "Orange Sea", { font: "120px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
+      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, Levels[OrangeSea.currentLevel].title, { font: "120px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
       titleText.anchor.setTo(0.5, 0.5);
     }
     titleText.fixedToCamera = true;
