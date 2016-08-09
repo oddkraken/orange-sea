@@ -19,7 +19,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * SPEECH
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
-* "The Aeronaut" - aeronaut.oddkraken.com
+* New Title??
+    * "The Aeronaut" / "The Aeronaut's Journey" - aeronaut.oddkraken.com
 * Boss music
 * Angler Fish?
 * Does fish fall while off screen? look into that.

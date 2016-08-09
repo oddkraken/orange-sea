@@ -43,7 +43,7 @@ OrangeSea.ChapterOne.prototype = {
     this.sky = null;
     this.skyNight = null;
     this.stars = null;
-    this.sun = null;
+    this.celestial = null;
     this.fog = null;
     this.fish = null;
     this.anglerFish = null;
@@ -89,6 +89,7 @@ OrangeSea.ChapterOne.prototype = {
     var backCloudsTint = 0xeeeedd;
     var midCloudsTint = 0xeeddcc;
     var frontCloudsTint = 0xffeedd;
+    var celestialImage = 'sun';
     if (!Levels[OrangeSea.currentLevel].dayTime) { //if night...
       starsAlpha = 1;
       skyNightAlpha = 1;
@@ -102,6 +103,7 @@ OrangeSea.ChapterOne.prototype = {
       backCloudsTint = 0x557799;
       midCloudsTint = 0x557799;
       frontCloudsTint = 0x557799;
+      celestialImage = 'moon';
     }
 
     this.camera.flash(0x000000, 1000); //fade in
@@ -136,9 +138,8 @@ OrangeSea.ChapterOne.prototype = {
       game.stars.tilePosition.x -= (0.4*game.ENV_SPEED);
     });
 
-    //TODO add moon at night
-    this.sun = this.add.sprite(this.camera.width*.4, this.camera.height*-0.3, 'sun');
-    this.sun.anchor.setTo(0.5,0.5);
+    this.celestial = this.add.sprite(this.camera.width*.4, this.camera.height*-0.3, celestialImage);
+    this.celestial.anchor.setTo(0.5,0.5);
 
     //lightning bolt
     this.lightning = this.add.sprite(this.camera.width*0.5, -200, 'lightning');
@@ -527,7 +528,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   startGame: function() {
-    this.add.tween(this.sun).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, Phaser.Easing.Linear.None, true);
+    this.add.tween(this.celestial).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, Phaser.Easing.Linear.None, true);
     this.sendBadBalloon(Levels[OrangeSea.currentLevel].balloonDelay, 100);
 
     this.timer.add(Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, function() {
