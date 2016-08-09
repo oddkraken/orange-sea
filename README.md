@@ -4,18 +4,22 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* STATS!
+    * Combos will make it WAY more fun
+        * "Double hit!"
+        * End screen: "Best multi-hit: 5"
+* Let player go all the way to the right, and make pearls appear at any x val
+* Something GOOD needs to lure player to right of screen
+    * rapid pearl burst?
+* MOON! SUPER EASY!
 * Design level configuration system:
     * boss HP
     * write moonrise function
+    * SPEECH
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
-* Part Two: Nocturnal Sycophants
-    * Get rid of the "not flying at night" thing, find another way to indicate there's a level end / reprieve
-* Combos
-    * "Double hit!"
-    * End screen: "Best multi-hit: 5"
-* BIG balloon BOSS that takes 5 pearls to bring down
-    * Music
+* "The Aeronaut" - aeronaut.oddkraken.com
+* Boss music
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3
