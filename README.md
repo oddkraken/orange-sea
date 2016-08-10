@@ -4,15 +4,14 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Extend tutorial to give an easy combo.
 * STATS!
     * Combos will make it WAY more fun
         * "Double hit!"
         * End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
     * Enemy killed count above ALL enemies, like pearl count except allow duplicates
-* Let player go all the way to the right, and make pearls appear at any x val
 * Something GOOD needs to lure player to right of screen
     * rapid pearl burst?
-* MOON! SUPER EASY!
 * Design level configuration system:
     * boss HP
     * write moonrise function

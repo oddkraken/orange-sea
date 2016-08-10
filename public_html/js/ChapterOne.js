@@ -354,7 +354,6 @@ OrangeSea.ChapterOne.prototype = {
           game.escapedBalloons++;
           if (game.escapedBalloons >= 1) {
             ga('send', 'event', 'dead', 'balloonEscaped');
-            OrangeSea.pearlCount = 0;
             OrangeSea.deadMessage = 'An enemy airship escaped.';
             game.deadSound.play(null, null, 0.5);
             OrangeSea.thunder.fadeOut(500);
@@ -913,7 +912,6 @@ OrangeSea.ChapterOne.prototype = {
     //dying
     if (this.balloon.y > 650 && this.alive) {
       ga('send', 'event', 'dead', 'lostAtSea');
-      OrangeSea.pearlCount = 0;
       OrangeSea.deadMessage = 'He was lost at sea.';
       this.splash.play(null, null, 0.5);
       this.deadSound.play(null, null, 0.5);
