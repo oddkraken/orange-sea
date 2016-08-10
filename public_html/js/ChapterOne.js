@@ -77,8 +77,8 @@ OrangeSea.ChapterOne.prototype = {
 
   create: function () {
     //set up day and night (day default)
-    var starsAlpha = 0;
-    var skyNightAlpha = 0;
+    var starsAlpha = 0.1;
+    var skyNightAlpha = 0.1;
     var skyNightTint = 0XFFFFFF;
     var waveTilesTint = 0xFFFFFF;
     var balloonTint = 0xFFFFFF;
@@ -509,7 +509,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   sunset: function() {
-    //this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
+    this.add.tween(this.stars).to( { alpha: 1.0 }, 10000, Phaser.Easing.Linear.None, true);
     this.add.tween(this.skyNight).to( { alpha: 1.0 }, 20000, Phaser.Easing.Linear.None, true);
     this.tweenTint(this.waveTiles[0], 0xFFFFFF, 0xCCCCFF, 20000);
     this.tweenTint(this.waveTiles[1], 0xFFFFFF, 0xCCCCFF, 20000);
