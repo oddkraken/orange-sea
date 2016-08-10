@@ -73,6 +73,7 @@ OrangeSea.ChapterOne.prototype = {
     this.glow = null; //end game glow
     this.continuePearls = true;
     this.boss = {};
+    this.vanquished = 0;
   },
 
   create: function () {
@@ -397,6 +398,7 @@ OrangeSea.ChapterOne.prototype = {
             }
           } else if (pearl.alive && game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
             game.pop.play(null, null, 0.25);
+            game.vanquished++;
             child.popped = true;
             var holeY = pearl.y - child.y;
             if (holeY < 0) { holeY = 0; }
@@ -902,6 +904,7 @@ OrangeSea.ChapterOne.prototype = {
 
     //WINNING
     if (this.balloon.x > this.camera.width*1.1 && this.over && this.alive && this.badBalloonGroup.total == 0) {
+      OrangeSea.vanquished += this.vanquished;
       ga('send', 'event', 'cleared');
       this.balloon.body.immovable = true;
       this.camera.fade(0x000000);

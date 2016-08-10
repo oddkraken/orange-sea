@@ -9,6 +9,7 @@ var OrangeSea = {
   currentLevel: 0,
   pearlCount: 0, //ammo
   totalPearlCount: 0, //total collected
+  vanquished: 0, //total enemies killed
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
