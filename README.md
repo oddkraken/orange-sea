@@ -4,14 +4,18 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* STATS!
-    * Combos will make it WAY more fun
-        * "Double hit!"
-        * End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
-    * Enemy killed count above ALL enemies, like pearl count except allow duplicates
+* Enemies need to be scarier (grim reaper pilots?)
+* Give player a sense of progress and curiosity...
+    * big balloons drop something
+    * items - cycle through with numbers
+        * 1. add reload sound/delay to musket, rename to rifle
+        * 2. repeater - weaker/slower shot, no delay
+        * 3. boost - ram to melee attack balloon
+* Evil ghost balloons come from shadow at night and try to knock you into the water!
+* End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
 * Something GOOD needs to lure player to right of screen
     * rapid pearl burst?
-* Design level configuration system:
+* Level configuration system:
     * boss HP
     * write moonrise function
     * SPEECH
@@ -28,19 +32,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * bad balloon flashes red if x < ~200
     * Shadow gets larger (no longer a function of balloon.x)
     * Loss animation that explains what happens
-* Design good and bad "encounters" to be used throughout Chapters
-    * Good
-        * goodies - blunderbuss, weight (slower balloon, less effected by wind)
-        * find goodies in derelict balloon, ship, or flotsam
-        * commandeer derelict
-        * "eye of the storm" - stop clouds for 10 seconds or so.
-        * sky opens up and you can play above the dark clouds.
-        * specters
-    * Bad
-        * Whale jumping
-        * pirates shooting at you
-        * tentacle
-        * mountain
 * New music - 3/4 time? Accordion / bagpipe / violin - idk
 
 ## Issues
