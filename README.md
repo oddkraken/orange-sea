@@ -4,7 +4,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Extend tutorial to give an easy combo.
 * STATS!
     * Combos will make it WAY more fun
         * "Double hit!"

@@ -13,7 +13,7 @@ OrangeSea.Cleared.prototype = {
     var background = this.add.sprite(0, 0, 'clearedBackground1'); //winner background
 
     var message = this.add.text(this.camera.width/2, this.camera.height/2,
-      'Pearls: ' + OrangeSea.pearlCount + '\nEnemies felled: ' + OrangeSea.vanquished, 
+      'Pearls: ' + OrangeSea.pearlCount + '\nEnemies Felled: ' + OrangeSea.vanquished, 
       { font: "90px great_victorianstandard", fill: "#ede3d6", align: "left" } );
     message.anchor.setTo(0.5, 0.5);
 

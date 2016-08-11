@@ -397,6 +397,16 @@ OrangeSea.ChapterOne.prototype = {
               }, null, game);
             }
           } else if (pearl.alive && game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
+            pearl.killCount++;
+            if (pearl.killCount > 1) {
+              game.killCountText.setText(pearl.killCount + "!");
+              if (pearl.killCount < 5) {
+                game.killCountText.fontSize = pearl.killCount*30;
+              } else {
+                game.killCountText.fontSize = 150;
+              }
+              game.showCount(game.killCountText, child.x, child.y);
+            }
             game.pop.play(null, null, 0.25);
             game.vanquished++;
             child.popped = true;
@@ -412,7 +422,7 @@ OrangeSea.ChapterOne.prototype = {
             child.body.velocity.x = pearl.body.velocity.x*.25;
             child.tween.stop();
           }
-          if (pearl.x > game.camera.width || pearl.y > game.camera.height) {
+          if (pearl.x > game.camera.width || pearl.x < 0 || pearl.y > game.camera.height) {
             pearl.destroy();
           }
         });
@@ -430,7 +440,8 @@ OrangeSea.ChapterOne.prototype = {
           //show pearl count text
           OrangeSea.totalPearlCount++;
           OrangeSea.pearlCount++;
-          game.showPearlCount();
+          game.pearlCountText.setText(OrangeSea.pearlCount);
+          game.showCount(game.pearlCountText, game.balloon.x, game.balloon.y);
           game.pearlSound.play(null, null, 0.5);
           pearl.destroy();
         } else if (pearl.y > game.camera.height) {
@@ -461,9 +472,14 @@ OrangeSea.ChapterOne.prototype = {
     //text group
     this.textGroup = this.add.group(undefined, 'textGroup');
     //pearl count text
-    this.pearlCountText = this.add.text(0, -50, "10", { font: "48px great_victorianstandard", fill: "white" } );
+    this.pearlCountText = this.add.text(0, -50, "0", { font: "48px great_victorianstandard", fill: "white", fontWeight: 'bold' } );
     this.pearlCountText.anchor.setTo(0.5, 0.5);
     this.pearlCountText.alpha = 0;
+
+    //pearl count text
+    this.killCountText = this.add.text(0, -50, "0", { font: "72px great_victorianstandard", fill: "gold", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
+    this.killCountText.anchor.setTo(0.5, 0.5);
+    this.killCountText.alpha = 0;
 
     //display chapter title
     this.timer.add(Phaser.Timer.SECOND*2, this.displayChapterTitle, this);
@@ -645,13 +661,15 @@ OrangeSea.ChapterOne.prototype = {
     if (OrangeSea.pearlCount > 0) {
       this.gunshot.play(null, null, 0.4);
       OrangeSea.pearlCount--;
-      this.showPearlCount();
+      this.pearlCountText.setText(OrangeSea.pearlCount);
+      this.showCount(this.pearlCountText, this.balloon.x, this.balloon.y);
       var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
       this.thrownPearlGroup.add(thrownPearl);
       this.physics.arcade.enable(thrownPearl);
       thrownPearl.body.velocity.x = this.pearlThrowDirection*1200;
       thrownPearl.body.velocity.y = -100;
       thrownPearl.body.bounce.setTo(0.1, 0.1);
+      thrownPearl.killCount = 0; //track kills for combos
     } else {
       this.click.play(null, null, 0.25);
     }
@@ -681,15 +699,22 @@ OrangeSea.ChapterOne.prototype = {
     }
   },
 
-  showPearlCount: function() {
-    if (this.pearlCountText.tween) {
-      this.pearlCountText.tween.stop();
+  showCount: function(text, x, y) {
+    if (text.tween) {
+      text.tween.stop();
     }
-    this.pearlCountText.setText(OrangeSea.pearlCount);
-    this.pearlCountText.x = this.balloon.x;
-    this.pearlCountText.y = this.balloon.y;
-    this.pearlCountText.alpha = 1.0;
-    this.pearlCountText.tween = this.add.tween(this.pearlCountText).to( {y: this.pearlCountText.y - 100, alpha: 0}, 2000, null, true);
+    var xMax = this.camera.width*0.95;
+    var xMin = this.camera.width*0.05;
+    if (x > xMax) {
+      text.x = xMax;
+    } else if (x < xMin) {
+      text.x = xMin;
+    } else {
+      text.x = x;
+    }
+    text.y = y;
+    text.alpha = 1.0;
+    text.tween = this.add.tween(text).to( {y: text.y - 100, alpha: 0}, 2000, null, true);
   },
 
   sendFish: function() {
@@ -779,9 +804,16 @@ OrangeSea.ChapterOne.prototype = {
     fadeIn.chain(fadeOut);
   },
 
-  displaySpeech: function(speechText, seconds) {
+  displaySpeech: function(speechText, seconds, fadeTime) {
     if (!seconds) {
       seconds = 8;
+    }
+    if (!fadeTime) {
+      fadeTime = 2000;
+    }
+    //interrupt existing speech, if any
+    if (this.speech) {
+      this.speech.destroy();
     }
     //fade in speech
     var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" };
@@ -790,8 +822,8 @@ OrangeSea.ChapterOne.prototype = {
     this.speech.fixedToCamera = true;
     this.textGroup.add(this.speech);
     this.speech.bringToTop();
-    var fadeIn = this.add.tween(this.speech).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
-    var fadeOut = this.add.tween(this.speech).to({ alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, false, seconds*Phaser.Timer.SECOND);
+    var fadeIn = this.add.tween(this.speech).from( { alpha: 0.0 }, fadeTime, Phaser.Easing.Linear.None, true);
+    var fadeOut = this.add.tween(this.speech).to({ alpha: 0.0 }, fadeTime, Phaser.Easing.Linear.None, false, seconds*Phaser.Timer.SECOND);
     fadeIn.chain(fadeOut);
   },
 
