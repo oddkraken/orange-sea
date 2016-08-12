@@ -7,8 +7,9 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Enemies need to be scarier (grim reaper pilots?)
 * Give player a sense of progress and curiosity...
     * big balloons drop something
+        * chest full of pearls
     * items - cycle through with numbers
-        * 1. add reload sound/delay to musket, rename to rifle
+        * 1. add reload sound/delay to musket, rename to rifle - IMPORTANT SO YOU CAN'T RAPIDFIRE THE BOSSES!
         * 2. repeater - weaker/slower shot, no delay
         * 3. boost - ram to melee attack balloon
 * Evil ghost balloons come from shadow at night and try to knock you into the water!
@@ -22,7 +23,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
 * New Title??
-    * "The Aeronaut" / "The Aeronaut's Journey" - aeronaut.oddkraken.com
+    * "The Aeronaut" / "The Aeronaut's Journey" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
 * Boss music
 * Angler Fish?
 * Does fish fall while off screen? look into that.

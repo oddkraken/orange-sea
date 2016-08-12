@@ -11,7 +11,6 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text("Balloons: " + this.badBalloonGroup.total, 2, 75, "#ffffff");
       this.game.debug.text("Text: " + this.textGroup.total, 2, 90, "#ffffff");
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
-      this.game.debug.text("Fish y: " + this.fish.y, 2, 120, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       // this.badBalloonGroup.forEach(function(child) {
@@ -291,7 +290,7 @@ OrangeSea.ChapterOne.prototype = {
     this.splash = this.add.audio('splash');
     this.splash.allowMultiple = true; //fish and pearl may splash simultaneously
     this.gunshot = this.add.audio('gunshot');
-    this.gunshot.allowMultiple = true;
+    this.reload = this.add.audio('reload');
     this.pop = this.add.audio('pop');
     this.pop.allowMultiple = true;
     this.click = this.add.audio('click');
@@ -353,7 +352,7 @@ OrangeSea.ChapterOne.prototype = {
         //3 escaped balloons triggers loss!
         if (balloon.x < -100 && !balloon.popped) {
           game.escapedBalloons++;
-          if (game.escapedBalloons >= 1) {
+          if (game.escapedBalloons >= 1 && game.alive) {
             ga('send', 'event', 'dead', 'balloonEscaped');
             OrangeSea.deadMessage = 'An enemy airship escaped.';
             game.deadSound.play(null, null, 0.5);
@@ -659,17 +658,26 @@ OrangeSea.ChapterOne.prototype = {
 
   throwPearl: function() {
     if (OrangeSea.pearlCount > 0) {
-      this.gunshot.play(null, null, 0.4);
-      OrangeSea.pearlCount--;
-      this.pearlCountText.setText(OrangeSea.pearlCount);
-      this.showCount(this.pearlCountText, this.balloon.x, this.balloon.y);
-      var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
-      this.thrownPearlGroup.add(thrownPearl);
-      this.physics.arcade.enable(thrownPearl);
-      thrownPearl.body.velocity.x = this.pearlThrowDirection*1200;
-      thrownPearl.body.velocity.y = -100;
-      thrownPearl.body.bounce.setTo(0.1, 0.1);
-      thrownPearl.killCount = 0; //track kills for combos
+      if (!this.reloading) {
+        this.gunshot.play(null, null, 0.4);
+        this.reloading = true;
+        this.timer.add(Phaser.Timer.SECOND*0.5, function() {
+          this.reload.play(null, null, 0.3);
+          this.reload.onStop.addOnce(function() {
+            this.reloading = false;
+          }, this);
+        }, this);
+        OrangeSea.pearlCount--;
+        this.pearlCountText.setText(OrangeSea.pearlCount);
+        this.showCount(this.pearlCountText, this.balloon.x, this.balloon.y);
+        var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
+        this.thrownPearlGroup.add(thrownPearl);
+        this.physics.arcade.enable(thrownPearl);
+        thrownPearl.body.velocity.x = this.pearlThrowDirection*1200;
+        thrownPearl.body.velocity.y = -100;
+        thrownPearl.body.bounce.setTo(0.1, 0.1);
+        thrownPearl.killCount = 0; //track kills for combos
+      }
     } else {
       this.click.play(null, null, 0.25);
     }

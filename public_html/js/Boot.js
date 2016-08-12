@@ -35,35 +35,35 @@ var Levels = [
   {
     title: "Night One",
     duration: 45,
-    balloonDelay: 8,
+    balloonDelay: 4,
     dayTime: false,
     storm: false
   },
   {
     title: "Day Two",
     duration: 60,
-    balloonDelay: 6,
+    balloonDelay: 2,
     dayTime: true,
     storm: false
   },
   {
     title: "Night Two",
     duration: 60,
-    balloonDelay: 4,
+    balloonDelay: 1,
     dayTime: false,
     storm: true
   },
   {
     title: "Day Three",
     duration: 75,
-    balloonDelay: 2,
+    balloonDelay: 1,
     dayTime: true,
     storm: true
   },
   {
     title: "Night Three",
     duration: 75,
-    balloonDelay: 1,
+    balloonDelay: 0.5,
     dayTime: false,
     storm: false
   }

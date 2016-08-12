@@ -66,6 +66,7 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('explosion', 'assets/audio/explosion.mp3');
     this.load.audio('pearlSound', 'assets/audio/pearlSound.mp3');
     this.load.audio('gunshot', 'assets/audio/gunshot.mp3');
+    this.load.audio('reload', 'assets/audio/reload.mp3');
     this.load.audio('pop', 'assets/audio/pop.mp3');
     this.load.audio('click', 'assets/audio/click.mp3');
     this.load.audio('dead', 'assets/audio/dead.mp3');
