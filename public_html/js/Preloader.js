@@ -46,6 +46,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('boost', 'assets/images/boost.png');
     this.load.image('musket', 'assets/images/musket.png');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
+    this.load.image('healthBar', 'assets/images/healthBar.png');
 
     this.load.image('chapterOne', 'assets/text/chapterOne.png');
     this.load.image('spaceToContinue', 'assets/text/spaceToContinue.png');

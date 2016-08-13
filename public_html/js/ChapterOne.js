@@ -111,7 +111,7 @@ OrangeSea.ChapterOne.prototype = {
     this.alive = true;
 
     // Define movement constants
-    this.MAX_SPEED = 600; // pixels/second
+    this.MAX_SPEED = 800; // pixels/second
     this.ACCELERATION = 2000; // pixels/second/second
     this.DRAG_X = 1200; // pixels/second
     this.DRAG_Y = 1200; // pixels/second
@@ -385,7 +385,7 @@ OrangeSea.ChapterOne.prototype = {
                 if (!child.flashing) {
                   child.flashing = true;
                   var oldTint = child.tint;
-                  child.tint = 0xFF9999;
+                  child.tint = 0xFF7777;
                   this.timer.add(Phaser.Timer.SECOND*0.1, function() {
                     child.tint = oldTint;
                     child.flashing = false;
@@ -393,6 +393,13 @@ OrangeSea.ChapterOne.prototype = {
                 }
                 child.hp--;
                 pearl.alive = false;
+                if (!child.healthBar){
+                  child.healthBar = game.add.sprite(0, -30, 'healthBar');
+                  child.healthBar.tint = 0xCC0000;
+                  child.healthBar.anchor.setTo(0.5, 0.5);
+                  child.addChild(child.healthBar);
+                }
+                child.healthBar.scale.setTo(child.hp*0.2, 0.5);
               }, null, game);
             }
           } else if (pearl.alive && game.physics.arcade.intersects(pearl.body, child.body) && !child.popped) {
@@ -409,17 +416,20 @@ OrangeSea.ChapterOne.prototype = {
             game.pop.play(null, null, 0.25);
             game.vanquished++;
             child.popped = true;
-            var holeY = pearl.y - child.y;
+            var holeY = (pearl.y - child.y) / child.scale.y;
             if (holeY < 0) { holeY = 0; }
-            else if (holeY > 50) { holeY = 50; }
             var balloonHole = game.add.sprite(0, holeY, 'balloonHole');
             balloonHole.anchor.setTo(0.5, 0.5);
+            balloonHole.scale.setTo(1.5, 1.5);
             child.addChild(balloonHole);
             typeof child.onPopped === 'function' && child.onPopped(game);
             child.body.acceleration.y = 100;
             child.body.velocity.y = 200;
             child.body.velocity.x = pearl.body.velocity.x*.25;
             child.tween.stop();
+            if (child.healthBar) {
+              child.healthBar.alpha = 0;
+            }
           }
           if (pearl.x > game.camera.width || pearl.x < 0 || pearl.y > game.camera.height) {
             pearl.destroy();
@@ -513,10 +523,10 @@ OrangeSea.ChapterOne.prototype = {
 
   beginTutorial: function() {
     this.tutorialInProgress = true;
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had saved some ammunition..."', 5);
+    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had saved some ammunition. Something small and round..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
-    var firstBadBalloon = this.sendBadBalloon(-1, 10, 1.5);
+    var firstBadBalloon = this.sendBadBalloon(-1, 10, 1);
     firstBadBalloon.onPopped = function(game) {
       this.body.maxVelocity.x = game.MAX_SPEED; //let it fly off screen
       OrangeSea.showTutorial = false;
@@ -560,7 +570,7 @@ OrangeSea.ChapterOne.prototype = {
 
       this.deadSound.play();
       this.timer.add(Phaser.Timer.SECOND*5, function() {
-        this.boss = this.sendBadBalloon(-1, 50, 2, 5, 0xCC2222, true);
+        this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null, true);
         this.boss.onPopped = function(game) {
           game.over = true;
         }
@@ -621,10 +631,12 @@ OrangeSea.ChapterOne.prototype = {
     var height = this.camera.height*(Math.random()*0.4 + 0.3);
     var badBalloon = this.add.sprite(this.camera.width*1.1, height, 'badBalloon');
     if (!size) {
-      size = Math.random()+0.5;
+      size = Math.random()*0.5+0.5;
     }
     if (tint) {
       badBalloon.tint = tint;
+    } else if (!Levels[OrangeSea.currentLevel].dayTime) {
+      badBalloon.tint = 0xCCCCFF;
     }
     if (hp) {
       badBalloon.hp = hp;
@@ -930,7 +942,7 @@ OrangeSea.ChapterOne.prototype = {
     if (this.balloon.x > this.camera.width && this.balloon.body.velocity.x > 0 && !this.over) {
       this.balloon.body.acceleration.x = -this.ACCELERATION;
     }
-    if (this.balloon.x < 50 && this.balloon.body.velocity.x < 0 && !this.over) {
+    if (this.balloon.x < 50 && this.balloon.body.velocity.x < 0) {
       this.balloon.body.acceleration.x = this.ACCELERATION;
     }
     if (this.balloon.y < 0) {
