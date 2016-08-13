@@ -58,6 +58,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('lostInShadow', 'assets/text/lostInGloom.png');
 
     this.load.audio('theme', 'assets/audio/theme2.mp3');
+    this.load.audio('bossTheme', 'assets/audio/bossTheme.mp3');
     this.load.audio('thunder', 'assets/audio/thunder2.mp3');
     this.load.audio('waveSound', 'assets/audio/waves.mp3');
     this.load.audio('splash', 'assets/audio/splash.mp3');

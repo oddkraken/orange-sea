@@ -4,7 +4,10 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Enemies need to be scarier (grim reaper pilots?)
+* Circle hitboxes, replace y tweens with physics calculations
+* badBalloon/fish collisions cause you to drop pearls
+* propellers
+* Happy music when boss falls
 * Give player a sense of progress and curiosity...
     * big balloons drop something
         * chest full of pearls
@@ -24,15 +27,9 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * Shadow grows, evil music plays, camera fades out
 * New Title??
     * "The Aeronaut" / "The Aeronaut's Journey" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
-* Boss music
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3
-* Let 3 balloons get by before dying
-    * "A servant has eluded me! The Shadow grows stronger."
-    * bad balloon flashes red if x < ~200
-    * Shadow gets larger (no longer a function of balloon.x)
-    * Loss animation that explains what happens
 * New music - 3/4 time? Accordion / bagpipe / violin - idk
 
 ## Issues

@@ -284,7 +284,7 @@ OrangeSea.ChapterOne.prototype = {
 
     OrangeSea.music = this.add.audio('theme');
     OrangeSea.music.onDecoded.add(function() {
-      OrangeSea.music.loopFull(0.2);
+      OrangeSea.music.loopFull(0.3);
     }, this);
 
     this.splash = this.add.audio('splash');
@@ -565,15 +565,26 @@ OrangeSea.ChapterOne.prototype = {
       }
 
       //send BOSS
-      //TODO scary music
       this.displaySpeech('"A formidable airship is incoming!"', 3);
+      OrangeSea.music.fadeOut(4000);
 
-      this.deadSound.play();
       this.timer.add(Phaser.Timer.SECOND*5, function() {
         this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null, true);
         this.boss.onPopped = function(game) {
+          OrangeSea.music.fadeOut(1000);
           game.over = true;
         }
+      }, this);
+
+      this.timer.add(Phaser.Timer.SECOND*7, function() {
+        OrangeSea.music.destroy();
+        OrangeSea.music = this.add.audio('bossTheme');
+        OrangeSea.music.onDecoded.add(function() {
+          OrangeSea.music.loopFull(0.4);
+        }, this);
+        this.flashLightning(1.0);
+        this.explosion.play();
+        this.camera.shake(0.003);
       }, this);
     }, this);
 
@@ -597,7 +608,7 @@ OrangeSea.ChapterOne.prototype = {
               this.on = false;
             }, game.rainEmitters[i]);
           }
-          OrangeSea.thunder.fadeOut(6000, true);
+          OrangeSea.thunder.fadeOut(6000);
           //stop storm
           game.add.tween(game.frontClouds).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
           game.add.tween(game.fog).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
