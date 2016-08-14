@@ -13,13 +13,13 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
-      // this.badBalloonGroup.forEach(function(child) {
-      //   child.game.debug.body(child);
-      // });
+      this.badBalloonGroup.forEach(function(child) {
+        child.game.debug.body(child);
+      });
       // this.thrownPearlGroup.forEach(function(child) {
       //   child.game.debug.body(child);
       // });
-      // this.game.debug.body(this.balloon);
+      this.game.debug.body(this.balloon);
       // for (var i=0; i<this.stormClouds.length; i++) {
       //   this.game.debug.body(this.stormClouds[i], 'rgba(0,255,0,0.2)');
       // }
@@ -371,12 +371,19 @@ OrangeSea.ChapterOne.prototype = {
       }).callAll('destroy');
       //update all badBalloons
       game.badBalloonGroup.forEach(function(child) {
+        if (!child.popped) {
+          if (child.y > 225) {
+            child.body.acceleration.y = -25;
+          } else {
+            child.body.acceleration.y = 25;
+          }
+        }
         if (child.body.rotation >= 0) {
           child.body.angularAcceleration = -60;
         } else {
           child.body.angularAcceleration = 60;
         }
-        game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.2); });
+        game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.5); });
         game.thrownPearlGroup.forEach(function(pearl) {
           if (child.hp > 1) { //pearl does damage and bounces off
             if (pearl.alive) {
@@ -426,7 +433,6 @@ OrangeSea.ChapterOne.prototype = {
             child.body.acceleration.y = 100;
             child.body.velocity.y = 200;
             child.body.velocity.x = pearl.body.velocity.x*.25;
-            child.tween.stop();
             if (child.healthBar) {
               child.healthBar.alpha = 0;
             }
@@ -569,7 +575,7 @@ OrangeSea.ChapterOne.prototype = {
       OrangeSea.music.fadeOut(4000);
 
       this.timer.add(Phaser.Timer.SECOND*5, function() {
-        this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null, true);
+        this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null);
         this.boss.onPopped = function(game) {
           OrangeSea.music.fadeOut(1000);
           game.over = true;
@@ -631,7 +637,7 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   //use delay = -1 to send only one
-  sendBadBalloon: function(delay, maxVelocity, size, hp, tint, immovable) {
+  sendBadBalloon: function(delay, maxVelocity, size, hp, tint) {
     if (this.over) {
       return;
     }
@@ -639,7 +645,7 @@ OrangeSea.ChapterOne.prototype = {
       maxVelocity = this.MAX_SPEED;
     }
     //bad balloon
-    var height = this.camera.height*(Math.random()*0.4 + 0.3);
+    var height = this.camera.height*Math.random()*0.5;
     var badBalloon = this.add.sprite(this.camera.width*1.1, height, 'badBalloon');
     if (!size) {
       size = Math.random()*0.5+0.5;
@@ -658,18 +664,11 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.setSize(badBalloon.body.width, badBalloon.body.height*0.65);
     badBalloon.scale.setTo(size, size);
     badBalloon.anchor.setTo(0.5, 0.1);
-    //badBalloon.body.setCircle(badBalloon.width*0.5);
     badBalloon.angle = 8;
     badBalloon.body.allowGravity = false;
-    badBalloon.tween = this.add.tween(badBalloon).to({ y: badBalloon.y - 200}, 3000 + Math.random()*3000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     badBalloon.body.acceleration.x = -50;
     badBalloon.body.maxVelocity.setTo(maxVelocity, this.MAX_SPEED);
-    badBalloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
-    badBalloon.body.mass = 10;
-    badBalloon.body.bounce = new Phaser.Point(1, 1);
-    if (immovable) {
-      badBalloon.body.immovable = true;
-    }
+    badBalloon.body.immovable = true;
     this.badBalloonGroup.add(badBalloon);
 
     if (delay < 0) {
