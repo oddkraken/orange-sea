@@ -4,7 +4,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Circle hitboxes, replace y tweens with physics calculations
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
