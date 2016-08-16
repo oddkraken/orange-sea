@@ -7,6 +7,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
+* Different night music
 * Give player a sense of progress and curiosity...
     * big balloons drop something
         * chest full of pearls
@@ -25,7 +26,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Dead animation
     * Shadow grows, evil music plays, camera fades out
 * New Title??
-    * "The Aeronaut" / "The Aeronaut's Journey" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
+    * "The Lost Aeronaut" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3

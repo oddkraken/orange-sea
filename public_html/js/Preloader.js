@@ -42,7 +42,6 @@ OrangeSea.Preloader.prototype = {
     this.load.image('lightning2', 'assets/images/lightning2.png');
     this.load.image('white', 'assets/images/white.png');
     this.load.image('glow', 'assets/images/glow.png');
-    this.load.image('shadow', 'assets/images/shadow.png');
     this.load.image('boost', 'assets/images/boost.png');
     this.load.image('musket', 'assets/images/musket.png');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
@@ -55,7 +54,6 @@ OrangeSea.Preloader.prototype = {
     this.load.image('speech2', 'assets/text/speech2.png');
     this.load.image('controls', 'assets/text/controls.png');
     this.load.image('lostAtSea', 'assets/text/lostAtSea.png');
-    this.load.image('lostInShadow', 'assets/text/lostInGloom.png');
 
     this.load.audio('theme', 'assets/audio/theme2.mp3');
     this.load.audio('bossTheme', 'assets/audio/bossTheme.mp3');
@@ -133,6 +131,7 @@ OrangeSea.Preloader.prototype = {
         this.storyTween.stop();
         this.add.tween(this.story).to( { alpha: 0.0}, 500, Phaser.Easing.Linear.None, true);
         this.add.tween(this.controlsMessage).to( { alpha: 1.0}, 500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.preloadBackground).to( { alpha: 0.2}, 500, Phaser.Easing.Linear.None, true);
       }
     } else {
       this.displayOneMomentPlease();
@@ -152,7 +151,9 @@ OrangeSea.Preloader.prototype = {
   },
 
   displayStoryText: function() {
-    this.story = this.add.sprite(0, 0, 'story');
+    this.story = this.add.text(this.camera.width*0.5, this.camera.height*0.5, 'Orange Sea', { font: "180px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
+    this.story.anchor.setTo(0.5, 0.5);
+    this.story.setShadow(5, 0, 'rgba(0,0,0,0.4)', 5);
     this.storyTween = this.add.tween(this.story).from( { alpha: 0.0 }, 1000, Phaser.Easing.Linear.None, true);
   },
 

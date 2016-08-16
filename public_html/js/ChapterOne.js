@@ -450,7 +450,7 @@ OrangeSea.ChapterOne.prototype = {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body) && game.alive) {
           //show explanation if first pearl
           if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
-            game.displaySpeech('"Colossal mollusks lob pearls from the depths! These trinkets will have to suffice."\nPress Space to fire.', 5);
+            game.displaySpeech('"Colossal mollusks lob pearls from the depths!\nThese trinkets will have to suffice."\nPress Space to fire.', 5);
           }
           //show pearl count text
           OrangeSea.totalPearlCount++;
@@ -473,16 +473,6 @@ OrangeSea.ChapterOne.prototype = {
       this.sendPearl();
       this.startGame();
     }
-
-    //evil shadow
-    this.shadow = this.add.sprite(-100, 0, 'shadow');
-    this.shadow.alpha = 0.0;
-    this.updateFunctions.push(function(game) {
-      if (game.balloon.x < 300 && game.balloon.x > 0) {
-        game.shadow.alpha = (300 - game.balloon.x) / 300;
-        game.shadow.x = -game.balloon.x / 4;
-      }
-    });
 
     //text group
     this.textGroup = this.add.group(undefined, 'textGroup');
@@ -529,7 +519,7 @@ OrangeSea.ChapterOne.prototype = {
 
   beginTutorial: function() {
     this.tutorialInProgress = true;
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of the Shadow approaches! I must not let it pass. If only I had saved some ammunition. Something small and round..."', 5);
+    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of Evil approaches! It cannot pass. I need to find something small and round for ammunition..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(-1, 10, 1);
@@ -574,7 +564,7 @@ OrangeSea.ChapterOne.prototype = {
       this.displaySpeech('"A formidable airship is incoming!"', 3);
       OrangeSea.music.fadeOut(4000);
 
-      this.timer.add(Phaser.Timer.SECOND*5, function() {
+      this.timer.add(Phaser.Timer.SECOND*3, function() {
         this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null);
         this.boss.onPopped = function(game) {
           OrangeSea.music.fadeOut(1000);
@@ -846,7 +836,7 @@ OrangeSea.ChapterOne.prototype = {
       this.speech.destroy();
     }
     //fade in speech
-    var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" };
+    var style = { font: "50px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.8, align: "center" };
     this.speech = this.add.text(this.camera.width/2, this.camera.height*.8, speechText, style);
     this.speech.anchor.setTo(0.5, 0.5);
     this.speech.fixedToCamera = true;
