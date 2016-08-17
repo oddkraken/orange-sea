@@ -4,6 +4,12 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* boss appearance
+    * stop other balloons from spawning
+    * boss slowly drifts out in silence
+    * lightning strikes, music starts
+    * other balloons start again
+* MOONSET
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
@@ -21,10 +27,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * rapid pearl burst?
 * Level configuration system:
     * boss HP
-    * write moonrise function
     * SPEECH
 * Dead animation
-    * Shadow grows, evil music plays, camera fades out
 * New Title??
     * "The Lost Aeronaut" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
 * Angler Fish?

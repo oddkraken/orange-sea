@@ -88,9 +88,9 @@ OrangeSea.Preloader.prototype = {
       this.input.onTap.add(this.spacePressed, this);
     }
 
-    var loadingBar = this.add.sprite(0, 50, "loading");
+    this.loadingBar = this.add.sprite(0, 50, "loading");
     //loadingBar.anchor.setTo(0.5,1);
-    this.load.setPreloadSprite(loadingBar,0);
+    this.load.setPreloadSprite(this.loadingBar,0);
 	},
 
 	create: function () {
@@ -132,6 +132,7 @@ OrangeSea.Preloader.prototype = {
         this.add.tween(this.story).to( { alpha: 0.0}, 500, Phaser.Easing.Linear.None, true);
         this.add.tween(this.controlsMessage).to( { alpha: 1.0}, 500, Phaser.Easing.Linear.None, true);
         this.add.tween(this.preloadBackground).to( { alpha: 0.2}, 500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.loadingBar).to( { alpha: 0.2}, 500, Phaser.Easing.Linear.None, true);
       }
     } else {
       this.displayOneMomentPlease();

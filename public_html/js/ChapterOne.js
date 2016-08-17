@@ -522,7 +522,7 @@ OrangeSea.ChapterOne.prototype = {
     this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"A servant of Evil approaches! It cannot pass. I need to find something small and round for ammunition..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
-    var firstBadBalloon = this.sendBadBalloon(-1, 10, 1);
+    var firstBadBalloon = this.sendBadBalloon(10, 1);
     firstBadBalloon.onPopped = function(game) {
       this.body.maxVelocity.x = game.MAX_SPEED; //let it fly off screen
       OrangeSea.showTutorial = false;
@@ -551,7 +551,14 @@ OrangeSea.ChapterOne.prototype = {
 
   startGame: function() {
     this.add.tween(this.celestial).to( {x: this.camera.width*0.1, y: this.camera.height*0.8 }, Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, Phaser.Easing.Linear.None, true);
-    this.sendBadBalloon(Levels[OrangeSea.currentLevel].balloonDelay, 100);
+
+    var badBalloonTime = 0; //seconds
+    while (badBalloonTime < Levels[OrangeSea.currentLevel].duration) {
+      this.timer.add(Phaser.Timer.SECOND*badBalloonTime, function() {
+        this.sendBadBalloon(100);
+      }, this);
+      badBalloonTime += Levels[OrangeSea.currentLevel].balloonDelay;
+    }
 
     this.timer.add(Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, function() {
       if (Levels[OrangeSea.currentLevel].dayTime) {
@@ -565,14 +572,14 @@ OrangeSea.ChapterOne.prototype = {
       OrangeSea.music.fadeOut(4000);
 
       this.timer.add(Phaser.Timer.SECOND*3, function() {
-        this.boss = this.sendBadBalloon(-1, 50, 1.5, 5, null);
+        this.boss = this.sendBadBalloon(50, 1.5, 5, null);
         this.boss.onPopped = function(game) {
           OrangeSea.music.fadeOut(1000);
           game.over = true;
         }
       }, this);
 
-      this.timer.add(Phaser.Timer.SECOND*7, function() {
+      this.timer.add(Phaser.Timer.SECOND*10, function() {
         OrangeSea.music.destroy();
         OrangeSea.music = this.add.audio('bossTheme');
         OrangeSea.music.onDecoded.add(function() {
@@ -626,8 +633,7 @@ OrangeSea.ChapterOne.prototype = {
     colorTween.start();
   },
 
-  //use delay = -1 to send only one
-  sendBadBalloon: function(delay, maxVelocity, size, hp, tint) {
+  sendBadBalloon: function(maxVelocity, size, hp, tint) {
     if (this.over) {
       return;
     }
@@ -660,12 +666,7 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.maxVelocity.setTo(maxVelocity, this.MAX_SPEED);
     badBalloon.body.immovable = true;
     this.badBalloonGroup.add(badBalloon);
-
-    if (delay < 0) {
-      return badBalloon; //don't send any more
-    }
-    console.log(delay);
-    this.timer.add(Phaser.Timer.SECOND*delay, this.sendBadBalloon, this, delay, maxVelocity);
+    return badBalloon;
   },
 
   throwPearl: function() {
