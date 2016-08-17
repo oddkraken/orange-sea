@@ -4,12 +4,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* boss appearance
-    * stop other balloons from spawning
-    * boss slowly drifts out in silence
-    * lightning strikes, music starts
-    * other balloons start again
-* MOONSET
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls

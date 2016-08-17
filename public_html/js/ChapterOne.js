@@ -323,7 +323,7 @@ OrangeSea.ChapterOne.prototype = {
       this.desaturation.blendMode = PIXI.blendModes.SATURATION;
     }
 
-    this.timer = this.time.create();
+    this.timer = this.time.create(false);
     OrangeSea.thunder = this.add.audio('thunder');
     if (Levels[OrangeSea.currentLevel].storm) {
       OrangeSea.thunder.onDecoded.add(function() {
@@ -546,7 +546,18 @@ OrangeSea.ChapterOne.prototype = {
   },
 
   moonset: function() {
-
+    this.sky.tint = 0xFFCCEE;
+    this.add.tween(this.stars).to( { alpha: 0 }, 10000, Phaser.Easing.Linear.None, true);
+    this.add.tween(this.skyNight).to( { alpha: 0 }, 20000, Phaser.Easing.Linear.None, true);
+    this.tweenTint(this.waveTiles[0], this.waveTiles[0].tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.waveTiles[1], this.waveTiles[1].tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.waveTiles[2], this.waveTiles[2].tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.balloon, this.balloon.tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.musket, this.musket.tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.fog, this.fog.tint, 0xFFCCEE, 10000);
+    this.tweenTint(this.backClouds, this.backClouds.tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.midClouds, this.midClouds.tint, 0xFFCCEE, 20000);
+    this.tweenTint(this.frontClouds, this.midClouds.tint, 0xFFCCEE, 20000);
   },
 
   startGame: function() {
