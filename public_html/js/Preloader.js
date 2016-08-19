@@ -17,6 +17,8 @@ OrangeSea.Preloader.prototype = {
     //this.load.crossOrigin = 'anonymous';
     this.load.image('balloon', 'assets/images/balloon_small.png');
     this.load.image('badBalloon', 'assets/images/badBalloon.png');
+    this.load.image('boss', 'assets/images/boss.png');
+    this.load.image('shield', 'assets/images/shield.png');
     this.load.image('balloonHole', 'assets/images/balloonHole.png');
     this.load.image('sky', 'assets/images/tallSky.jpg');
     this.load.image('skyNight', 'assets/images/tallSkyNight.jpg');
@@ -70,6 +72,7 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('pop', 'assets/audio/pop.mp3');
     this.load.audio('click', 'assets/audio/click.mp3');
     this.load.audio('dead', 'assets/audio/dead.mp3');
+    this.load.audio('clang', 'assets/audio/clang2.mp3');
 
     if (!OrangeSea.debug) {
       //time when to display 'press space to continue' message
@@ -127,12 +130,13 @@ OrangeSea.Preloader.prototype = {
         this.ready = true;
       } else {
         this.controlsMessage = this.add.sprite(0, 0, 'controls');
+        this.controlsMessage.alpha = 0;
         this.story.alpha = 0;
         this.storyTween.stop();
         this.add.tween(this.story).to( { alpha: 0.0}, 500, Phaser.Easing.Linear.None, true);
         this.add.tween(this.controlsMessage).to( { alpha: 1.0}, 500, Phaser.Easing.Linear.None, true);
-        this.add.tween(this.preloadBackground).to( { alpha: 0.2}, 500, Phaser.Easing.Linear.None, true);
-        this.add.tween(this.loadingBar).to( { alpha: 0.2}, 500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.preloadBackground).to( { alpha: 0.2}, 1000, Phaser.Easing.Sinusoidal.InOut, true);
+        this.add.tween(this.loadingBar).to( { alpha: 0.2}, 1000, Phaser.Easing.Sinusoidal.InOut, true);
       }
     } else {
       this.displayOneMomentPlease();

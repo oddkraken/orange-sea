@@ -4,6 +4,11 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* boss explodes!
+* enemies shoot at you!
+    * real musket balls
+    * light up to warn you
+    * get more frequent in later levels?
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
@@ -25,6 +30,7 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Dead animation
 * New Title??
     * "The Lost Aeronaut" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
+    * "The Aeronaut's Odyssey"
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3
