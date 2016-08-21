@@ -8,14 +8,22 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * enemies shoot at you!
     * real musket balls
     * light up to warn you
-    * get more frequent in later levels?
+    * configurable speed and frequency
+* balloon takes damage and repairs over time
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
 * Different night music
+* mollusks throw gems sometimes
+* island with merchant to spend gems
+    * repeater - no reload, usually too expensive to buy from first merchant
+    * booster - double tap to boost
+    * shield - more hp
+* new control: i for inventory
 * Give player a sense of progress and curiosity...
-    * big balloons drop something
-        * chest full of pearls
+    * balloons drop things
+        * chest of pearls
+        * chest of gems
     * items - cycle through with numbers
         * 1. add reload sound/delay to musket, rename to rifle - IMPORTANT SO YOU CAN'T RAPIDFIRE THE BOSSES!
         * 2. repeater - weaker/slower shot, no delay

@@ -76,6 +76,7 @@ OrangeSea.ChapterOne.prototype = {
     this.continuePearls = true;
     this.boss = {};
     this.vanquished = 0;
+    this.balloonHp = 3;
   },
 
   create: function () {
@@ -490,6 +491,11 @@ OrangeSea.ChapterOne.prototype = {
     this.pearlCountText.anchor.setTo(0.5, 0.5);
     this.pearlCountText.alpha = 0;
 
+    //init balloon health
+    this.balloonHpGroup = this.add.group(undefined, 'balloonHpGroup');
+    this.balloonHpGroup.fixedToCamera = true;
+    this.drawBalloonHp();
+
     //pearl count text
     this.killCountText = this.add.text(0, -50, "0", { font: "72px great_victorianstandard", fill: "gold", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
     this.killCountText.anchor.setTo(0.5, 0.5);
@@ -524,6 +530,47 @@ OrangeSea.ChapterOne.prototype = {
     this.input.onDown.add(function() {this.pointerDown = true;}, this);
     this.input.onUp.add(function() {this.pointerDown = false;}, this);
     this.input.onTap.add(this.throwPearl, this);
+  },
+
+  drawBalloonHp: function() {
+    this.balloonHpGroup.removeAll(true);
+    for (var i=0; i<OrangeSea.maxBalloonHp; i++) {
+      var balloonHealth = this.add.sprite(20 + i*35, 20, 'balloonHealth');
+      if (i >= this.balloonHp) {
+        balloonHealth.tint = 0x222222;
+        balloonHealth.alpha = 0.5;
+      }
+      this.balloonHpGroup.add(balloonHealth);
+    }
+  },
+
+  loseHealth: function() {
+    if (this.balloonHp > 0) {
+      this.balloonHp--;
+      this.drawBalloonHp();
+    }
+    if (this.balloonHp <= 0) {
+      //dying
+      var balloonHole = this.add.sprite(0, 0, 'balloonHole');
+      balloonHole.anchor.setTo(0.5, 0.5);
+      this.balloon.addChildAt(balloonHole, 0);
+      ga('send', 'event', 'dead', 'destroyed');
+      OrangeSea.deadMessage = 'His airship was destroyed.';
+      this.deadSound.play(null, null, 0.5);
+      this.pop.play(null, null, 0.25);
+      OrangeSea.thunder.fadeOut(500);
+      OrangeSea.music.stop();
+      this.camera.fade(0x000000, 4000);
+      this.camera.onFadeComplete.add(function(){
+        this.state.start('ChapterOne');
+      }, this);
+      this.alive = false;
+      this.balloon.body.velocity.y = 10;
+    } else {
+      var oldTint = this.balloon.tint;
+      this.balloon.tint = 0xFF0000;
+      this.tweenTint(this.balloon, this.balloon.tint, oldTint, 1000);
+    }
   },
 
   beginTutorial: function() {
@@ -1091,6 +1138,9 @@ OrangeSea.ChapterOne.prototype = {
       var fadeInLightning = this.add.tween(this.lightningStrike).from( {alpha: 0.0}, 100, Phaser.Easing.Linear.None, true, 0);
       var fadeOutLightning = this.add.tween(this.lightningStrike).to( {alpha: 0.0}, 500, Phaser.Easing.Linear.None, false, 100);
       fadeInLightning.chain(fadeOutLightning);
+
+      //health knock down
+      this.loseHealth();
     }
   }
 };

@@ -10,6 +10,7 @@ var OrangeSea = {
   pearlCount: 0, //ammo
   totalPearlCount: 0, //total collected
   vanquished: 0, //total enemies killed
+  maxBalloonHp: 3, //increases at the end of levels
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
