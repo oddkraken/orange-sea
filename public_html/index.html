@@ -19,6 +19,7 @@
       <script src="js/Preloader.js"></script>
       <script src="js/ChapterOne.js"></script>
       <script src="js/Cleared.js"></script>
+      <script src="js/GameOver.js"></script>
       <style>
         * {margin:0;padding:0;}
         html, body {
@@ -74,6 +75,7 @@
         game.state.add('Preloader', OrangeSea.Preloader, false);
         game.state.add('ChapterOne', OrangeSea.ChapterOne, false);
         game.state.add('Cleared', OrangeSea.Cleared, false);
+        game.state.add('GameOver', OrangeSea.GameOver, false);
         game.state.start('Boot');
       };
     </script>

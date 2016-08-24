@@ -4,12 +4,18 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* Game Over
+    * "Lost at Sea" causes -1 health
+    * 0 health OR balloon escape causes GAME OVER, start at Day One
 * boss explodes!
-* enemies shoot at you!
-    * real musket balls
-    * light up to warn you
-    * configurable speed and frequency
-* balloon takes damage and repairs over time
+* enemy types - each have different graphic
+    * standard
+    * fast (lightning bolt icon)
+    * shooter (muskets)
+* Add pearls and gems to HUD
+* Balloons drop chests
+    * "+10 Pearls!"
+    * "+3 Gems!"
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
@@ -21,9 +27,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * shield - more hp
 * new control: i for inventory
 * Give player a sense of progress and curiosity...
-    * balloons drop things
-        * chest of pearls
-        * chest of gems
     * items - cycle through with numbers
         * 1. add reload sound/delay to musket, rename to rifle - IMPORTANT SO YOU CAN'T RAPIDFIRE THE BOSSES!
         * 2. repeater - weaker/slower shot, no delay

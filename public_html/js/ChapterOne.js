@@ -76,7 +76,6 @@ OrangeSea.ChapterOne.prototype = {
     this.continuePearls = true;
     this.boss = {};
     this.vanquished = 0;
-    this.balloonHp = 3;
   },
 
   create: function () {
@@ -465,8 +464,7 @@ OrangeSea.ChapterOne.prototype = {
           //show pearl count text
           OrangeSea.totalPearlCount++;
           OrangeSea.pearlCount++;
-          game.pearlCountText.setText(OrangeSea.pearlCount);
-          game.showCount(game.pearlCountText, game.balloon.x, game.balloon.y);
+          game.pearlCountHUDText.setText(OrangeSea.pearlCount);
           game.pearlSound.play(null, null, 0.5);
           pearl.destroy();
         } else if (pearl.y > game.camera.height) {
@@ -486,15 +484,29 @@ OrangeSea.ChapterOne.prototype = {
 
     //text group
     this.textGroup = this.add.group(undefined, 'textGroup');
-    //pearl count text
-    this.pearlCountText = this.add.text(0, -50, "0", { font: "48px great_victorianstandard", fill: "white", fontWeight: 'bold' } );
-    this.pearlCountText.anchor.setTo(0.5, 0.5);
-    this.pearlCountText.alpha = 0;
 
     //init balloon health
     this.balloonHpGroup = this.add.group(undefined, 'balloonHpGroup');
     this.balloonHpGroup.fixedToCamera = true;
     this.drawBalloonHp();
+
+    //pearl count HUD
+    this.pearlCountGroup = this.add.group(undefined, 'pearlCount');
+    this.pearlCountGroup.fixedToCamera = true;
+    var pearlIcon = this.add.sprite(this.camera.width-40, 40, 'pearlIcon');
+    var pearlIconShadow = this.add.sprite(pearlIcon.x, pearlIcon.y, 'pearlIcon');
+    pearlIconShadow.anchor.setTo(0.5, 0.5);
+    pearlIconShadow.scale.setTo(1.1);
+    pearlIconShadow.tint = 0x000000;
+    pearlIconShadow.alpha = 0.75;
+    pearlIcon.anchor.setTo(0.5, 0.5);
+    this.pearlCountHUDText = this.add.text(this.camera.width - 60, 44, OrangeSea.pearlCount, { font: "48px great_victorianstandard", fill: "white", fontWeight: 'bold', strokeThickness: 3, align: 'right' } );
+    this.pearlCountHUDText.anchor.setTo(1, 0.5);
+  //  this.pearlCountHUDText.setShadow(3, 3, 'rgba(0,0,0,0.4)');
+    this.pearlCountGroup.add(pearlIconShadow);
+    this.pearlCountGroup.add(pearlIcon);
+    this.pearlCountGroup.add(this.pearlCountHUDText);
+    this.drawPearlCount();
 
     //pearl count text
     this.killCountText = this.add.text(0, -50, "0", { font: "72px great_victorianstandard", fill: "gold", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
@@ -535,41 +547,50 @@ OrangeSea.ChapterOne.prototype = {
   drawBalloonHp: function() {
     this.balloonHpGroup.removeAll(true);
     for (var i=0; i<OrangeSea.maxBalloonHp; i++) {
-      var balloonHealth = this.add.sprite(20 + i*35, 20, 'balloonHealth');
-      if (i >= this.balloonHp) {
+      var balloonHealth = this.add.sprite(40 + i*35, 40, 'balloonHealth');
+      balloonHealth.anchor.setTo(0.5, 0.5);
+      var balloonHealthShadow = this.add.sprite(balloonHealth.x, balloonHealth.y, 'balloonHealth');
+      balloonHealthShadow.anchor.setTo(0.5, 0.5);
+      balloonHealthShadow.scale.setTo(1.1);
+      balloonHealthShadow.tint = 0x000000;
+      balloonHealthShadow.alpha = 0.75;
+      if (i >= OrangeSea.balloonHp) {
         balloonHealth.tint = 0x222222;
-        balloonHealth.alpha = 0.5;
+        //balloonHealth.alpha = 0.5;
       }
+      this.balloonHpGroup.add(balloonHealthShadow);
       this.balloonHpGroup.add(balloonHealth);
     }
   },
 
+  drawPearlCount: function() {
+
+  },
+
   loseHealth: function() {
-    if (this.balloonHp > 0) {
-      this.balloonHp--;
+    if (OrangeSea.balloonHp > 0) {
+      OrangeSea.balloonHp--;
       this.drawBalloonHp();
     }
-    if (this.balloonHp <= 0) {
-      //dying
-      var balloonHole = this.add.sprite(0, 0, 'balloonHole');
-      balloonHole.anchor.setTo(0.5, 0.5);
-      this.balloon.addChildAt(balloonHole, 0);
-      ga('send', 'event', 'dead', 'destroyed');
-      OrangeSea.deadMessage = 'His airship was destroyed.';
+    if (OrangeSea.balloonHp <= 0) {
+      //TODO this happens when shot down
+      // var balloonHole = this.add.sprite(0, 0, 'balloonHole');
+      // balloonHole.anchor.setTo(0.5, 0.5);
+      // this.balloon.addChildAt(balloonHole, 0);
+      // this.balloon.body.velocity.y = 10;
+
       this.deadSound.play(null, null, 0.5);
-      this.pop.play(null, null, 0.25);
       OrangeSea.thunder.fadeOut(500);
       OrangeSea.music.stop();
-      this.camera.fade(0x000000, 4000);
+      this.camera.fade(0x000000, 2000);
       this.camera.onFadeComplete.add(function(){
-        this.state.start('ChapterOne');
+        this.state.start('GameOver');
       }, this);
       this.alive = false;
-      this.balloon.body.velocity.y = 10;
     } else {
       var oldTint = this.balloon.tint;
       this.balloon.tint = 0xFF0000;
-      this.tweenTint(this.balloon, this.balloon.tint, oldTint, 1000);
+      this.tweenTint(this.balloon, this.balloon.tint, oldTint, 2000);
     }
   },
 
@@ -764,8 +785,7 @@ OrangeSea.ChapterOne.prototype = {
           }, this);
         }, this);
         OrangeSea.pearlCount--;
-        this.pearlCountText.setText(OrangeSea.pearlCount);
-        this.showCount(this.pearlCountText, this.balloon.x, this.balloon.y);
+        this.pearlCountHUDText.setText(OrangeSea.pearlCount);
         var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
         this.thrownPearlGroup.add(thrownPearl);
         this.physics.arcade.enable(thrownPearl);
@@ -1051,19 +1071,21 @@ OrangeSea.ChapterOne.prototype = {
     //dying
     if (this.balloon.y > 650 && this.alive) {
       ga('send', 'event', 'dead', 'lostAtSea');
-      OrangeSea.deadMessage = 'He was lost at sea.';
+      this.loseHealth();
       this.splash.play(null, null, 0.5);
-      this.deadSound.play(null, null, 0.5);
-      //this.windSound.pause();
-      OrangeSea.thunder.fadeOut(500);
-      OrangeSea.music.stop();
-      this.camera.fade(0x000000, 2000);
-      this.camera.onFadeComplete.add(function(){
-        this.state.start('ChapterOne');
-      }, this);
-      this.alive = false;
-      this.balloon.body.acceleration.x = 0;
-      this.balloon.body.acceleration.y = 0;
+      if (OrangeSea.balloonHp > 0) {
+        OrangeSea.deadMessage = 'He was lost at sea.';
+        //this.windSound.pause();
+        OrangeSea.thunder.fadeOut(500);
+        OrangeSea.music.fadeOut(500);
+        this.camera.fade(0x000000, 2000);
+        this.camera.onFadeComplete.add(function(){
+          this.state.start('ChapterOne');
+        }, this);
+        this.alive = false;
+        this.balloon.body.acceleration.x = 0;
+        this.balloon.body.acceleration.y = 0;
+      }
     }
 
     this.perfTimeElapsed = window.performance.now() - perfTimeStart;

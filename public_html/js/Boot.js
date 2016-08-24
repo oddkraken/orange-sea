@@ -6,11 +6,6 @@ var OrangeSea = {
   waveSound: null,
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
-  currentLevel: 0,
-  pearlCount: 0, //ammo
-  totalPearlCount: 0, //total collected
-  vanquished: 0, //total enemies killed
-  maxBalloonHp: 3, //increases at the end of levels
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
@@ -22,6 +17,14 @@ var OrangeSea = {
         this.scale.startFullScreen(false);
         this.game.canvas.style.cursor = "none";
     }
+  },
+  initVals: function() {
+    OrangeSea.currentLevel = 0;
+    OrangeSea.pearlCount = 0; //ammo
+    OrangeSea.totalPearlCount = 0; //total collected
+    OrangeSea.vanquished = 0; //total enemies killed
+    OrangeSea.maxBalloonHp = 3; //increases at the end of levels
+    OrangeSea.balloonHp = 3;
   }
 };
 
@@ -75,6 +78,7 @@ OrangeSea.Boot = function(game) {
 
 OrangeSea.Boot.prototype = {
   init: function () {
+    OrangeSea.initVals();
     this.input.maxPointers = 1; //Change if need multitouch
     if (this.game.device.desktop)
     {
