@@ -551,7 +551,8 @@ OrangeSea.ChapterOne.prototype = {
     var treasure = this.add.sprite(x, y, 'treasure');
     this.physics.arcade.enable(treasure);
     treasure.body.velocity.y = -100;
-    treasure.body.angularVelocity = 50;
+    var direction = Math.random() > 0.5 ? 1 : -1;
+    treasure.body.angularVelocity = direction*50;
   },
 
   drawBalloonHp: function() {

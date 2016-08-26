@@ -13,6 +13,8 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * Balloons drop chests
     * "+10 Pearls!"
     * "+3 Gems!"
+    * Put behind waves2
+    * Splash sound
     * ding ding piano sound
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
