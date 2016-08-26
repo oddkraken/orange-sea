@@ -4,18 +4,16 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Game Over
-    * "Lost at Sea" causes -1 health
-    * 0 health OR balloon escape causes GAME OVER, start at Day One
-* boss explodes!
+* Fix hitboxes: compose craft of balloon + basket sprites
+* first boss - small weak spot
 * enemy types - each have different graphic
     * standard
-    * fast (lightning bolt icon)
+    * fast/small (lightning bolt icon)
     * shooter (muskets)
-* Add pearls and gems to HUD
 * Balloons drop chests
     * "+10 Pearls!"
     * "+3 Gems!"
+    * ding ding piano sound
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
@@ -23,24 +21,16 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 * mollusks throw gems sometimes
 * island with merchant to spend gems
     * repeater - no reload, usually too expensive to buy from first merchant
-    * booster - double tap to boost
+    * propeller - double tap to boost
     * shield - more hp
-* new control: i for inventory
-* Give player a sense of progress and curiosity...
-    * items - cycle through with numbers
-        * 1. add reload sound/delay to musket, rename to rifle - IMPORTANT SO YOU CAN'T RAPIDFIRE THE BOSSES!
-        * 2. repeater - weaker/slower shot, no delay
-        * 3. boost - ram to melee attack balloon
 * Evil ghost balloons come from shadow at night and try to knock you into the water!
 * End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
-* Something GOOD needs to lure player to right of screen
-    * rapid pearl burst?
 * Level configuration system:
     * boss HP
     * SPEECH
 * Dead animation
 * New Title??
-    * "The Lost Aeronaut" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
+    * "Aeronaut Defender" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
     * "The Aeronaut's Odyssey"
 * Angler Fish?
 * Does fish fall while off screen? look into that.

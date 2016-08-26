@@ -432,6 +432,9 @@ OrangeSea.ChapterOne.prototype = {
             game.pop.play(null, null, 0.25);
             game.vanquished++;
             child.popped = true;
+            if (Math.random() < child.treasureProbability) {
+              game.sendTreasure(child.x, pearl.y);
+            }
             var holeY = (pearl.y - child.y) / child.scale.y;
             if (holeY < 0) { holeY = 0; }
             var balloonHole = game.add.sprite(0, holeY, 'balloonHole');
@@ -544,6 +547,13 @@ OrangeSea.ChapterOne.prototype = {
     this.input.onTap.add(this.throwPearl, this);
   },
 
+  sendTreasure: function(x, y) {
+    var treasure = this.add.sprite(x, y, 'treasure');
+    this.physics.arcade.enable(treasure);
+    treasure.body.velocity.y = -100;
+    treasure.body.angularVelocity = 50;
+  },
+
   drawBalloonHp: function() {
     this.balloonHpGroup.removeAll(true);
     for (var i=0; i<OrangeSea.maxBalloonHp; i++) {
@@ -643,7 +653,7 @@ OrangeSea.ChapterOne.prototype = {
     var badBalloonTime = 0; //seconds
     while (badBalloonTime < Levels[OrangeSea.currentLevel].duration) {
       this.timer.add(Phaser.Timer.SECOND*badBalloonTime, function() {
-        this.sendBadBalloon(100);
+        this.sendBadBalloon(100, null, null, null, null, false, 0.5);
       }, this);
       badBalloonTime += Levels[OrangeSea.currentLevel].balloonDelay;
     }
@@ -724,7 +734,7 @@ OrangeSea.ChapterOne.prototype = {
     colorTween.start();
   },
 
-  sendBadBalloon: function(maxVelocity, size, hp, tint, spriteImage, shield) {
+  sendBadBalloon: function(maxVelocity, size, hp, tint, spriteImage, shield, treasureProbability) {
     if (this.over) {
       return;
     }
@@ -769,6 +779,7 @@ OrangeSea.ChapterOne.prototype = {
       badBalloon.addChild(shield);
       badBalloon.shield = shield;
     }
+    badBalloon.treasureProbability = treasureProbability;
     this.badBalloonGroup.add(badBalloon);
     return badBalloon;
   },

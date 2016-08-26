@@ -50,6 +50,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('healthBar', 'assets/images/healthBar.png');
     this.load.image('balloonHealth', 'assets/images/balloonHealth.png');
     this.load.image('pearlIcon', 'assets/images/pearlIcon.png');
+    this.load.image('treasure', 'assets/images/treasure.png');
 
     this.load.image('chapterOne', 'assets/text/chapterOne.png');
     this.load.image('spaceToContinue', 'assets/text/spaceToContinue.png');
