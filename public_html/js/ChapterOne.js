@@ -114,7 +114,7 @@ OrangeSea.ChapterOne.prototype = {
     this.alive = true;
 
     // Define movement constants
-    this.MAX_SPEED = 800; // pixels/second
+    this.MAX_SPEED = 600; // pixels/second
     this.ACCELERATION = 2000; // pixels/second/second
     this.DRAG_X = 1200; // pixels/second
     this.DRAG_Y = 1200; // pixels/second
@@ -265,6 +265,43 @@ OrangeSea.ChapterOne.prototype = {
         game.splash.play(null, null, 0.5);
         game.fish.isJumping = false;
       }
+    });
+
+    //treasure group
+    this.tada = this.add.audio('tada');
+    this.treasureGroup = this.add.group(undefined, 'treasureGroup');
+    //treasure text
+    this.treasureText = this.add.text(0, -50, "", { font: "48px great_victorianstandard", fill: "white", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
+    this.treasureText.anchor.setTo(0.5, 0.5);
+    this.treasureText.alpha = 0;
+    //treasure behavior
+    this.updateFunctions.push(function(game) {
+      //destroy out of bounds
+      game.treasureGroup.filter(function(treasure) {
+        if (treasure.y > game.camera.height) {
+          game.splash.play(null, null, 1);
+          return true;
+        }
+      }).callAll('destroy');
+      //check remaining for overlap with balloon
+      game.treasureGroup.forEach(function(treasure) {
+        if (treasure.overlap(game.balloon)) {
+          treasure.destroy();
+          game.tada.play(null, null, 0.5);
+          //if player missing health, give an extra balloon, otherwise 10 pearls
+          if (OrangeSea.balloonHp < OrangeSea.maxBalloonHp) {
+            game.gainHealth(1);
+            game.treasureText.setText("+1 Balloon!");
+            game.showFloatingText(game.treasureText, game.balloon.x, game.balloon.y);
+          } else {
+            OrangeSea.pearlCount += 10;
+            OrangeSea.totalPearlCount += 10;
+            game.pearlCountHUDText.setText(OrangeSea.pearlCount);
+            game.treasureText.setText("+10 Pearls!");
+            game.showFloatingText(game.treasureText, game.balloon.x, game.balloon.y);
+          }
+        }
+      });
     });
 
     // TODO waveropes scrapped until I find a way to tile them
@@ -427,7 +464,7 @@ OrangeSea.ChapterOne.prototype = {
               } else {
                 game.killCountText.fontSize = 150;
               }
-              game.showCount(game.killCountText, child.x, child.y);
+              game.showFloatingText(game.killCountText, child.x, child.y);
             }
             game.pop.play(null, null, 0.25);
             game.vanquished++;
@@ -509,9 +546,8 @@ OrangeSea.ChapterOne.prototype = {
     this.pearlCountGroup.add(pearlIconShadow);
     this.pearlCountGroup.add(pearlIcon);
     this.pearlCountGroup.add(this.pearlCountHUDText);
-    this.drawPearlCount();
 
-    //pearl count text
+    //kill count text
     this.killCountText = this.add.text(0, -50, "0", { font: "72px great_victorianstandard", fill: "gold", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
     this.killCountText.anchor.setTo(0.5, 0.5);
     this.killCountText.alpha = 0;
@@ -553,6 +589,7 @@ OrangeSea.ChapterOne.prototype = {
     treasure.body.velocity.y = -100;
     var direction = Math.random() > 0.5 ? 1 : -1;
     treasure.body.angularVelocity = direction*50;
+    this.treasureGroup.add(treasure);
   },
 
   drawBalloonHp: function() {
@@ -574,8 +611,14 @@ OrangeSea.ChapterOne.prototype = {
     }
   },
 
-  drawPearlCount: function() {
-
+  //gains health unless will go over max
+  gainHealth: function(amount) {
+    var newHealth = OrangeSea.balloonHp + amount;
+    if (newHealth > OrangeSea.maxBalloonHp) {
+      newHealth = OrangeSea.maxBalloonHp;
+    }
+    OrangeSea.balloonHp = newHealth;
+    this.drawBalloonHp();
   },
 
   loseHealth: function() {
@@ -654,7 +697,7 @@ OrangeSea.ChapterOne.prototype = {
     var badBalloonTime = 0; //seconds
     while (badBalloonTime < Levels[OrangeSea.currentLevel].duration) {
       this.timer.add(Phaser.Timer.SECOND*badBalloonTime, function() {
-        this.sendBadBalloon(100, null, null, null, null, false, 0.5);
+        this.sendBadBalloon(100, null, null, null, null, false, 0.25);
       }, this);
       badBalloonTime += Levels[OrangeSea.currentLevel].balloonDelay;
     }
@@ -835,12 +878,12 @@ OrangeSea.ChapterOne.prototype = {
     }
   },
 
-  showCount: function(text, x, y) {
+  showFloatingText: function(text, x, y) {
     if (text.tween) {
       text.tween.stop();
     }
-    var xMax = this.camera.width*0.95;
-    var xMin = this.camera.width*0.05;
+    var xMax = this.camera.width*0.9;
+    var xMin = this.camera.width*0.1;
     if (x > xMax) {
       text.x = xMax;
     } else if (x < xMin) {

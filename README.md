@@ -11,17 +11,13 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * fast/small (lightning bolt icon)
     * shooter (muskets)
 * Balloons drop chests
-    * "+10 Pearls!"
-    * "+3 Gems!"
-    * Put behind waves2
-    * Splash sound
     * ding ding piano sound
 * badBalloon/fish collisions cause you to drop pearls
 * propellers
 * Happy music when boss falls
 * Different night music
 * mollusks throw gems sometimes
-* island with merchant to spend gems
+* flying merchant to spend gems...flies from left after level ends
     * repeater - no reload, usually too expensive to buy from first merchant
     * propeller - double tap to boost
     * shield - more hp
