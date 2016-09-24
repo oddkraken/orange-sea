@@ -4,32 +4,28 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
-* Fix hitboxes: compose craft of balloon + basket sprites
-* first boss - small weak spot
+* badBalloon/fish collisions/strike cause you to drop pearls
 * enemy types - each have different graphic
     * standard
     * fast/small (lightning bolt icon)
     * shooter (muskets)
 * Balloons drop chests
-    * ding ding piano sound
-* badBalloon/fish collisions cause you to drop pearls
-* propellers
-* Happy music when boss falls
+    * 10, 25, or 50 pearls
+* boss
+    * Happy music on victory
+    * drops shiny balloon slot
 * Different night music
-* mollusks throw gems sometimes
-* flying merchant to spend gems...flies from left after level ends
+* flying merchant to spend pearls...flies from left after level ends
     * repeater - no reload, usually too expensive to buy from first merchant
     * propeller - double tap to boost
     * shield - more hp
-* Evil ghost balloons come from shadow at night and try to knock you into the water!
+    * theme!
+* Phantasms come from water at night, make spooky sound - detonate and damage if overlap balloon
 * End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
 * Level configuration system:
     * boss HP
     * SPEECH
 * Dead animation
-* New Title??
-    * "Aeronaut Defender" - aeronaut.oddkraken.com / aeronaut.mtk4000.com
-    * "The Aeronaut's Odyssey"
 * Angler Fish?
 * Does fish fall while off screen? look into that.
 * Trim silence in thunder mp3

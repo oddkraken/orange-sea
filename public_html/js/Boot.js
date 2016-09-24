@@ -34,42 +34,48 @@ var Levels = [
     duration: 45,
     balloonDelay: 10,
     dayTime: true,
-    storm: true
+    storm: true,
+    clearedMessage: '"The Orange Sea is only a few days across if the winds are charitable. What awaits me on the northern shores?"'
   },
   {
     title: "Night One",
     duration: 45,
     balloonDelay: 4,
     dayTime: false,
-    storm: false
+    storm: false,
+    clearedMessage: '"I knew their nature seemed... otherworldly. The phantasms from the depths must have been conjured by the same Evil."'
   },
   {
     title: "Day Two",
     duration: 60,
     balloonDelay: 2,
     dayTime: true,
-    storm: false
+    storm: false,
+    clearedMessage: '"The Enemy\'s numbers are growing by the day. Something tells me their haste and aggression will grow as well."'
   },
   {
     title: "Night Two",
     duration: 60,
     balloonDelay: 1,
     dayTime: false,
-    storm: true
+    storm: true,
+    clearedMessage: '"The Enemy\'s numbers are growing by the day. Something tells me their haste and aggression will grow as well."'
   },
   {
     title: "Day Three",
     duration: 75,
     balloonDelay: 1,
     dayTime: true,
-    storm: true
+    storm: true,
+    clearedMessage: '"The Enemy\'s numbers are growing by the day. Something tells me their haste and aggression will grow as well."'
   },
   {
     title: "Night Three",
     duration: 75,
     balloonDelay: 0.5,
     dayTime: false,
-    storm: false
+    storm: false,
+    clearedMessage: '"The Enemy\'s numbers are growing by the day. Something tells me their haste and aggression will grow as well."'
   }
 ];
 

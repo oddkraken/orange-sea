@@ -15,9 +15,6 @@ OrangeSea.ChapterOne.prototype = {
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       this.badBalloonGroup.forEach(function(child) {
         child.game.debug.body(child);
-        if (child.shield) {
-          child.game.debug.body(child.shield);
-        }
       });
       // this.thrownPearlGroup.forEach(function(child) {
       //   child.game.debug.body(child);
@@ -339,7 +336,6 @@ OrangeSea.ChapterOne.prototype = {
     this.hit = this.add.audio('hit');
     this.fishJump = this.add.audio('fishJump');
     this.deadSound = this.add.audio('dead');
-    this.clang = this.add.audio('clang');
 
     this.windSound = this.add.audio('gust', 0);
     this.explosion = this.add.audio('explosion', 0.5);
@@ -426,14 +422,22 @@ OrangeSea.ChapterOne.prototype = {
         }
         game.physics.arcade.collide(game.balloon, child, function() { game.hit.play(null, null, 0.5); });
         game.thrownPearlGroup.forEach(function(pearl) {
-          if (child.shield) {
-            game.physics.arcade.collide(pearl, child.shield, function(pearl, shield) {
-              this.clang.play(null, null, 0.25);
-            }, null, game);
-          }
           if (child.hp > 1) { //pearl does damage and bounces off
             if (pearl.alive) {
               game.physics.arcade.collide(pearl, child, function(pearl, child) {
+                //if first hit to boss, strike lightning, start music, speed up
+                if (!child.hasBeenHit) {
+                  child.hasBeenHit = true;
+                  child.body.maxVelocity.setTo(child.body.maxVelocity.x*2, this.MAX_SPEED);
+                  game.flashLightning(1.0);
+                  game.explosion.play();
+                  game.camera.shake(0.003);
+                  OrangeSea.music.destroy();
+                  OrangeSea.music = game.add.audio('bossTheme');
+                  OrangeSea.music.onDecoded.add(function() {
+                    OrangeSea.music.loopFull(0.4);
+                  });
+                }
                 this.hit.play(null, null, 0.75);
                 if (!child.flashing) {
                   child.flashing = true;
@@ -697,7 +701,7 @@ OrangeSea.ChapterOne.prototype = {
     var badBalloonTime = 0; //seconds
     while (badBalloonTime < Levels[OrangeSea.currentLevel].duration) {
       this.timer.add(Phaser.Timer.SECOND*badBalloonTime, function() {
-        this.sendBadBalloon(100, null, null, null, null, false, 0.25);
+        this.sendBadBalloon(100, null, null, null, null, 0.25);
       }, this);
       badBalloonTime += Levels[OrangeSea.currentLevel].balloonDelay;
     }
@@ -714,25 +718,11 @@ OrangeSea.ChapterOne.prototype = {
       OrangeSea.music.fadeOut(4000);
 
       this.timer.add(Phaser.Timer.SECOND*3, function() {
-        this.boss = this.sendBadBalloon(50, 1.5, 5, null, 'boss', true);
+        this.boss = this.sendBadBalloon(50, 1.5, 5, null, 'boss');
         this.boss.onPopped = function(game) {
           OrangeSea.music.fadeOut(1000);
           game.over = true;
         }
-      }, this);
-
-      this.timer.add(Phaser.Timer.SECOND*9, function() {
-        this.flashLightning(1.0);
-        this.explosion.play();
-        this.camera.shake(0.003);
-      }, this);
-
-      this.timer.add(Phaser.Timer.SECOND*9.2, function() {
-        OrangeSea.music.destroy();
-        OrangeSea.music = this.add.audio('bossTheme');
-        OrangeSea.music.onDecoded.add(function() {
-          OrangeSea.music.loopFull(0.4);
-        }, this);
       }, this);
     }, this);
 
@@ -778,7 +768,7 @@ OrangeSea.ChapterOne.prototype = {
     colorTween.start();
   },
 
-  sendBadBalloon: function(maxVelocity, size, hp, tint, spriteImage, shield, treasureProbability) {
+  sendBadBalloon: function(maxVelocity, size, hp, tint, spriteImage, treasureProbability) {
     if (this.over) {
       return;
     }
@@ -813,16 +803,6 @@ OrangeSea.ChapterOne.prototype = {
     badBalloon.body.maxVelocity.setTo(maxVelocity, this.MAX_SPEED);
     badBalloon.body.allowGravity = false;
     badBalloon.body.immovable = true;
-    if (shield) {
-      var shield = this.add.sprite(-80, -15, 'shield');
-      this.physics.arcade.enable(shield);
-      shield.body.allowGravity = false;
-      shield.body.immovable = true;
-      shield.body.setSize(shield.width, shield.height*1.4);
-      //shield.body.offset.setTo(0, -10);
-      badBalloon.addChild(shield);
-      badBalloon.shield = shield;
-    }
     badBalloon.treasureProbability = treasureProbability;
     this.badBalloonGroup.add(badBalloon);
     return badBalloon;

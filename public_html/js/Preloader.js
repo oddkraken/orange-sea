@@ -18,7 +18,6 @@ OrangeSea.Preloader.prototype = {
     this.load.image('balloon', 'assets/images/balloon_small.png');
     this.load.image('badBalloon', 'assets/images/badBalloon.png');
     this.load.image('boss', 'assets/images/boss.png');
-    this.load.image('shield', 'assets/images/shield.png');
     this.load.image('balloonHole', 'assets/images/balloonHole.png');
     this.load.image('sky', 'assets/images/tallSky.jpg');
     this.load.image('skyNight', 'assets/images/tallSkyNight.jpg');
@@ -75,7 +74,6 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('pop', 'assets/audio/pop.mp3');
     this.load.audio('click', 'assets/audio/click.mp3');
     this.load.audio('dead', 'assets/audio/dead.mp3');
-    this.load.audio('clang', 'assets/audio/clang2.mp3');
     this.load.audio('tada', 'assets/audio/tada.mp3');
 
     if (!OrangeSea.debug) {

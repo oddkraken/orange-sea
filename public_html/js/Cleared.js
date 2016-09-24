@@ -13,8 +13,9 @@ OrangeSea.Cleared.prototype = {
     var background = this.add.sprite(0, 0, 'clearedBackground1'); //winner background
 
     var message = this.add.text(this.camera.width/2, this.camera.height/2,
-      'Pearls: ' + OrangeSea.pearlCount + '\nEnemies Felled: ' + OrangeSea.vanquished,
-      { font: "90px great_victorianstandard", fill: "#ede3d6", align: "left" } );
+      Levels[OrangeSea.currentLevel].clearedMessage +
+      '\n\nPearls: ' + OrangeSea.pearlCount + '\nEnemies Felled: ' + OrangeSea.vanquished,
+      { font: "60px great_victorianstandard", fill: "#ede3d6", align: "center", wordWrap: true, wordWrapWidth: this.camera.width*.65 } );
     message.anchor.setTo(0.5, 0.5);
 
     var spaceToContinueMessage = this.add.sprite(0, 0, 'spaceToContinue');
