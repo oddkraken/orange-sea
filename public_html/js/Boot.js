@@ -7,7 +7,6 @@ var OrangeSea = {
   propellerSound: null,
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
-  phantasmSpeech: true, //show phantasm speech once
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
@@ -27,6 +26,7 @@ var OrangeSea = {
     OrangeSea.vanquished = 0; //total enemies killed
     OrangeSea.maxBalloonHp = 3; //increases at the end of levels
     OrangeSea.balloonHp = 3;
+    OrangeSea.phantasmSpeech = true; //show phantasm speech once (and after each Game Over)
   }
 };
 

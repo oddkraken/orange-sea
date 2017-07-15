@@ -239,9 +239,6 @@ OrangeSea.ChapterOne.prototype = {
     this.balloon.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED);
     this.balloon.body.bounce = new Phaser.Point(1, 1);
 
-    console.log("scale:");
-    console.log(this.balloon.scale);
-
     var propeller = this.add.sprite(-38, -12, 'propeller');
     var spin = propeller.animations.add('spin');
     propeller.scale.setTo(0.4, 0.2);
