@@ -43,13 +43,14 @@ OrangeSea.Preloader.prototype = {
     this.load.image('lightning2', 'assets/images/lightning2.png');
     this.load.image('white', 'assets/images/white.png');
     this.load.image('glow', 'assets/images/glow.png');
-    this.load.image('boost', 'assets/images/boost.png');
+    this.load.image('phantasm', 'assets/images/phantasm.png');
     this.load.image('musket', 'assets/images/musket.png');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
     this.load.image('healthBar', 'assets/images/healthBar.png');
     this.load.image('balloonHealth', 'assets/images/balloonHealth.png');
     this.load.image('pearlIcon', 'assets/images/pearlIcon.png');
     this.load.image('treasure', 'assets/images/treasure.png');
+    this.load.spritesheet('propeller', 'assets/images/propeller.png', 50, 300);
 
     this.load.image('chapterOne', 'assets/text/chapterOne.png');
     this.load.image('spaceToContinue', 'assets/text/spaceToContinue.png');
@@ -75,6 +76,7 @@ OrangeSea.Preloader.prototype = {
     this.load.audio('click', 'assets/audio/click.mp3');
     this.load.audio('dead', 'assets/audio/dead.mp3');
     this.load.audio('tada', 'assets/audio/tada.mp3');
+    this.load.audio('propeller', 'assets/audio/propeller.mp3');
 
     if (!OrangeSea.debug) {
       //time when to display 'press space to continue' message
@@ -99,13 +101,20 @@ OrangeSea.Preloader.prototype = {
 	},
 
 	create: function () {
-    //set up wavesound to fade in and loop
+    //set up wavesound and propeller to fade in and loop
     OrangeSea.waveSound = this.add.audio('waveSound');
+    OrangeSea.propellerSound = this.add.audio('propeller');
     OrangeSea.waveSound.onDecoded.add(function() {
       //start silent and fade in with tween
       //fadeIn method only allows fading to volume 1.0
       OrangeSea.waveSound.loopFull(0.0);
       this.add.tween(OrangeSea.waveSound).to( { volume: 0.2 }, 2000, "Linear", true);
+    }, this);
+    OrangeSea.propellerSound.onDecoded.add(function() {
+      //start silent and fade in with tween
+      //fadeIn method only allows fading to volume 1.0
+      OrangeSea.propellerSound.loopFull(0.0);
+      this.add.tween(OrangeSea.propellerSound).to( { volume: 0.8 }, 2000, "Linear", true);
     }, this);
     if (OrangeSea.debug) {
       this.state.start('ChapterOne'); //skip story and control screen

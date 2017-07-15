@@ -1,9 +1,11 @@
-# Orange Sea
+paper# Orange Sea
 
 An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library. The player controls a hot air balloon and guides it through various perils in an attempt to cross the Orange Sea. Work in progress! Play for free at [orangesea.oddkraken.com](http://orangesea.oddkraken.com).
 
 ## Todo
 
+* boss shoots!
+* Spooky phantasm sound, gets louder when close
 * badBalloon/fish collisions/strike cause you to drop pearls
 * enemy types - each have different graphic
     * standard
@@ -20,7 +22,6 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
     * propeller - double tap to boost
     * shield - more hp
     * theme!
-* Phantasms come from water at night, make spooky sound - detonate and damage if overlap balloon
 * End screen: "Best multi-hit: 5; Enemies Vanquished: 10"
 * Level configuration system:
     * boss HP

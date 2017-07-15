@@ -4,8 +4,10 @@ var OrangeSea = {
   thunder: null,
   music: null,
   waveSound: null,
+  propellerSound: null,
   deadMessage: null,
   showTutorial: true, //show tutorial once when game begins
+  phantasmSpeech: true, //show phantasm speech once
   toggleFullScreen: function() {
     if (this.scale.isFullScreen)
     {
@@ -39,11 +41,12 @@ var Levels = [
   },
   {
     title: "Night One",
-    duration: 45,
+    duration: 60,
     balloonDelay: 4,
     dayTime: false,
     storm: false,
-    clearedMessage: '"I knew their nature seemed... otherworldly. The phantasms from the depths must have been conjured by the same Evil."'
+    phantasmDelay: 4,
+    clearedMessage: '"I knew the craft seemed... otherworldly. The phantasms from the depths must have been conjured by the same Evil."'
   },
   {
     title: "Day Two",

@@ -8,9 +8,10 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text(this.timer.ms/1000, 2, 30, "#ffffff");
       this.game.debug.text("Shots: " + this.thrownPearlGroup.total, 2, 45, "#ffffff");
       this.game.debug.text("Lobs: " + this.lobbedPearlGroup.total, 2, 60, "#ffffff");
-      this.game.debug.text("Balloons: " + this.badBalloonGroup.total, 2, 75, "#ffffff");
+      this.game.debug.text("Phantasms: " + this.phantasmGroup.total, 2, 75, "#ffffff");
       this.game.debug.text("Text: " + this.textGroup.total, 2, 90, "#ffffff");
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
+      this.game.debug.text("Balloon y:" + this.balloon.y, 2, 120, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       this.badBalloonGroup.forEach(function(child) {
@@ -191,6 +192,33 @@ OrangeSea.ChapterOne.prototype = {
     this.waveTiles[1].alpha = 0.9;
     this.waveTiles[1].tint = waveTilesTint;
 
+    this.phantasmGroup = this.add.group(undefined, 'phantasmGroup');
+    //phantasm behavior
+    this.updateFunctions.push(function(game) {
+      //destroy out of bounds
+      game.phantasmGroup.filter(function(phantasm) {
+        if (phantasm.y < -game.camera.height) {
+          return true;
+        }
+      }).callAll('destroy');
+      //move toward balloon, check for overlap with balloon
+      game.phantasmGroup.forEach(function(phantasm) {
+        phantasm.body.velocity.x = 0.5*(game.balloon.x - phantasm.x);
+        game.physics.arcade.overlap(phantasm, game.balloon, function(p, b) {
+          if (p.alive) {
+            p.alive = false;
+            this.flashLightning(1.0);
+            this.explosion.play();
+            this.camera.shake(0.003);
+            this.loseHealth();
+            p.scaleTween.stop();
+            this.add.tween(p.scale).to({ x: 1, y: 1}, 250, Phaser.Easing.Sinusoidal.In, true);
+            this.add.tween(p).to({ alpha: 0 }, 250, Phaser.Easing.Sinusoidal.In, true);
+          }
+        }, null, game);
+      });
+    });
+
     // init pearl
     this.pearlSound = this.add.audio('pearlSound');
     this.thrownPearlGroup = this.add.group(undefined, 'thrownPearlGroup');
@@ -210,6 +238,18 @@ OrangeSea.ChapterOne.prototype = {
     this.balloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
     this.balloon.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED);
     this.balloon.body.bounce = new Phaser.Point(1, 1);
+
+    console.log("scale:");
+    console.log(this.balloon.scale);
+
+    var propeller = this.add.sprite(-38, -12, 'propeller');
+    var spin = propeller.animations.add('spin');
+    propeller.scale.setTo(0.4, 0.2);
+    propeller.animations.play('spin', 30, true);
+    this.balloon.addChild(propeller);
+
+
+
     this.musket.tint = musketTint;
     //balloon swaying
     this.updateFunctions.push(function(game) {
@@ -706,6 +746,19 @@ OrangeSea.ChapterOne.prototype = {
       badBalloonTime += Levels[OrangeSea.currentLevel].balloonDelay;
     }
 
+    var startStuffTime = 10; //seconds...delay before starting phantasms and speech
+
+    //send phantasms at night
+    if (!Levels[OrangeSea.currentLevel].dayTime) {
+      var phantasmTime = startStuffTime;
+      while (phantasmTime < Levels[OrangeSea.currentLevel].duration) {
+        this.timer.add(Phaser.Timer.SECOND*phantasmTime, function() {
+          this.sendPhantasm();
+        }, this);
+        phantasmTime += Levels[OrangeSea.currentLevel].phantasmDelay;
+      }
+    }
+
     this.timer.add(Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, function() {
       if (Levels[OrangeSea.currentLevel].dayTime) {
         this.sunset();
@@ -766,6 +819,57 @@ OrangeSea.ChapterOne.prototype = {
     });        // set the object to the start color straight away
     obj.tint = startColor;            // start the tween
     colorTween.start();
+  },
+
+  sendPhantasm: function() {
+    if (this.over) {
+      return;
+    }
+    if (OrangeSea.phantasmSpeech) {
+      this.displaySpeech('"Deadly phantasms arise on the night-wind!', 5);
+      OrangeSea.phantasmSpeech = false;
+    }
+    var randX = 1.1*this.camera.width*Math.random();
+
+    //phantasm
+    var phantasm = this.add.sprite(randX, this.camera.height*1.1, 'phantasm');
+    phantasm.tint = 0xFFFFFF;
+    phantasm.scale.setTo(0.25);
+    var phantasmChild = this.add.sprite(0, 0, 'phantasm');
+    phantasmChild.scale.setTo(1.5, 1.5);
+    phantasmChild.tint = 0xFF0000;
+    phantasmChild.alpha = 0.5;
+    phantasm.addChild(phantasmChild);
+    this.physics.arcade.enable(phantasmChild);
+    phantasmChild.body.allowGravity = false;
+    phantasmChild.anchor.setTo(0.47, 0.58);
+    phantasmChild.body.angularVelocity = -100;
+
+    var phantasmChild2 = this.add.sprite(0, 0, 'phantasm');
+    phantasmChild2.tint = 0xFF0000;
+    phantasmChild2.scale.setTo(1.25, 1.25);
+    phantasmChild2.alpha = 0.5;
+    phantasm.addChild(phantasmChild2);
+    this.physics.arcade.enable(phantasmChild2);
+    phantasmChild2.body.allowGravity = false;
+    phantasmChild2.anchor.setTo(0.47, 0.58);
+    phantasmChild2.body.angularVelocity = 50;
+
+    phantasm.anchor.setTo(0.47, 0.58);
+    phantasm.scaleTween = this.add.tween(phantasm.scale).to( { x: 0.4, y: 0.4 }, 500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    this.physics.arcade.enable(phantasm);
+
+    phantasm.body.allowGravity = false;
+    var scale = 0.25; //scale phantasm body
+    phantasm.body.setSize(phantasm.body.width*scale, phantasm.body.height*scale,
+      (phantasm.body.width-phantasm.body.width*scale)/2,
+      (phantasm.body.height-phantasm.body.height*scale)/2);
+    phantasm.body.angularVelocity = 50;
+
+
+    phantasm.body.velocity.y = -50 + Math.random()*-150;
+    phantasm.body.velocity.x = -50;
+    this.phantasmGroup.add(phantasm);
   },
 
   sendBadBalloon: function(maxVelocity, size, hp, tint, spriteImage, treasureProbability) {
@@ -1088,7 +1192,7 @@ OrangeSea.ChapterOne.prototype = {
       if (this.balloon.body.velocity.y < 0) {
         this.balloon.body.acceleration.y = this.ACCELERATION;
       }
-      if (this.balloon.y < -100) { //STRUCK BY LIGHTNING!
+      if (this.balloon.y < -80) { //STRUCK BY LIGHTNING!
         this.strike();
       }
     }
