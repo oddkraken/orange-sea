@@ -691,7 +691,7 @@ OrangeSea.ChapterOne.prototype = {
 
   beginTutorial: function() {
     this.tutorialInProgress = true;
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"Servants of Evil approach! I\'ve sworn a sacred oath to prevent their passage, but my rifle is depleted..."', 5);
+    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"Servants of Evil approach! I\'ve sworn an oath to\nprevent their passage, but my rifle is depleted..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(10, 1);
