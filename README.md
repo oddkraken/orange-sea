@@ -4,6 +4,10 @@ An HTML5 game written in JavaScript using the [Phaser](http://phaser.io) library
 
 ## Todo
 
+* incorporate storm clouds removed in commit c53953e0ca24606c7a3c633bb4e55be3500d1db8
+    * Night One is just storm cloud dodge
+    * Night Two is storm clouds + balloons
+    * Night Three is storm clouds + balloons + specters
 * boss shoots!
 * Spooky phantasm sound, gets louder when close
 * badBalloon/fish collisions/strike cause you to drop pearls

@@ -245,6 +245,20 @@ OrangeSea.ChapterOne.prototype = {
     propeller.animations.play('spin', 30, true);
     this.balloon.addChild(propeller);
 
+    var gear1 = this.add.sprite(-1, 33, 'gear');
+    gear1.anchor.setTo(0.5, 0.5);
+    gear1.scale.setTo(0.22);
+    this.updateFunctions.push(function(game) {
+      gear1.rotation += 0.1;
+    });
+    this.balloon.addChild(gear1);
+    var gear2 = this.add.sprite(-14, 19, 'gear');
+    gear2.anchor.setTo(0.5, 0.5);
+    gear2.scale.setTo(0.14);
+    this.updateFunctions.push(function(game) {
+      gear2.rotation -= .08;
+    });
+    this.balloon.addChild(gear2);
 
 
     this.musket.tint = musketTint;
@@ -539,9 +553,9 @@ OrangeSea.ChapterOne.prototype = {
       game.lobbedPearlGroup.forEach(function(pearl) {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body) && game.alive) {
           //show explanation if first pearl
-          if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
-            game.displaySpeech('"Colossal mollusks lob pearls from the depths!\nThese trinkets will have to suffice for ammunition."\nPress Space to fire.', 5);
-          }
+          // if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
+          //   game.displaySpeech('"Colossal mollusks lob pearls from the depths!\nThese trinkets will have to suffice for ammunition."\nPress Space to fire.', 5);
+          // }
           //show pearl count text
           OrangeSea.totalPearlCount++;
           OrangeSea.pearlCount++;
@@ -691,7 +705,7 @@ OrangeSea.ChapterOne.prototype = {
 
   beginTutorial: function() {
     this.tutorialInProgress = true;
-    this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"Servants of Evil approach! I\'ve sworn an oath to\nprevent their passage, but my rifle is depleted..."', 5);
+    //this.timer.add(Phaser.Timer.SECOND*8, this.displaySpeech, this, '"Servants of Evil approach! I\'ve sworn an oath to\nprevent their passage, but my rifle is depleted..."', 5);
     //send pearls
     this.timer.add(Phaser.Timer.SECOND*18, this.sendPearl, this);
     var firstBadBalloon = this.sendBadBalloon(10, 1);
@@ -745,8 +759,8 @@ OrangeSea.ChapterOne.prototype = {
 
     var startStuffTime = 10; //seconds...delay before starting phantasms and speech
 
-    //send phantasms at night
-    if (!Levels[OrangeSea.currentLevel].dayTime) {
+    //send phantasms if phantasmDelay is defined
+    if (Levels[OrangeSea.currentLevel].phantasmDelay) {
       var phantasmTime = startStuffTime;
       while (phantasmTime < Levels[OrangeSea.currentLevel].duration) {
         this.timer.add(Phaser.Timer.SECOND*phantasmTime, function() {
@@ -755,6 +769,8 @@ OrangeSea.ChapterOne.prototype = {
         phantasmTime += Levels[OrangeSea.currentLevel].phantasmDelay;
       }
     }
+
+    //TODO send storm clouds if specified in config
 
     this.timer.add(Phaser.Timer.SECOND*Levels[OrangeSea.currentLevel].duration, function() {
       if (Levels[OrangeSea.currentLevel].dayTime) {

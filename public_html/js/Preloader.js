@@ -16,6 +16,7 @@ OrangeSea.Preloader.prototype = {
     // this.load.baseURL = 'http://files.phaser.io.s3.amazonaws.com/codingtips/issue003/';
     //this.load.crossOrigin = 'anonymous';
     this.load.image('balloon', 'assets/images/balloon_small.png');
+    this.load.image('gear', 'assets/images/gear.png');
     this.load.image('badBalloon', 'assets/images/badBalloon.png');
     this.load.image('boss', 'assets/images/boss.png');
     this.load.image('balloonHole', 'assets/images/balloonHole.png');
