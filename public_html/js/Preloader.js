@@ -104,19 +104,23 @@ OrangeSea.Preloader.prototype = {
 	create: function () {
     //set up wavesound and propeller to fade in and loop
     OrangeSea.waveSound = this.add.audio('waveSound');
-    OrangeSea.propellerSound = this.add.audio('propeller');
     OrangeSea.waveSound.onDecoded.add(function() {
       //start silent and fade in with tween
       //fadeIn method only allows fading to volume 1.0
       OrangeSea.waveSound.loopFull(0.0);
       this.add.tween(OrangeSea.waveSound).to( { volume: 0.2 }, 2000, "Linear", true);
     }, this);
+
+    /*
+    OrangeSea.propellerSound = this.add.audio('propeller');
     OrangeSea.propellerSound.onDecoded.add(function() {
       //start silent and fade in with tween
       //fadeIn method only allows fading to volume 1.0
       OrangeSea.propellerSound.loopFull(0.0);
       this.add.tween(OrangeSea.propellerSound).to( { volume: 0.8 }, 2000, "Linear", true);
     }, this);
+    */
+    
     if (OrangeSea.debug) {
       this.state.start('ChapterOne'); //skip story and control screen
     } else {

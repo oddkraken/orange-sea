@@ -11,17 +11,15 @@ var OrangeSea = {
     if (this.scale.isFullScreen)
     {
         this.scale.stopFullScreen();
-        this.game.canvas.style.cursor = "default";
     }
     else
     {
         this.scale.startFullScreen(false);
-        this.game.canvas.style.cursor = "none";
     }
   },
   initVals: function() {
     OrangeSea.currentLevel = 0;
-    OrangeSea.pearlCount = 0; //ammo
+    OrangeSea.pearlCount = 100; //ammo
     OrangeSea.totalPearlCount = 0; //total collected
     OrangeSea.vanquished = 0; //total enemies killed
     OrangeSea.maxBalloonHp = 3; //increases at the end of levels
@@ -33,6 +31,8 @@ var OrangeSea = {
 var Levels = [
   {
     title: "Day One",
+    subtitle: "The Vanguard",
+    fullControl: false,
     duration: 45,
     balloonDelay: 10,
     dayTime: true,
@@ -41,6 +41,7 @@ var Levels = [
   },
   {
     title: "Night One",
+    subtitle: "The Gale",
     duration: 60,
     balloonDelay: 4,
     dayTime: false,

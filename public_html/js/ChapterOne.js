@@ -11,7 +11,15 @@ OrangeSea.ChapterOne.prototype = {
       this.game.debug.text("Phantasms: " + this.phantasmGroup.total, 2, 75, "#ffffff");
       this.game.debug.text("Text: " + this.textGroup.total, 2, 90, "#ffffff");
       this.game.debug.text("Boss HP: " + this.boss.hp, 2, 105, "#ffffff");
-      this.game.debug.text("Balloon y:" + this.balloon.y, 2, 120, "#ffffff");
+      this.game.debug.text("Balloon x:" + this.balloon.x, 2, 120, "#ffffff");
+      this.game.debug.text("Balloon y:" + this.balloon.y, 2, 135, "#ffffff");
+      this.game.debug.text("Balloon x acc:" + this.balloon.body.acceleration.x, 2, 150, "#ffffff");
+      this.game.debug.text("Balloon x vel:" + this.balloon.body.velocity.x, 2, 165, "#ffffff");
+      this.game.debug.text("Mouse x:" + this.game.input.x, 2, 180, "#ffffff");
+      this.game.debug.text("Mouse y:" + this.game.input.y, 2, 195, "#ffffff");
+      this.game.debug.text("Musket x:" + this.musket.world.x, 2, 210, "#ffffff");
+      this.game.debug.text("Musket y:" + this.musket.world.y, 2, 225, "#ffffff");
+      this.game.debug.text("Angle:" + (180 / (Math.PI)) * Math.atan((this.game.input.y - this.musket.world.y) / (this.game.input.x - this.musket.world.x)), 2, 240, "#ffffff");
       //this.game.debug.text(gyro.getOrientation().gamma, 2, 45, "#ffffff");
       //this.game.debug.text("Update time: " + this.perfTimeElapsed, 2, 30, "#ffffff");
       this.badBalloonGroup.forEach(function(child) {
@@ -112,10 +120,10 @@ OrangeSea.ChapterOne.prototype = {
     this.alive = true;
 
     // Define movement constants
-    this.MAX_SPEED = 600; // pixels/second
+    this.MAX_SPEED = 500; // pixels/second
     this.ACCELERATION = 2000; // pixels/second/second
-    this.DRAG_X = 1200; // pixels/second
-    this.DRAG_Y = 1200; // pixels/second
+    this.DRAG_X = 400; // pixels/second/second
+    this.DRAG_Y = 100; // pixels/second/second
     this.ENV_SPEED = 1.0;
     this.FISH_INTERVAL = 5000; //wait >= 5000ms before sending another fish
     this.fishTimer = this.time.create();
@@ -210,7 +218,6 @@ OrangeSea.ChapterOne.prototype = {
             this.flashLightning(1.0);
             this.explosion.play();
             this.camera.shake(0.003);
-            this.loseHealth();
             p.scaleTween.stop();
             this.add.tween(p.scale).to({ x: 1, y: 1}, 250, Phaser.Easing.Sinusoidal.In, true);
             this.add.tween(p).to({ alpha: 0 }, 250, Phaser.Easing.Sinusoidal.In, true);
@@ -226,19 +233,22 @@ OrangeSea.ChapterOne.prototype = {
 
     // balloon
     this.balloon = this.add.sprite(this.camera.width*0.5, this.camera.height*0.25, 'balloon');
-    this.musket = this.add.sprite(0, 0, 'musket');
-    this.musket.anchor.setTo(0.5, 0.1);
+    this.musket = this.add.sprite(0, 56, 'musket');
+    this.musket.anchor.setTo(0, 0.5);
+    this.musket.angle = -45;
     this.balloon.addChild(this.musket);
     this.balloon.anchor.setTo(0.5, 0.1);
     this.balloon.angle = 8;
     this.physics.arcade.enable(this.balloon);
     this.balloon.tint = balloonTint;
     this.musket.body.allowGravity = false;
-    this.balloon.body.allowGravity = false;
+    this.balloon.body.allowGravity = true;
     this.balloon.body.drag.setTo(this.DRAG_X, this.DRAG_Y);
     this.balloon.body.maxVelocity.setTo(this.MAX_SPEED, this.MAX_SPEED);
     this.balloon.body.bounce = new Phaser.Point(1, 1);
 
+    // propeller
+    /*
     var propeller = this.add.sprite(-38, -12, 'propeller');
     var spin = propeller.animations.add('spin');
     propeller.scale.setTo(0.4, 0.2);
@@ -259,6 +269,7 @@ OrangeSea.ChapterOne.prototype = {
       gear2.rotation -= .08;
     });
     this.balloon.addChild(gear2);
+    */
 
 
     this.musket.tint = musketTint;
@@ -338,13 +349,11 @@ OrangeSea.ChapterOne.prototype = {
           game.tada.play(null, null, 0.5);
           //if player missing health, give an extra balloon, otherwise 10 pearls
           if (OrangeSea.balloonHp < OrangeSea.maxBalloonHp) {
-            game.gainHealth(1);
             game.treasureText.setText("+1 Balloon!");
             game.showFloatingText(game.treasureText, game.balloon.x, game.balloon.y);
           } else {
             OrangeSea.pearlCount += 10;
             OrangeSea.totalPearlCount += 10;
-            game.pearlCountHUDText.setText(OrangeSea.pearlCount);
             game.treasureText.setText("+10 Pearls!");
             game.showFloatingText(game.treasureText, game.balloon.x, game.balloon.y);
           }
@@ -552,14 +561,9 @@ OrangeSea.ChapterOne.prototype = {
     this.updateFunctions.push(function(game) {
       game.lobbedPearlGroup.forEach(function(pearl) {
         if (game.physics.arcade.intersects(game.balloon.body, pearl.body) && game.alive) {
-          //show explanation if first pearl
-          // if (OrangeSea.totalPearlCount == 0 && OrangeSea.showTutorial) {
-          //   game.displaySpeech('"Colossal mollusks lob pearls from the depths!\nThese trinkets will have to suffice for ammunition."\nPress Space to fire.', 5);
-          // }
           //show pearl count text
           OrangeSea.totalPearlCount++;
           OrangeSea.pearlCount++;
-          game.pearlCountHUDText.setText(OrangeSea.pearlCount);
           game.pearlSound.play(null, null, 0.5);
           pearl.destroy();
         } else if (pearl.y > game.camera.height) {
@@ -583,24 +587,6 @@ OrangeSea.ChapterOne.prototype = {
     //init balloon health
     this.balloonHpGroup = this.add.group(undefined, 'balloonHpGroup');
     this.balloonHpGroup.fixedToCamera = true;
-    this.drawBalloonHp();
-
-    //pearl count HUD
-    this.pearlCountGroup = this.add.group(undefined, 'pearlCount');
-    this.pearlCountGroup.fixedToCamera = true;
-    var pearlIcon = this.add.sprite(this.camera.width-40, 40, 'pearlIcon');
-    var pearlIconShadow = this.add.sprite(pearlIcon.x, pearlIcon.y, 'pearlIcon');
-    pearlIconShadow.anchor.setTo(0.5, 0.5);
-    pearlIconShadow.scale.setTo(1.1);
-    pearlIconShadow.tint = 0x000000;
-    pearlIconShadow.alpha = 0.75;
-    pearlIcon.anchor.setTo(0.5, 0.5);
-    this.pearlCountHUDText = this.add.text(this.camera.width - 60, 44, OrangeSea.pearlCount, { font: "48px great_victorianstandard", fill: "white", fontWeight: 'bold', strokeThickness: 3, align: 'right' } );
-    this.pearlCountHUDText.anchor.setTo(1, 0.5);
-  //  this.pearlCountHUDText.setShadow(3, 3, 'rgba(0,0,0,0.4)');
-    this.pearlCountGroup.add(pearlIconShadow);
-    this.pearlCountGroup.add(pearlIcon);
-    this.pearlCountGroup.add(this.pearlCountHUDText);
 
     //kill count text
     this.killCountText = this.add.text(0, -50, "0", { font: "72px great_victorianstandard", fill: "gold", stroke: "black", strokeThickness: 3, fontWeight: 'bold' } );
@@ -620,7 +606,13 @@ OrangeSea.ChapterOne.prototype = {
     this.controlsMessage.alpha = 0;
 
     //init cursors
-    this.cursors = this.input.keyboard.createCursorKeys();
+    //this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = {
+      up: this.input.keyboard.addKey(Phaser.Keyboard.W),
+      down: this.input.keyboard.addKey(Phaser.Keyboard.S),
+      left: this.input.keyboard.addKey(Phaser.Keyboard.A),
+      right: this.input.keyboard.addKey(Phaser.Keyboard.D),
+    };
     var fKey = this.input.keyboard.addKey(Phaser.KeyCode.F);
     var mKey = this.input.keyboard.addKey(Phaser.KeyCode.M);
     var pKey = this.input.keyboard.addKey(Phaser.KeyCode.P);
@@ -645,62 +637,6 @@ OrangeSea.ChapterOne.prototype = {
     var direction = Math.random() > 0.5 ? 1 : -1;
     treasure.body.angularVelocity = direction*50;
     this.treasureGroup.add(treasure);
-  },
-
-  drawBalloonHp: function() {
-    this.balloonHpGroup.removeAll(true);
-    for (var i=0; i<OrangeSea.maxBalloonHp; i++) {
-      var balloonHealth = this.add.sprite(40 + i*35, 40, 'balloonHealth');
-      balloonHealth.anchor.setTo(0.5, 0.5);
-      var balloonHealthShadow = this.add.sprite(balloonHealth.x, balloonHealth.y, 'balloonHealth');
-      balloonHealthShadow.anchor.setTo(0.5, 0.5);
-      balloonHealthShadow.scale.setTo(1.1);
-      balloonHealthShadow.tint = 0x000000;
-      balloonHealthShadow.alpha = 0.75;
-      if (i >= OrangeSea.balloonHp) {
-        balloonHealth.tint = 0x222222;
-        //balloonHealth.alpha = 0.5;
-      }
-      this.balloonHpGroup.add(balloonHealthShadow);
-      this.balloonHpGroup.add(balloonHealth);
-    }
-  },
-
-  //gains health unless will go over max
-  gainHealth: function(amount) {
-    var newHealth = OrangeSea.balloonHp + amount;
-    if (newHealth > OrangeSea.maxBalloonHp) {
-      newHealth = OrangeSea.maxBalloonHp;
-    }
-    OrangeSea.balloonHp = newHealth;
-    this.drawBalloonHp();
-  },
-
-  loseHealth: function() {
-    if (OrangeSea.balloonHp > 0) {
-      OrangeSea.balloonHp--;
-      this.drawBalloonHp();
-    }
-    if (OrangeSea.balloonHp <= 0) {
-      //TODO this happens when shot down
-      // var balloonHole = this.add.sprite(0, 0, 'balloonHole');
-      // balloonHole.anchor.setTo(0.5, 0.5);
-      // this.balloon.addChildAt(balloonHole, 0);
-      // this.balloon.body.velocity.y = 10;
-
-      this.deadSound.play(null, null, 0.5);
-      OrangeSea.thunder.fadeOut(500);
-      OrangeSea.music.stop();
-      this.camera.fade(0x000000, 2000);
-      this.camera.onFadeComplete.add(function(){
-        this.state.start('GameOver');
-      }, this);
-      this.alive = false;
-    } else {
-      var oldTint = this.balloon.tint;
-      this.balloon.tint = 0xFF0000;
-      this.tweenTint(this.balloon, this.balloon.tint, oldTint, 2000);
-    }
   },
 
   beginTutorial: function() {
@@ -937,12 +873,18 @@ OrangeSea.ChapterOne.prototype = {
           }, this);
         }, this);
         OrangeSea.pearlCount--;
-        this.pearlCountHUDText.setText(OrangeSea.pearlCount);
-        var thrownPearl = this.add.sprite(this.balloon.x, this.balloon.y+40, 'pearl');
+        var thrownPearl = this.add.sprite(this.musket.world.x, this.musket.world.y, 'pearl');
         this.thrownPearlGroup.add(thrownPearl);
         this.physics.arcade.enable(thrownPearl);
-        thrownPearl.body.velocity.x = this.pearlThrowDirection*1200;
-        thrownPearl.body.velocity.y = -100;
+        var pearlSpeed = 1000;
+        if (this.game.input.x > this.musket.world.x) {
+          thrownPearl.body.velocity.x = pearlSpeed * Math.cos(this.getMusketAngle());
+          thrownPearl.body.velocity.y = pearlSpeed * Math.sin(this.getMusketAngle());
+        } else {
+          thrownPearl.body.velocity.x = -pearlSpeed * Math.cos(this.getMusketAngle());
+          thrownPearl.body.velocity.y = -pearlSpeed * Math.sin(this.getMusketAngle());
+        }
+        console.log(thrownPearl.body.velocity.y);
         thrownPearl.body.bounce.setTo(0.1, 0.1);
         thrownPearl.killCount = 0; //track kills for combos
       }
@@ -1068,11 +1010,17 @@ OrangeSea.ChapterOne.prototype = {
     var titleText;
     if (OrangeSea.deadMessage) {
       titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, OrangeSea.deadMessage, { font: "90px great_victorianstandard", fill: "white" } );
-      titleText.anchor.setTo(0.5, 0.5);
     } else {
-      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.5, Levels[OrangeSea.currentLevel].title, { font: "120px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
-      titleText.anchor.setTo(0.5, 0.5);
+      titleText = this.add.text(this.camera.width*0.5, this.camera.height*0.43, Levels[OrangeSea.currentLevel].title, { font: "72px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
+      subtitle = this.add.text(this.camera.width*0.5, this.camera.height*0.5, Levels[OrangeSea.currentLevel].subtitle, { font: "120px great_victorianstandard", fill: "white", wordWrap: true, wordWrapWidth: this.camera.width*.7, align: "center" } );
+      subtitle.anchor.setTo(0.5, 0.5);
+      subtitle.fixedToCamera = true;
+      this.textGroup.add(subtitle);
+      var subtitleFadeIn = this.add.tween(subtitle).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
+      var subtitleFadeOut = this.add.tween(subtitle).to({ alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, false, 2000);
+      subtitleFadeIn.chain(subtitleFadeOut);
     }
+    titleText.anchor.setTo(0.5, 0.5);
     titleText.fixedToCamera = true;
     this.textGroup.add(titleText);
     var fadeIn = this.add.tween(titleText).from( { alpha: 0.0 }, 2000, Phaser.Easing.Linear.None, true);
@@ -1164,7 +1112,7 @@ OrangeSea.ChapterOne.prototype = {
   startWaveTilesTweens: function() {
     //up and down
     this.add.tween(this.waveTiles[0]).to( { y: this.waveTiles[0].position.y+10 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-    this.add.tween(this.waveTiles[1]).to( { y: this.waveTiles[1].position.y+-10 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+    this.add.tween(this.waveTiles[1]).to( { y: this.waveTiles[1].position.y-10 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     this.add.tween(this.waveTiles[2]).to( {  y: this.waveTiles[2].position.y+10 }, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
     //angle
     this.add.tween(this.waveTiles[0]).to( { angle: -this.waveTiles[0].angle }, 1500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
@@ -1172,7 +1120,29 @@ OrangeSea.ChapterOne.prototype = {
     this.add.tween(this.waveTiles[2]).to( { angle: -this.waveTiles[2].angle }, 1500, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
   },
 
+  getMusketAngle: function() {
+    return Math.atan((this.game.input.y + this.game.camera.y - this.musket.world.y) / (this.game.input.x + this.game.camera.x - this.musket.world.x));
+  },
+
   update: function () {
+    var musketAngle = (180 / (Math.PI)) * this.getMusketAngle();
+    if (this.game.input.x > this.musket.world.x) {
+      this.musket.scale.setTo(1, 1);
+    } else {
+      this.musket.scale.setTo(-1, 1);
+    }
+    this.musket.angle = musketAngle;
+    // if no left/right controls, drift around center
+    if (!Levels[OrangeSea.currentLevel].fullControl) {
+      if (this.balloon.x <= this.camera.width * 0.4) {
+        this.balloon.body.acceleration.x = 300;
+      } else if (this.balloon.x > this.camera.width * 0.6){
+        this.balloon.body.acceleration.x = -300;
+      } else {
+        this.balloon.body.acceleration.x = 0;
+      }
+    }
+
     var perfTimeStart = window.performance.now();
     // this.ship.y = this.waveRopes[0].y + this.waveRopes[0].points[5].y - 105;
     // this.ship.x += 0.5;
@@ -1195,12 +1165,14 @@ OrangeSea.ChapterOne.prototype = {
     }
 
     //balloon world limits
+    /*
     if (this.balloon.x > this.camera.width && this.balloon.body.velocity.x > 0 && !this.over) {
       this.balloon.body.acceleration.x = -this.ACCELERATION;
     }
     if (this.balloon.x < 50 && this.balloon.body.velocity.x < 0) {
       this.balloon.body.acceleration.x = this.ACCELERATION;
     }
+    */
     if (this.balloon.y < 0) {
       if (this.balloon.body.velocity.y < 0) {
         this.balloon.body.acceleration.y = this.ACCELERATION;
@@ -1223,7 +1195,6 @@ OrangeSea.ChapterOne.prototype = {
     //dying
     if (this.balloon.y > 650 && this.alive) {
       ga('send', 'event', 'dead', 'lostAtSea');
-      this.loseHealth();
       this.splash.play(null, null, 0.5);
       if (OrangeSea.balloonHp > 0) {
         OrangeSea.deadMessage = 'He was lost at sea.';
@@ -1253,19 +1224,23 @@ OrangeSea.ChapterOne.prototype = {
         this.balloon.body.acceleration.y = 0;
       }
 
-      if (this.cursors.right.isDown) {
-        this.balloon.body.acceleration.x = this.ACCELERATION;
-        this.pearlThrowDirection = 1; //right
-        this.musket.scale.setTo(1, 1);
+      // only go left-right if fullControl is enabled
+      if (Levels[OrangeSea.currentLevel].fullControl) {
+        if (this.cursors.right.isDown) {
+          this.balloon.body.acceleration.x = this.ACCELERATION;
+          this.pearlThrowDirection = 1; //right
+          this.musket.scale.setTo(1, 1);
+        }
+        else if (this.cursors.left.isDown) {
+          this.balloon.body.acceleration.x = -this.ACCELERATION;
+          this.pearlThrowDirection = -1; //left
+          this.musket.scale.setTo(-1, 1);
+        }
+        else {
+          this.balloon.body.acceleration.x = 0;
+        }
       }
-      else if (this.cursors.left.isDown) {
-        this.balloon.body.acceleration.x = -this.ACCELERATION;
-        this.pearlThrowDirection = -1; //left
-        this.musket.scale.setTo(-1, 1);
-      }
-      else {
-        this.balloon.body.acceleration.x = 0;
-      }
+
     } else { //mobile control
       if (this.pointerDown) { //mobile or mouse control
         var xDiff = this.input.position.x - this.balloon.x;
@@ -1312,9 +1287,6 @@ OrangeSea.ChapterOne.prototype = {
       var fadeInLightning = this.add.tween(this.lightningStrike).from( {alpha: 0.0}, 100, Phaser.Easing.Linear.None, true, 0);
       var fadeOutLightning = this.add.tween(this.lightningStrike).to( {alpha: 0.0}, 500, Phaser.Easing.Linear.None, false, 100);
       fadeInLightning.chain(fadeOutLightning);
-
-      //health knock down
-      this.loseHealth();
     }
   }
 };
