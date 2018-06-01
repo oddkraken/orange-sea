@@ -48,7 +48,7 @@ OrangeSea.Preloader.prototype = {
     this.load.image('musket', 'assets/images/musket.png');
     this.load.image('clearedBackground1', 'assets/images/clearedBackground1.jpg');
     this.load.image('healthBar', 'assets/images/healthBar.png');
-    this.load.image('balloonHealth', 'assets/images/balloonHealth.png');
+    this.load.image('crosshair', 'assets/images/crosshair.png'); // TODO get crosshair image
     this.load.image('pearlIcon', 'assets/images/pearlIcon.png');
     this.load.image('treasure', 'assets/images/treasure.png');
     this.load.spritesheet('propeller', 'assets/images/propeller.png', 50, 300);
@@ -99,6 +99,8 @@ OrangeSea.Preloader.prototype = {
     this.loadingBar = this.add.sprite(0, 50, "loading");
     //loadingBar.anchor.setTo(0.5,1);
     this.load.setPreloadSprite(this.loadingBar,0);
+
+    this.game.canvas.style.cursor = "none";
 	},
 
 	create: function () {
@@ -120,7 +122,7 @@ OrangeSea.Preloader.prototype = {
       this.add.tween(OrangeSea.propellerSound).to( { volume: 0.8 }, 2000, "Linear", true);
     }, this);
     */
-    
+
     if (OrangeSea.debug) {
       this.state.start('ChapterOne'); //skip story and control screen
     } else {

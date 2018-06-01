@@ -19,7 +19,7 @@ var OrangeSea = {
   },
   initVals: function() {
     OrangeSea.currentLevel = 0;
-    OrangeSea.pearlCount = 100; //ammo
+    OrangeSea.pearlCount = 0; //ammo
     OrangeSea.totalPearlCount = 0; //total collected
     OrangeSea.vanquished = 0; //total enemies killed
     OrangeSea.maxBalloonHp = 3; //increases at the end of levels
@@ -31,10 +31,10 @@ var OrangeSea = {
 var Levels = [
   {
     title: "Day One",
-    subtitle: "The Vanguard",
+    subtitle: "If Pearls Were Slugs",
     fullControl: false,
     duration: 45,
-    balloonDelay: 10,
+    balloonDelay: 5,
     dayTime: true,
     storm: true,
     clearedMessage: '"The Orange Sea is only a few days across if the winds are charitable. What awaits me on the northern shores?"'
